@@ -26,26 +26,52 @@ flowchart LR
     
     %% Public Marketing Site Section
     subgraph Public[" PUBLIC MARKETING SITE "]
-        B1["🏠<br/>Homepage"]:::greenBox
-        B2["📄<br/>Features Page"]:::yellowBox
-        B3["💲<br/>Pricing Page"]:::yellowBox
-        B4["👤<br/>About Us"]:::redBox
-        B5["✉️<br/>Contact Page"]:::redBox
-        L["🔐<br/>Login or Sign Up"]:::loginBox
+        B1["🏠<br/>Homepage<br/>(Jefferson)"]:::greenBox
+        B2["📄<br/>Features Page<br/>(Jefferson)"]:::yellowBox
+        B3["💲<br/>Pricing Page<br/>(王紹帆)"]:::yellowBox
+        B4["👤<br/>About Us<br/>"]:::redBox
+        B5["✉️<br/>Contact Page<br/>"]:::redBox
+        L["🔐<br/>Login or Sign Up<br/>(Ishaq)"]:::loginBox
     end
     
     %% Application Section
     subgraph App[" NOVASPHERE APPLICATION "]
-        D["🎛️<br/>Dashboard"]:::loginBox
+        D["🎛️<br/>Dashboard<br/>(Jefferson)"]:::loginBox
         
-        P1["📁<br/>Project<br/>Management"]:::greenBox
-        P2["🏢<br/>Supplier<br/>Management"]:::greenBox
-        P3["📦<br/>Material<br/>Management"]:::greenBox
-        P4["⚙️<br/>Settings and<br/>User<br/>Management"]:::greenBox
-        P5["📊<br/>Reporting and<br/>Analytics"]:::greenBox
+        P1["📁<br/>Project<br/>Management<br/>(Jefferson)"]:::greenBox
+        P1_List["📋<br/>List Projects<br/>(Jefferson)"]:::greenBox
+        P1_View["👁️<br/>View Project<br/>(Jefferson)"]:::greenBox
+        P1_View_Project_Form["🗂️<br/>Project Details<br/>(Jefferson)"]:::greenBox
+        P1_View_Project_Task["✅<br/>Project Task Management<br/>(Jefferson)"]:::greenBox
+        P1_View_Project_Material["📦<br/>Project Materials Management<br/>(王紹帆)"]:::greenBox
+        P1_View_Project_Material_S1["⭐<br/>Supplier Rating<br/>Basic<br/>(Ishaq)"]:::greenBox
+        P1_Create["➕<br/>Create Project<br/>(Jefferson)"]:::greenBox
+        P1_Edit["✏️<br/>Edit Project<br/>(Jefferson)"]:::greenBox
         
-        S1["⭐<br/>Supplier Rating<br/>Basic"]:::greenBox
-        R1["📋<br/>Basic Reports"]:::greenBox
+        P2["🏢<br/>Supplier<br/>Management<br/>(王紹帆)"]:::greenBox
+        P2_List["📋<br/>List Suppliers<br/>(王紹帆)"]:::greenBox
+        P2_View["👁️<br/>View Supplier<br/>(王紹帆)"]:::greenBox
+        P2_Create["➕<br/>Add Supplier<br/>(王紹帆)"]:::greenBox
+        P2_Edit["✏️<br/>Edit Supplier<br/>(王紹帆)"]:::greenBox
+        
+        P3["📦<br/>Material<br/>Management<br/>(Ishaq)"]:::greenBox
+        P3_List["📋<br/>List Materials<br/>(Ishaq)"]:::greenBox
+        P3_View["👁️<br/>View Material<br/>(Ishaq)"]:::greenBox
+        P3_Create["➕<br/>Create Material<br/>(Ishaq)"]:::greenBox
+        P3_Edit["✏️<br/>Edit Material<br/>(Ishaq)"]:::greenBox
+        
+        P4["⚙️<br/>Settings and<br/>User<br/>Management<br/>(Ishaq)"]:::greenBox
+        P4_List["📋<br/>List Users<br/>(Ishaq)"]:::greenBox
+        P4_View["👁️<br/>View User<br/>(Ishaq)"]:::greenBox
+        P4_Create["➕<br/>Create User<br/>(Ishaq)"]:::greenBox
+        P4_Edit["✏️<br/>Edit User<br/>(Ishaq)"]:::greenBox
+        
+        P5["📊<br/>Reporting and<br/>Analytics<br/>(王紹帆)"]:::greenBox
+        R1["📋<br/>Basic Reports<br/>(王紹帆)"]:::greenBox
+        R1_Advance_Supplier_Performance["🎯 Advanced Supplier Performance Analytics<br/>"]:::redBox
+        R1_Predictive_Delay_Alert["⚡ AI-driven Predictive Delay Alerts<br/>"]:::redBox
+        R1_In_Depth_Performance["📈 In-depth Performance Analytics<br/>"]:::redBox
+
     end
     
     %% Connections
@@ -59,9 +85,44 @@ flowchart LR
     D --> P4
     D --> P5
     
-    P2 --> S1
+    P1 --> P1_List
+    P1 --> P1_View
+    P1_View --> P1_View_Project_Form
+    P1_View --> P1_View_Project_Task
+    P1_View --> P1_View_Project_Material
+    P1_View_Project_Material --> P1_View_Project_Material_S1
+    P1 --> P1_Create
+    P1 --> P1_Edit
+    
+    P2 --> P2_List
+    P2 --> P2_View
+    P2 --> P2_Create
+    P2 --> P2_Edit
+    
+    P3 --> P3_List
+    P3 --> P3_View
+    P3 --> P3_Create
+    P3 --> P3_Edit
+    
+    P4 --> P4_List
+    P4 --> P4_View
+    P4 --> P4_Create
+    P4 --> P4_Edit
+    
     P5 --> R1
+    P5 --> R1_Advance_Supplier_Performance
+    P5 --> R1_Predictive_Delay_Alert
+    P5 --> R1_In_Depth_Performance
     
     %% Apply styles to subgraphs
     style Public fill:#2d3a1f,stroke:#a3a847,stroke-width:3px,color:#e5e5e5
     style App fill:#1e3a5a,stroke:#3b82f6,stroke-width:3px,color:#e5e5e5
+```
+- 🟢 **High Priority (MVP - Phase 1)**  
+  Green boxes: core features required for basic system operation.
+
+- 🟡 **Medium Priority (Phase 2)**  
+  Yellow boxes: features that enhance user experience and system completeness.
+
+- 🔴 **Low Priority (Phase 3)**  
+  Red boxes: advanced AI-driven analytics and reporting features.
