@@ -1,0 +1,287 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Project novasphere_mvp {
+  database_type: 'PostgreSQL'
+  Note: 'ER Diagram Database For Novasphere Fully Featured - Construction Supplier Management System'
+}
+
+Table roles {
+  role_id uuid [primary key, default: `gen_random_uuid()`]
+  name varchar(100) [not null]
+  is_active boolean [not null, default: true]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+  deleted_at timestamp  
+  
+  Indexes {
+    name
+    is_active
+  }
+  
+  Note: 'System role including Administrators, Project Managers, and Supervisors'
+}
+
+Table users {
+  user_id uuid [primary key, default: `gen_random_uuid()`]
+  email varchar(100) [unique, not null]
+  password varchar(255) [not null]
+  first_name varchar(100) [not null]
+  last_name varchar(100) [not null]
+  phone varchar(20) [not null]
+  last_login_at timestamp
+  is_active boolean [not null, default: true]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+  deleted_at timestamp
+
+  role_id uuid [not null, ref: > roles.role_id]
+  
+  Indexes {
+    email
+    is_active
+  }  
+}
+
+Table suppliers {
+  supplier_id uuid [primary key, default: `gen_random_uuid()`]
+  name varchar(100) [not null]
+  email varchar(100) [not null]
+  phone varchar(20) [not null]
+  address text [not null]
+  website varchar(255)
+  rating double(1,1)
+  is_active boolean [not null, default: true]
+  created_by uuid [ref: > users.user_id]
+  created_at timestamp [default: `now()`]
+  updated_by uuid [ref: > users.user_id]
+  updated_at timestamp
+  deleted_at timestamp
+  
+  Indexes {
+    name
+    is_active
+  }
+  
+  Note: 'Supplier/vendor information managed by administrators'
+}
+
+Table project_statuses {
+  project_status_id uuid [primary key, default: `gen_random_uuid()`]
+  name varchar(100) [not null]
+  is_active boolean [not null, default: true]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+  deleted_at timestamp
+  
+  Indexes {
+    name
+    is_active
+  }
+}
+
+Table projects {
+  project_id uuid [primary key, default: `gen_random_uuid()`]
+  name varchar(100) [not null]
+  description text
+  budget numeric(15,2) [not null]
+  start_date timestamp [not null]
+  end_date timestamp [not null]
+  actual_end_date timestamp
+  is_active boolean [not null, default: true]
+  created_by uuid [ref: > users.user_id]
+  created_at timestamp [default: `now()`]
+  updated_by uuid [ref: > users.user_id]
+  updated_at timestamp
+  deleted_at timestamp
+ 
+  status uuid [ref: > project_statuses.project_status_id, not null]
+  project_manager uuid [ref: > users.user_id, not null]
+  
+  Indexes {
+    project_manager
+    status
+    start_date
+    end_date
+  }
+  
+  Note: 'Construction projects managed by Project Managers'
+}
+
+Table project_members {
+  project_member_id uuid [primary key, default: `gen_random_uuid()`]
+  is_active boolean [not null, default: true]
+  created_by uuid [ref: > users.user_id]
+  created_at timestamp [default: `now()`]
+  updated_by uuid [ref: > users.user_id]
+  updated_at timestamp
+  deleted_at timestamp
+
+  project_id uuid [ref: > projects.project_id, not null]
+  user_id uuid [ref: > users.user_id, not null]
+
+  Indexes {
+    (project_id, user_id) [unique]
+    project_id
+    user_id
+  }
+
+  Note: 'Team members assigned to projects including Supervisors'
+}
+
+Table project_task_statuses {
+  project_task_status_id uuid [primary key, default: `gen_random_uuid()`]
+  name varchar(100) [not null]
+  is_active boolean [not null, default: true]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+  deleted_at timestamp  
+  
+  Indexes {
+    name
+    is_active
+  }
+}
+
+Table project_tasks {
+  project_task_id uuid [primary key, default: `gen_random_uuid()`]
+  name varchar(100) [not null]
+  description text
+  is_active boolean [not null, default: true]
+  start_date timestamp [not null]
+  end_date timestamp [not null]
+  actual_end_date timestamp
+  created_by uuid [ref: > users.user_id]
+  created_at timestamp [default: `now()`]
+  updated_by uuid [ref: > users.user_id]
+  updated_at timestamp
+  deleted_at timestamp
+
+  status uuid [ref: > project_task_statuses.project_task_status_id, not null]
+  assigned_to uuid [ref: > users.user_id, not null]
+
+  Indexes {
+    name
+    is_active
+    status
+  }
+}
+
+Table materials {
+  material_id uuid [primary key, default: `gen_random_uuid()`]
+  name varchar(100) [not null]
+  is_active boolean [not null, default: true]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+  deleted_at timestamp  
+  
+  Indexes {
+    name
+    is_active
+  }
+}
+
+Table project_material_requirement_statuses {
+  project_material_requirement_status_id uuid [primary key, default: `gen_random_uuid()`]
+  name varchar(100) [not null]
+  is_active boolean [not null, default: true]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+  deleted_at timestamp  
+  
+  Indexes {
+    name
+    is_active
+  }
+}
+
+Table project_material_requirements {
+  project_material_requirement_id uuid [primary key, default: `gen_random_uuid()`]
+  quantity integer [not null]
+  price numeric(15,2) [not null]
+  total_price numeric(15,2) [not null]
+  arrived_date timestamp [not null]
+  actual_arrived_date timestamp
+  good_quantity integer
+  bad_quantity integer
+  is_active boolean [not null, default: true]
+  created_by uuid [ref: > users.user_id]
+  created_at timestamp [default: `now()`]
+  updated_by uuid [ref: > users.user_id]
+  updated_at timestamp
+  deleted_at timestamp
+
+  project_id uuid [ref: > projects.project_id, not null]
+  material_id uuid [ref: > materials.material_id, not null]
+  supplier_id uuid [ref: > suppliers.supplier_id, not null]
+  status uuid [ref: > project_material_requirement_statuses.project_material_requirement_status_id, not null]
+
+  Indexes {
+    material_id
+    is_active
+    supplier_id
+    status
+  }
+}
+
+Table supplier_ratings {
+  supplier_rating_id uuid [primary key, default: `gen_random_uuid()`]
+  rating numeric(1,1) [not null]
+  created_by uuid [ref: > users.user_id]
+  created_at timestamp [default: `now()`]
+  updated_by uuid [ref: > users.user_id]
+  updated_at timestamp
+  deleted_at timestamp
+
+  supplier_id uuid [ref: > suppliers.supplier_id, not null]
+  project_material_requirement_id uuid [ref: > project_material_requirements.project_material_requirement_id, not null]
+
+  Indexes {
+    supplier_id
+  }
+}
+ 
+Table modules {
+  module_id uuid [primary key, default: `gen_random_uuid()`]
+  name varchar(100) [not null]
+  description text
+  is_active boolean [not null, default: true]
+  created_by uuid [ref: > users.user_id]
+  created_at timestamp [default: `now()`]
+  updated_by uuid [ref: > users.user_id]
+  updated_at timestamp
+  deleted_at timestamp
+  
+  Indexes {
+    name
+    is_active
+  }
+  
+  Note: 'Application modules for permission and feature management'
+}
+
+Table notifications {
+  notification_id uuid [primary key, default: `gen_random_uuid()`]
+  title varchar(255) [not null]
+  message text [not null]
+  notification_type varchar(50) [not null, note: 'Types: info, warning, error, success']
+  is_read boolean [not null, default: false]
+  read_at timestamp
+  is_active boolean [not null, default: true]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+  deleted_at timestamp
+
+  user_id uuid [ref: > users.user_id, not null, note: 'User receiving the notification']
+  module_id uuid [ref: > modules.module_id, note: 'Related module (optional)']
+
+  Indexes {
+    user_id
+    module_id
+    is_read
+    created_at
+    (user_id, is_read)
+  }
+  
+  Note: 'User notifications linked to modules and features'
+}
