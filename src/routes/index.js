@@ -19,7 +19,11 @@ class MainRouter {
 
     // Protected routes (require authentication)
     this.router.use('/app/supplier', authMiddleware.isAuthenticated, supplierRouter);
-    this.router.use('/app/material-category', authMiddleware.isAuthenticated, materialCategoryRouter);
+    this.router.use(
+      '/app/material-category',
+      authMiddleware.isAuthenticated,
+      materialCategoryRouter
+    );
     this.router.use('/app/material', authMiddleware.isAuthenticated, materialRouter);
   }
 

@@ -22,17 +22,13 @@ class SeedScript {
   async seedRoles() {
     console.log('Seeding roles...');
 
-    const roles = [
-      { name: 'admin' },
-      { name: 'pm' },
-      { name: 'supervisor' },
-    ];
+    const roles = [{ name: 'admin' }, { name: 'pm' }, { name: 'supervisor' }];
 
     for (const role of roles) {
-      await databaseService.execute(
-        'INSERT INTO roles (name, is_active) VALUES (?, ?)',
-        [role.name, true]
-      );
+      await databaseService.execute('INSERT INTO roles (name, is_active) VALUES (?, ?)', [
+        role.name,
+        true,
+      ]);
     }
 
     console.log('Roles seeded: admin, pm, supervisor');

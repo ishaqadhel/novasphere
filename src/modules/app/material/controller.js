@@ -87,9 +87,9 @@ class MaterialController extends BaseController {
       const categories = await materialCategoryService.getAllActiveMaterialCategories();
 
       // Mark selected category
-      const categoriesWithSelection = categories.map(cat => ({
+      const categoriesWithSelection = categories.map((cat) => ({
         ...cat,
-        selected: cat.material_category_id === material.material_category_id
+        selected: cat.material_category_id === material.material_category_id,
       }));
 
       return this.renderView(res, 'app/material/detail/index', {
@@ -117,9 +117,9 @@ class MaterialController extends BaseController {
       const categories = await materialCategoryService.getAllActiveMaterialCategories();
 
       // Mark selected category
-      const categoriesWithSelection = categories.map(cat => ({
+      const categoriesWithSelection = categories.map((cat) => ({
         ...cat,
-        selected: cat.material_category_id === material.material_category_id
+        selected: cat.material_category_id === material.material_category_id,
       }));
 
       return this.renderView(res, 'app/material/detail/index', {
@@ -158,9 +158,9 @@ class MaterialController extends BaseController {
 
       // Merge material with submitted data and mark selected category
       const updatedMaterial = { ...material, ...req.body };
-      const categoriesWithSelection = categories.map(cat => ({
+      const categoriesWithSelection = categories.map((cat) => ({
         ...cat,
-        selected: cat.material_category_id == req.body.material_category_id
+        selected: cat.material_category_id == req.body.material_category_id,
       }));
 
       return this.renderView(res, 'app/material/detail/index', {
