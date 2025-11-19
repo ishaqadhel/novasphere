@@ -1,0 +1,7 @@
+echo "🔍 Running format check..."
+npm run format:check
+
+echo "🔍 Running linter..."
+npm run lint
+
+echo "✅ Pre-push checks passed!"
