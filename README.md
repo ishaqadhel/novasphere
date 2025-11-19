@@ -296,6 +296,56 @@ This project uses:
 - **ESM modules** (import/export)
 - **Class-based** architecture
 
+## Before Committing
+
+Before committing your changes, always run these commands in order:
+
+1. **Check code formatting**
+   ```bash
+   npm run format:check
+   ```
+
+2. **Format code**
+   ```bash
+   npm run format
+   ```
+
+3. **Lint code**
+   ```bash
+   npm run lint
+   ```
+
+### Commit Message Convention
+
+Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Types:**
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation only changes
+- `style`: Changes that don't affect code meaning (whitespace, formatting)
+- `refactor`: Code change that neither fixes a bug nor adds a feature
+- `perf`: Performance improvements
+- `test`: Adding or updating tests
+- `chore`: Changes to build process or auxiliary tools
+
+**Examples:**
+```bash
+git commit -m "feat(auth): add login functionality"
+git commit -m "fix(dashboard): resolve project count calculation"
+git commit -m "docs(readme): update installation instructions"
+git commit -m "refactor(services): simplify user service methods"
+git commit -m "chore(deps): update express to v4.18.0"
+```
+
 ## Import Strategy
 
 The project uses **relative imports** throughout the codebase for maximum compatibility with Node.js ESM:
