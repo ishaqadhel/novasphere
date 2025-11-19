@@ -79,6 +79,14 @@ class MaterialService extends BaseService {
       throw this.handleError(error, 'Failed to delete material');
     }
   }
+
+  async countMaterials() {
+    try {
+      return await materialRepository.count();
+    } catch (error) {
+      throw this.handleError(error, 'Failed to count materials');
+    }
+  }
 }
 
 export default new MaterialService();

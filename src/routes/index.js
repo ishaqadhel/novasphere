@@ -2,9 +2,10 @@ import express from 'express';
 import authMiddleware from '../middlewares/index.js';
 import homeRouter from '../modules/home/router.js';
 import authRouter from '../modules/auth/router.js';
-import supplierRouter from '../modules/app/supplier/router.js';
+import dashboardRouter from '../modules/app/dashboard/router.js';
 import materialCategoryRouter from '../modules/app/material-category/router.js';
 import materialRouter from '../modules/app/material/router.js';
+import userRouter from '../modules/app/user/router.js';
 
 class MainRouter {
   constructor() {
@@ -18,13 +19,14 @@ class MainRouter {
     this.router.use('/auth', authRouter);
 
     // Protected routes (require authentication)
-    this.router.use('/app/supplier', authMiddleware.isAuthenticated, supplierRouter);
+    this.router.use('/app/dashboard', authMiddleware.isAuthenticated, dashboardRouter);
     this.router.use(
       '/app/material-category',
       authMiddleware.isAuthenticated,
       materialCategoryRouter
     );
     this.router.use('/app/material', authMiddleware.isAuthenticated, materialRouter);
+    this.router.use('/app/user', authMiddleware.isAuthenticated, userRouter);
   }
 
   getRouter() {

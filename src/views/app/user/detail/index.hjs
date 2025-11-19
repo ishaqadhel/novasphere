@@ -25,12 +25,12 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="/app/material" class="nav-link text-white active">
+          <a href="/app/material" class="nav-link text-white">
             <i class="bi bi-box-seam"></i> Materials
           </a>
         </li>
         <li class="nav-item">
-          <a href="/app/user" class="nav-link text-white">
+          <a href="/app/user" class="nav-link text-white active">
             <i class="bi bi-people"></i> Users
           </a>
         </li>
@@ -62,7 +62,7 @@
       <!-- Content -->
       <div class="p-4">
         <div class="mb-3">
-          <a href="/app/material" class="btn btn-outline-secondary">
+          <a href="/app/user" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> Back to List
           </a>
         </div>
@@ -78,30 +78,83 @@
             <form action="{{ formAction }}" method="POST">
               <div class="row mb-3">
                 <div class="col-md-6">
-                  <label for="name" class="form-label">Material Name <span class="text-danger">*</span></label>
+                  <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                   <input
-                    type="text"
+                    type="email"
                     class="form-control"
-                    id="name"
-                    name="name"
-                    value="{{ material.name }}"
+                    id="email"
+                    name="email"
+                    value="{{ userData.email }}"
                     {{#isView}}readonly{{/isView}}
                     required
                   >
                 </div>
                 <div class="col-md-6">
-                  <label for="material_category_id" class="form-label">Category <span class="text-danger">*</span></label>
+                  <label for="password" class="form-label">Password {{#isCreate}}<span class="text-danger">*</span>{{/isCreate}}{{#isEdit}}<small class="text-muted">(leave blank to keep current)</small>{{/isEdit}}</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    {{#isCreate}}required{{/isCreate}}
+                    {{#isView}}readonly{{/isView}}
+                  >
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="first_name" class="form-label">First Name <span class="text-danger">*</span></label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="first_name"
+                    name="first_name"
+                    value="{{ userData.first_name }}"
+                    {{#isView}}readonly{{/isView}}
+                    required
+                  >
+                </div>
+                <div class="col-md-6">
+                  <label for="last_name" class="form-label">Last Name <span class="text-danger">*</span></label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="last_name"
+                    name="last_name"
+                    value="{{ userData.last_name }}"
+                    {{#isView}}readonly{{/isView}}
+                    required
+                  >
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="phone" class="form-label">Phone <span class="text-danger">*</span></label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="phone"
+                    name="phone"
+                    value="{{ userData.phone }}"
+                    {{#isView}}readonly{{/isView}}
+                    required
+                  >
+                </div>
+                <div class="col-md-6">
+                  <label for="role_id" class="form-label">Role <span class="text-danger">*</span></label>
                   <select
                     class="form-select"
-                    id="material_category_id"
-                    name="material_category_id"
+                    id="role_id"
+                    name="role_id"
                     {{#isView}}disabled{{/isView}}
                     required
                   >
-                    <option value="">-- Select Category --</option>
-                    {{#categories}}
-                    <option value="{{ material_category_id }}" {{#selected}}selected{{/selected}}>{{ name }}</option>
-                    {{/categories}}
+                    <option value="">-- Select Role --</option>
+                    {{#roles}}
+                    <option value="{{ role_id }}" {{#selected}}selected{{/selected}}>{{ name }}</option>
+                    {{/roles}}
                   </select>
                 </div>
               </div>
@@ -114,22 +167,22 @@
                   name="is_active"
                   {{#isView}}disabled{{/isView}}
                 >
-                  <option value="true" {{#material.is_active}}selected{{/material.is_active}}>Active</option>
-                  <option value="false" {{^material.is_active}}selected{{/material.is_active}}>Inactive</option>
+                  <option value="true" {{#userData.is_active}}selected{{/userData.is_active}}>Active</option>
+                  <option value="false" {{^userData.is_active}}selected{{/userData.is_active}}>Inactive</option>
                 </select>
               </div>
 
               {{^isView}}
               <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">{{ submitButtonText }}</button>
-                <a href="/app/material" class="btn btn-secondary">Cancel</a>
+                <a href="/app/user" class="btn btn-secondary">Cancel</a>
               </div>
               {{/isView}}
 
               {{#isView}}
               <div class="d-flex gap-2">
-                <a href="/app/material/{{ material.material_id }}/edit" class="btn btn-warning">Edit</a>
-                <a href="/app/material" class="btn btn-secondary">Back</a>
+                <a href="/app/user/{{ userData.user_id }}/edit" class="btn btn-warning">Edit</a>
+                <a href="/app/user" class="btn btn-secondary">Back</a>
               </div>
               {{/isView}}
             </form>

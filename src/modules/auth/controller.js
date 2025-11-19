@@ -28,7 +28,7 @@ class AuthController extends BaseController {
 
       req.session.user = user;
 
-      return this.redirect(res, '/app/supplier');
+      return this.redirect(res, '/app/dashboard');
     } catch (error) {
       return this.renderView(res, 'auth/login/index', {
         title: 'Login',

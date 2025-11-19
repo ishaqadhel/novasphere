@@ -20,7 +20,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="/app/material-category" class="nav-link text-white active">
+          <a href="/app/material-category" class="nav-link text-white">
             <i class="bi bi-folder"></i> Material Categories
           </a>
         </li>
@@ -30,7 +30,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="/app/user" class="nav-link text-white">
+          <a href="/app/user" class="nav-link text-white active">
             <i class="bi bi-people"></i> Users
           </a>
         </li>
@@ -62,9 +62,9 @@
       <!-- Content -->
       <div class="p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <h4>Material Category List</h4>
-          <a href="/app/material-category/create" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Add Material Category
+          <h4>User List</h4>
+          <a href="/app/user/create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add User
           </a>
         </div>
 
@@ -75,17 +75,30 @@
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>Email</th>
                     <th>Name</th>
+                    <th>Phone</th>
+                    <th>Role</th>
                     <th>Status</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {{#hasMaterialCategories}}
-                    {{#materialCategories}}
+                  {{#hasUsers}}
+                    {{#users}}
                     <tr>
-                      <td>{{ material_category_id }}</td>
-                      <td>{{ name }}</td>
+                      <td>{{ user_id }}</td>
+                      <td>{{ email }}</td>
+                      <td>{{ first_name }} {{ last_name }}</td>
+                      <td>{{ phone }}</td>
+                      <td>
+                        {{#role_name}}
+                          <span class="badge bg-info">{{ role_name }}</span>
+                        {{/role_name}}
+                        {{^role_name}}
+                          <span class="text-muted">-</span>
+                        {{/role_name}}
+                      </td>
                       <td>
                         {{#is_active}}
                           <span class="badge bg-success">Active</span>
@@ -96,27 +109,27 @@
                       </td>
                       <td>
                         <div class="btn-group btn-group-sm" role="group">
-                          <a href="/app/material-category/{{ material_category_id }}" class="btn btn-outline-primary">
+                          <a href="/app/user/{{ user_id }}" class="btn btn-outline-primary">
                             <i class="bi bi-eye"></i>
                           </a>
-                          <a href="/app/material-category/{{ material_category_id }}/edit" class="btn btn-outline-warning">
+                          <a href="/app/user/{{ user_id }}/edit" class="btn btn-outline-warning">
                             <i class="bi bi-pencil"></i>
                           </a>
-                          <form action="/app/material-category/{{ material_category_id }}/delete" method="POST" style="display: inline;">
-                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this material category?')">
+                          <form action="/app/user/{{ user_id }}/delete" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this user?')">
                               <i class="bi bi-trash"></i>
                             </button>
                           </form>
                         </div>
                       </td>
                     </tr>
-                    {{/materialCategories}}
-                  {{/hasMaterialCategories}}
-                  {{^hasMaterialCategories}}
+                    {{/users}}
+                  {{/hasUsers}}
+                  {{^hasUsers}}
                     <tr>
-                      <td colspan="4" class="text-center text-muted">No material categories found</td>
+                      <td colspan="7" class="text-center text-muted">No users found</td>
                     </tr>
-                  {{/hasMaterialCategories}}
+                  {{/hasUsers}}
                 </tbody>
               </table>
             </div>

@@ -14,7 +14,7 @@ class AuthMiddleware {
 
   redirectIfAuthenticated(req, res, next) {
     if (req.session && req.session.user) {
-      return res.redirect('/app/supplier');
+      return res.redirect('/app/dashboard');
     }
 
     return next();

@@ -15,8 +15,8 @@
       <h4 class="mb-4">Novasphere</h4>
       <ul class="nav nav-pills flex-column">
         <li class="nav-item">
-          <a href="/app/supplier" class="nav-link text-white">
-            <i class="bi bi-building"></i> Suppliers
+          <a href="/app/dashboard" class="nav-link text-white">
+            <i class="bi bi-speedometer2"></i> Dashboard
           </a>
         </li>
         <li class="nav-item">
@@ -27,6 +27,11 @@
         <li class="nav-item">
           <a href="/app/material" class="nav-link text-white active">
             <i class="bi bi-box-seam"></i> Materials
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/user" class="nav-link text-white">
+            <i class="bi bi-people"></i> Users
           </a>
         </li>
       </ul>
