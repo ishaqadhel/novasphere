@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} - Novasphere</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+  <div class="d-flex min-vh-100">
+    <!-- Sidebar -->
+    <div class="bg-dark text-white p-3" style="width: 250px;">
+      <h4 class="mb-4">Novasphere</h4>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <a href="/app/supplier" class="nav-link text-white">
+            <i class="bi bi-building"></i> Suppliers
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/material-category" class="nav-link text-white active">
+            <i class="bi bi-folder"></i> Material Categories
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/material" class="nav-link text-white">
+            <i class="bi bi-box-seam"></i> Materials
+          </a>
+        </li>
+      </ul>
+      <hr class="text-white">
+      <div class="mt-auto pt-4">
+        <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
+        <p class="mb-1"><small class="text-muted">{{ user.email }}</small></p>
+        <form action="/auth/logout" method="POST" class="mt-2">
+          <button type="submit" class="btn btn-sm btn-outline-light w-100">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-grow-1">
+      <!-- Header -->
+      <nav class="navbar navbar-light bg-light border-bottom px-4">
+        <div class="container-fluid">
+          <h5 class="mb-0">{{ title }}</h5>
+          <span class="navbar-text">
+            Welcome, {{ user.first_name }}!
+          </span>
+        </div>
+      </nav>
+
+      <!-- Content -->
+      <div class="p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h4>Material Category List</h4>
+          <a href="/app/material-category/create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Material Category
+          </a>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#hasMaterialCategories}}
+                    {{#materialCategories}}
+                    <tr>
+                      <td>{{ material_category_id }}</td>
+                      <td>{{ name }}</td>
+                      <td>
+                        {{#is_active}}
+                          <span class="badge bg-success">Active</span>
+                        {{/is_active}}
+                        {{^is_active}}
+                          <span class="badge bg-secondary">Inactive</span>
+                        {{/is_active}}
+                      </td>
+                      <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                          <a href="/app/material-category/{{ material_category_id }}" class="btn btn-outline-primary">
+                            <i class="bi bi-eye"></i>
+                          </a>
+                          <a href="/app/material-category/{{ material_category_id }}/edit" class="btn btn-outline-warning">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <form action="/app/material-category/{{ material_category_id }}/delete" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this material category?')">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                    {{/materialCategories}}
+                  {{/hasMaterialCategories}}
+                  {{^hasMaterialCategories}}
+                    <tr>
+                      <td colspan="4" class="text-center text-muted">No material categories found</td>
+                    </tr>
+                  {{/hasMaterialCategories}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

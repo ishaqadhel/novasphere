@@ -50,6 +50,7 @@ Table suppliers {
   phone varchar(20) [not null]
   address text [not null]
   website varchar(255)
+  rating double(1,1)
   is_active boolean [not null, default: true]
   created_by uuid [ref: > users.user_id]
   created_at timestamp [default: `now()`]
@@ -83,10 +84,10 @@ Table projects {
   project_id uuid [primary key, default: `gen_random_uuid()`]
   name varchar(100) [not null]
   description text
-  budget decimal(15,2) [not null]
-  start_date date [not null]
-  end_date date [not null]
-  actual_end_date date
+  budget numeric(15,2) [not null]
+  start_date timestamp [not null]
+  end_date timestamp [not null]
+  actual_end_date timestamp
   is_active boolean [not null, default: true]
   created_by uuid [ref: > users.user_id]
   created_at timestamp [default: `now()`]
@@ -147,6 +148,9 @@ Table project_tasks {
   name varchar(100) [not null]
   description text
   is_active boolean [not null, default: true]
+  start_date timestamp [not null]
+  end_date timestamp [not null]
+  actual_end_date timestamp
   created_by uuid [ref: > users.user_id]
   created_at timestamp [default: `now()`]
   updated_by uuid [ref: > users.user_id]
@@ -163,6 +167,20 @@ Table project_tasks {
   }
 }
 
+Table material_categories {
+  material_category_id uuid [primary key, default: `gen_random_uuid()`]
+  name varchar(100) [not null]
+  is_active boolean [not null, default: true]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+  deleted_at timestamp
+  
+  Indexes {
+    name
+    is_active
+  }
+}
+
 Table materials {
   material_id uuid [primary key, default: `gen_random_uuid()`]
   name varchar(100) [not null]
@@ -170,10 +188,13 @@ Table materials {
   created_at timestamp [default: `now()`]
   updated_at timestamp
   deleted_at timestamp  
-  
+
+  material_category_id uuid [ref: > material_categories.material_category_id, not null, note: 'Material Category']
+
   Indexes {
     name
     is_active
+    material_category_id
   }
 }
 
@@ -194,8 +215,10 @@ Table project_material_requirement_statuses {
 Table project_material_requirements {
   project_material_requirement_id uuid [primary key, default: `gen_random_uuid()`]
   quantity integer [not null]
-  price decimal(15,2) [not null]
-  total_price decimal(15,2) [not null]
+  price numeric(15,2) [not null]
+  total_price numeric(15,2) [not null]
+  arrived_date timestamp [not null]
+  actual_arrived_date timestamp
   good_quantity integer
   bad_quantity integer
   is_active boolean [not null, default: true]
@@ -216,4 +239,66 @@ Table project_material_requirements {
     supplier_id
     status
   }
+}
+
+Table supplier_ratings {
+  supplier_rating_id uuid [primary key, default: `gen_random_uuid()`]
+  rating numeric(1,1) [not null]
+  created_by uuid [ref: > users.user_id]
+  created_at timestamp [default: `now()`]
+  updated_by uuid [ref: > users.user_id]
+  updated_at timestamp
+  deleted_at timestamp
+
+  supplier_id uuid [ref: > suppliers.supplier_id, not null]
+  project_material_requirement_id uuid [ref: > project_material_requirements.project_material_requirement_id, not null]
+
+  Indexes {
+    supplier_id
+  }
+}
+ 
+Table modules {
+  module_id uuid [primary key, default: `gen_random_uuid()`]
+  name varchar(100) [not null]
+  description text
+  is_active boolean [not null, default: true]
+  created_by uuid [ref: > users.user_id]
+  created_at timestamp [default: `now()`]
+  updated_by uuid [ref: > users.user_id]
+  updated_at timestamp
+  deleted_at timestamp
+  
+  Indexes {
+    name
+    is_active
+  }
+  
+  Note: 'Application modules for permission and feature management'
+}
+
+Table notifications {
+  notification_id uuid [primary key, default: `gen_random_uuid()`]
+  title varchar(255) [not null]
+  message text [not null]
+  notification_type varchar(50) [not null, note: 'Types: info, warning, error, success']
+  is_read boolean [not null, default: false]
+  read_at timestamp
+  is_active boolean [not null, default: true]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+  deleted_at timestamp
+
+  user_id uuid [ref: > users.user_id, not null, note: 'User receiving the notification']
+  module_id uuid [ref: > modules.module_id, note: 'Related module (optional)']
+
+  Indexes {
+    user_id
+    module_id
+    is_read
+    created_at
+    (user_id, is_read)
+  }
+  
+  Note: 'User notifications linked to modules and features'
 }

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} - Novasphere</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+  <div class="d-flex min-vh-100">
+    <!-- Sidebar -->
+    <div class="bg-dark text-white p-3" style="width: 250px;">
+      <h4 class="mb-4">Novasphere</h4>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <a href="/app/supplier" class="nav-link text-white">
+            <i class="bi bi-building"></i> Suppliers
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/material-category" class="nav-link text-white">
+            <i class="bi bi-folder"></i> Material Categories
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/material" class="nav-link text-white active">
+            <i class="bi bi-box-seam"></i> Materials
+          </a>
+        </li>
+      </ul>
+      <hr class="text-white">
+      <div class="mt-auto pt-4">
+        <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
+        <p class="mb-1"><small class="text-muted">{{ user.email }}</small></p>
+        <form action="/auth/logout" method="POST" class="mt-2">
+          <button type="submit" class="btn btn-sm btn-outline-light w-100">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-grow-1">
+      <!-- Header -->
+      <nav class="navbar navbar-light bg-light border-bottom px-4">
+        <div class="container-fluid">
+          <h5 class="mb-0">{{ title }}</h5>
+          <span class="navbar-text">
+            Welcome, {{ user.first_name }}!
+          </span>
+        </div>
+      </nav>
+
+      <!-- Content -->
+      <div class="p-4">
+        <div class="mb-3">
+          <a href="/app/material" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to List
+          </a>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            {{#error}}
+            <div class="alert alert-danger" role="alert">
+              {{.}}
+            </div>
+            {{/error}}
+
+            <form action="{{ formAction }}" method="POST">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="name" class="form-label">Material Name <span class="text-danger">*</span></label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="name"
+                    name="name"
+                    value="{{ material.name }}"
+                    {{#isView}}readonly{{/isView}}
+                    required
+                  >
+                </div>
+                <div class="col-md-6">
+                  <label for="material_category_id" class="form-label">Category <span class="text-danger">*</span></label>
+                  <select
+                    class="form-select"
+                    id="material_category_id"
+                    name="material_category_id"
+                    {{#isView}}disabled{{/isView}}
+                    required
+                  >
+                    <option value="">-- Select Category --</option>
+                    {{#categories}}
+                    <option value="{{ material_category_id }}" {{#selected}}selected{{/selected}}>{{ name }}</option>
+                    {{/categories}}
+                  </select>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="is_active" class="form-label">Status</label>
+                <select
+                  class="form-select"
+                  id="is_active"
+                  name="is_active"
+                  {{#isView}}disabled{{/isView}}
+                >
+                  <option value="true" {{#material.is_active}}selected{{/material.is_active}}>Active</option>
+                  <option value="false" {{^material.is_active}}selected{{/material.is_active}}>Inactive</option>
+                </select>
+              </div>
+
+              {{^isView}}
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">{{ submitButtonText }}</button>
+                <a href="/app/material" class="btn btn-secondary">Cancel</a>
+              </div>
+              {{/isView}}
+
+              {{#isView}}
+              <div class="d-flex gap-2">
+                <a href="/app/material/{{ material.material_id }}/edit" class="btn btn-warning">Edit</a>
+                <a href="/app/material" class="btn btn-secondary">Back</a>
+              </div>
+              {{/isView}}
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    container_name: novasphere-app-dev
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=novasphere_db
+      - PORT=3000
+      - SESSION_SECRET=novasphere-secret-key-development
+      - SESSION_MAX_AGE=86400000
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - novasphere-network
+    volumes:
+      - ./src:/app/src
+
+  mysql:
+    image: mysql:8.0
+    container_name: novasphere-mysql-dev
+    ports:
+      - '3307:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=novasphere_db
+    volumes:
+      - novasphere-mysql-dev-data:/var/lib/mysql
+    networks:
+      - novasphere-network
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-ppassword']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  novasphere-network:
+    driver: bridge
+
+volumes:
+  novasphere-mysql-dev-data:
