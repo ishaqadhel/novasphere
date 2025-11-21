@@ -6,6 +6,8 @@ import dashboardRouter from '../modules/app/dashboard/router.js';
 import materialCategoryRouter from '../modules/app/material-category/router.js';
 import materialRouter from '../modules/app/material/router.js';
 import userRouter from '../modules/app/user/router.js';
+// 1. Import router Project
+import projectRouter from '../modules/app/project/router.js';
 
 class MainRouter {
   constructor() {
@@ -20,13 +22,17 @@ class MainRouter {
 
     // Protected routes (require authentication)
     this.router.use('/app/dashboard', authMiddleware.isAuthenticated, dashboardRouter);
+
     this.router.use(
       '/app/material-category',
       authMiddleware.isAuthenticated,
       materialCategoryRouter
     );
+
     this.router.use('/app/material', authMiddleware.isAuthenticated, materialRouter);
     this.router.use('/app/user', authMiddleware.isAuthenticated, userRouter);
+
+    this.router.use('/app/project', authMiddleware.isAuthenticated, projectRouter);
   }
 
   getRouter() {

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} - Novasphere</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+  <div class="d-flex min-vh-100">
+    <!-- Sidebar -->
+    <div class="bg-dark text-white p-3" style="width: 250px;">
+      <h4 class="mb-4">Novasphere</h4>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a href="/app/dashboard" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+        <li class="nav-item"><a href="/app/material-category" class="nav-link text-white"><i class="bi bi-folder"></i> Material Categories</a></li>
+        <li class="nav-item"><a href="/app/material" class="nav-link text-white"><i class="bi bi-box-seam"></i> Materials</a></li>
+        <li class="nav-item"><a href="/app/project" class="nav-link text-white active"><i class="bi bi-building"></i> Projects</a></li>
+        <li class="nav-item"><a href="/app/user" class="nav-link text-white"><i class="bi bi-people"></i> Users</a></li>
+      </ul>
+      <hr class="text-white">
+      <div class="mt-auto pt-4">
+        <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
+        <form action="/auth/logout" method="POST" class="mt-2"><button type="submit" class="btn btn-sm btn-outline-light w-100"><i class="bi bi-box-arrow-right"></i> Logout</button></form>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-grow-1">
+      <nav class="navbar navbar-light bg-light border-bottom px-4">
+        <div class="container-fluid"><h5 class="mb-0">{{ title }}</h5><span class="navbar-text">Welcome, {{ user.first_name }}!</span></div>
+      </nav>
+
+      <div class="p-4">
+        <div class="mb-3">
+          <a href="/app/project" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to List</a>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            {{#error}}<div class="alert alert-danger" role="alert">{{ error }}</div>{{/error}}
+
+            <form action="{{ formAction }}" method="POST">
+              <!-- Row 1 -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Project Name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" name="name" value="{{ project.name }}" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Project Manager <span class="text-danger">*</span></label>
+                  <select class="form-select" name="project_manager" required>
+                    <option value="">-- Select Manager --</option>
+                    {{#users}}
+                    <option value="{{ user_id }}" {{#selected}}selected{{/selected}}>{{ first_name }} {{ last_name }}</option>
+                    {{/users}}
+                  </select>
+                </div>
+              </div>
+
+              <!-- Row 2: Budget & Statuses -->
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label class="form-label">Budget <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control" name="budget" value="{{ project.budget }}" step="0.01" required>
+                </div>
+                
+                <!-- Project Status -->
+                <div class="col-md-4">
+                  <label class="form-label">Project Status <span class="text-danger">*</span></label>
+                  <select class="form-select" name="status" required>
+                    <option value="">-- Select Status --</option>
+                    {{#statuses}}
+                    <option value="{{ project_status_id }}" {{#selected}}selected{{/selected}}>{{ name }}</option>
+                    {{/statuses}}
+                  </select>
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Status (Active) <span class="text-danger">*</span></label>
+                  <select class="form-select" name="is_active" required>
+                    <option value="1" {{#project.is_active_bool}}selected{{/project.is_active_bool}}>Active</option>
+                    <option value="0" {{^project.is_active_bool}}selected{{/project.is_active_bool}}>Inactive</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Row 3 Dates -->
+              <div class="row mb-3">
+                <div class="col-md-4">
+                   <label class="form-label">Start Date <span class="text-danger">*</span></label>
+                   <input type="date" name="start_date" class="form-control" value="{{ project.formatted_start }}" required>
+                </div>
+                <div class="col-md-4">
+                   <label class="form-label">Est. End Date <span class="text-danger">*</span></label>
+                   <input type="date" name="end_date" class="form-control" value="{{ project.formatted_end }}" required>
+                </div>
+                <div class="col-md-4">
+                   <label class="form-label">Actual End Date <span class="text-danger">*</span></label>
+                   <input type="date" name="actual_end_date" class="form-control" value="{{ project.formatted_actual_end }}" required>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="3">{{ project.description }}</textarea>
+              </div>
+
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">{{ submitButtonText }}</button>
+                <a href="/app/project" class="btn btn-secondary">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
