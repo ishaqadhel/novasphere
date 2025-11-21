@@ -1,4 +1,4 @@
-import databaseService from '../../../services/database/index.js'; 
+import databaseService from '../../../services/database/index.js';
 import bcrypt from 'bcrypt';
 
 class SeedScript {
@@ -30,18 +30,18 @@ class SeedScript {
       { name: 'In Progress' },
       { name: 'Completed' },
       { name: 'On Hold' },
-      { name: 'Cancelled' }
+      { name: 'Cancelled' },
     ];
 
     for (const status of statuses) {
       const existing = await databaseService.query(
-        'SELECT project_status_id FROM project_statuses WHERE name = ?', 
+        'SELECT project_status_id FROM project_statuses WHERE name = ?',
         [status.name]
       );
 
       if (existing.length === 0) {
         await databaseService.execute(
-          'INSERT INTO project_statuses (name, is_active) VALUES (?, ?)', 
+          'INSERT INTO project_statuses (name, is_active) VALUES (?, ?)',
           [status.name, true]
         );
       }
@@ -56,13 +56,15 @@ class SeedScript {
     const roles = [{ name: 'admin' }, { name: 'pm' }, { name: 'supervisor' }];
 
     for (const role of roles) {
-      const existing = await databaseService.query('SELECT role_id FROM roles WHERE name = ?', [role.name]);
-      
+      const existing = await databaseService.query('SELECT role_id FROM roles WHERE name = ?', [
+        role.name,
+      ]);
+
       if (existing.length === 0) {
-         await databaseService.execute('INSERT INTO roles (name, is_active) VALUES (?, ?)', [
-            role.name,
-            true,
-         ]);
+        await databaseService.execute('INSERT INTO roles (name, is_active) VALUES (?, ?)', [
+          role.name,
+          true,
+        ]);
       }
     }
 
@@ -72,10 +74,12 @@ class SeedScript {
   async seedDefaultAdminUser() {
     console.log('Seeding default admin user...');
 
-    const existingUser = await databaseService.query('SELECT user_id FROM users WHERE email = ?', ['admin@example.com']);
+    const existingUser = await databaseService.query('SELECT user_id FROM users WHERE email = ?', [
+      'admin@example.com',
+    ]);
     if (existingUser.length > 0) {
-        console.log('Default admin user already exists. Skipping.');
-        return;
+      console.log('Default admin user already exists. Skipping.');
+      return;
     }
 
     const hashedPassword = await bcrypt.hash('admin123', 10);
@@ -83,9 +87,9 @@ class SeedScript {
     const roles = await databaseService.query('SELECT role_id FROM roles WHERE name = ?', [
       'admin',
     ]);
-    
+
     if (roles.length === 0) {
-        throw new Error('Admin role not found. Seed roles failed?');
+      throw new Error('Admin role not found. Seed roles failed?');
     }
 
     const adminRoleId = roles[0].role_id;

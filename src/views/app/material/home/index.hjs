@@ -29,6 +29,7 @@
             <i class="bi bi-box-seam"></i> Materials
           </a>
         </li>
+        <li class="nav-item"><a href="/app/project" class="nav-link text-white"><i class="bi bi-building"></i> Projects</a></li>
         <li class="nav-item">
           <a href="/app/user" class="nav-link text-white">
             <i class="bi bi-people"></i> Users
