@@ -5,77 +5,89 @@ class ProjectRepository {
     this.tableName = 'projects';
   }
 
-  async getAll() {
-    const query = `
-      SELECT p.*, ps.name as status_name,
-        CONCAT(pm.first_name, ' ', pm.last_name) as project_manager_name
+  _getBaseQuery() {
+    return `
+      SELECT p.*, 
+             CONCAT(u.first_name, ' ', u.last_name) as manager_name,
+             ps.name as status_name, 
+             ps.project_status_id as status_id_ref
       FROM ${this.tableName} p
+      LEFT JOIN users u ON p.project_manager = u.user_id
       LEFT JOIN project_statuses ps ON p.status = ps.project_status_id
-      LEFT JOIN users pm ON p.project_manager = pm.user_id
       WHERE p.deleted_at IS NULL
-      ORDER BY p.project_id DESC
     `;
+  }
+
+  async getAll() {
+    const query = `${this._getBaseQuery()} ORDER BY p.project_id DESC`;
     return await databaseService.query(query);
   }
 
-  async getOneById(id) {
+  async search(keyword) {
     const query = `
-      SELECT p.*, ps.name as status_name,
-        CONCAT(pm.first_name, ' ', pm.last_name) as project_manager_name
-      FROM ${this.tableName} p
-      LEFT JOIN project_statuses ps ON p.status = ps.project_status_id
-      LEFT JOIN users pm ON p.project_manager = pm.user_id
-      WHERE p.project_id = ? AND p.deleted_at IS NULL
+      ${this._getBaseQuery()} 
+      AND (p.name LIKE ? OR p.description LIKE ? OR ps.name LIKE ?)
+      ORDER BY p.project_id DESC
     `;
+    const searchTerm = `%${keyword}%`;
+    return await databaseService.query(query, [searchTerm, searchTerm, searchTerm]);
+  }
+
+  async getOneById(id) {
+    const query = `${this._getBaseQuery()} AND p.project_id = ?`;
     const rows = await databaseService.query(query, [id]);
     return rows[0] || null;
   }
 
-  async createOne(data, userId) {
+  async createOne(data) {
     const query = `
-      INSERT INTO ${this.tableName}
-      (name, description, budget, start_date, end_date, status, project_manager, is_active, created_by)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO ${this.tableName} 
+      (name, description, budget, start_date, end_date, actual_end_date, is_active, project_manager, status, created_by, updated_by) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const result = await databaseService.execute(query, [
       data.name,
-      data.description || null,
+      data.description,
       data.budget,
       data.start_date,
       data.end_date,
-      data.status,
+      data.actual_end_date,
+      data.is_active,
       data.project_manager,
-      data.is_active ?? true,
-      userId,
+      data.status,
+      data.created_by,
+      data.created_by,
     ]);
     return result.insertId;
   }
 
-  async updateOneById(id, data, userId) {
+  async updateOneById(id, data) {
     const query = `
-      UPDATE ${this.tableName}
-      SET name = ?, description = ?, budget = ?, start_date = ?, end_date = ?, status = ?,
-          project_manager = ?, is_active = ?, updated_by = ?, updated_at = CURRENT_TIMESTAMP
+      UPDATE ${this.tableName} 
+      SET name = ?, description = ?, budget = ?, 
+          start_date = ?, end_date = ?, actual_end_date = ?, 
+          is_active = ?, project_manager = ?, status = ?, updated_by = ?
       WHERE project_id = ? AND deleted_at IS NULL
     `;
     const result = await databaseService.execute(query, [
       data.name,
-      data.description || null,
+      data.description,
       data.budget,
       data.start_date,
       data.end_date,
-      data.status,
+      data.actual_end_date,
+      data.is_active,
       data.project_manager,
-      data.is_active ?? true,
-      userId,
+      data.status,
+      data.updated_by,
       id,
     ]);
     return result.affectedRows > 0;
   }
 
-  async deleteOneById(id) {
-    const query = `UPDATE ${this.tableName} SET deleted_at = CURRENT_TIMESTAMP WHERE project_id = ? AND deleted_at IS NULL`;
-    const result = await databaseService.execute(query, [id]);
+  async deleteOneById(id, userId) {
+    const query = `UPDATE ${this.tableName} SET deleted_at = CURRENT_TIMESTAMP, updated_by = ? WHERE project_id = ?`;
+    const result = await databaseService.execute(query, [userId, id]);
     return result.affectedRows > 0;
   }
 }
