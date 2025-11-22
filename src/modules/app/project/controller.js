@@ -27,11 +27,11 @@ class ProjectController extends BaseController {
       let statusBadgeClass = 'bg-secondary';
       if (p.status_name) {
         const status = p.status_name.toLowerCase();
-        if (status === 'planning') statusBadgeClass = 'bg-info text-dark';
-        else if (status === 'in progress') statusBadgeClass = 'bg-primary';
-        else if (status === 'completed') statusBadgeClass = 'bg-success';
-        else if (status === 'on hold') statusBadgeClass = 'bg-warning text-dark';
-        else if (status === 'cancelled') statusBadgeClass = 'bg-danger';
+        if (status.includes('planning')) statusBadgeClass = 'bg-info text-dark';
+        else if (status.includes('progress')) statusBadgeClass = 'bg-primary';
+        else if (status.includes('completed')) statusBadgeClass = 'bg-success';
+        else if (status.includes('hold')) statusBadgeClass = 'bg-warning text-dark';
+        else if (status.includes('cancel')) statusBadgeClass = 'bg-danger';
       }
 
       return {
@@ -40,7 +40,7 @@ class ProjectController extends BaseController {
         formatted_end: p.end_date ? moment(p.end_date).format('YYYY-MM-DD') : '',
         formatted_actual_end: p.actual_end_date
           ? moment(p.actual_end_date).format('YYYY-MM-DD')
-          : '',
+          : '', // Handle jika null jadi string kosong
 
         formatted_budget: new Intl.NumberFormat('zh-TW', {
           style: 'currency',
@@ -59,6 +59,8 @@ class ProjectController extends BaseController {
     return {
       ...body,
       is_active: body.is_active === '1' || body.is_active === 1 || body.is_active === true,
+      // REVISI: Jika actual_end_date string kosong (tidak diisi), ubah jadi null
+      actual_end_date: body.actual_end_date === '' ? null : body.actual_end_date,
     };
   }
 
@@ -208,7 +210,23 @@ class ProjectController extends BaseController {
   }
 
   async show(req, res) {
-    res.send('Not Implemented');
+    try {
+      const { id } = req.params;
+      let project = await projectService.getProjectById(id);
+
+      [project] = this._formatProjectData([project]);
+
+      const viewPath = path.join(__dirname, '../../../views/app/project/show/index');
+
+      return res.render(viewPath, {
+        title: `Project: ${project.name}`,
+        project,
+        user: this.getSessionUser(req),
+        currentPath: '/app/project',
+      });
+    } catch (error) {
+      return this.sendError(res, 'Failed to load project details', 500, error);
+    }
   }
 }
 
