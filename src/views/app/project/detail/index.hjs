@@ -99,7 +99,6 @@
                    <input type="date" name="end_date" class="form-control" value="{{ project.formatted_end }}" required>
                 </div>
                 <div class="col-md-4">
-                   <!-- REVISI: Tanda * dan atribut required dihapus -->
                    <label class="form-label">Actual End Date</label>
                    <input type="date" name="actual_end_date" class="form-control" value="{{ project.formatted_actual_end }}">
                 </div>

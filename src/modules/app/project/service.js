@@ -30,7 +30,6 @@ class ProjectService extends BaseService {
 
   async createProject(data, userId) {
     try {
-      // REVISI: 'actual_end_date' DIHAPUS dari sini agar menjadi opsional
       this.validateRequired(data, [
         'name',
         'project_manager',
@@ -49,7 +48,6 @@ class ProjectService extends BaseService {
 
   async updateProject(id, data, userId) {
     try {
-      // REVISI: 'actual_end_date' DIHAPUS dari sini juga
       this.validateRequired(data, [
         'name',
         'project_manager',

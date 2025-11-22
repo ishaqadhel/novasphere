@@ -40,7 +40,7 @@ class ProjectController extends BaseController {
         formatted_end: p.end_date ? moment(p.end_date).format('YYYY-MM-DD') : '',
         formatted_actual_end: p.actual_end_date
           ? moment(p.actual_end_date).format('YYYY-MM-DD')
-          : '', // Handle jika null jadi string kosong
+          : '', 
 
         formatted_budget: new Intl.NumberFormat('zh-TW', {
           style: 'currency',
@@ -59,7 +59,6 @@ class ProjectController extends BaseController {
     return {
       ...body,
       is_active: body.is_active === '1' || body.is_active === 1 || body.is_active === true,
-      // REVISI: Jika actual_end_date string kosong (tidak diisi), ubah jadi null
       actual_end_date: body.actual_end_date === '' ? null : body.actual_end_date,
     };
   }
