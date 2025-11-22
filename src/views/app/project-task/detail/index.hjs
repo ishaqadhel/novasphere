@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} - Novasphere</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+  <div class="d-flex min-vh-100">
+    <!-- Sidebar -->
+    <div class="bg-dark text-white p-3 flex-shrink-0" style="width: 250px; min-width: 250px;">
+      <h4 class="mb-4">Novasphere</h4>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a href="/app/dashboard" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+        <li class="nav-item"><a href="/app/material-category" class="nav-link text-white"><i class="bi bi-folder"></i> Material Categories</a></li>
+        <li class="nav-item"><a href="/app/material" class="nav-link text-white"><i class="bi bi-box-seam"></i> Materials</a></li>
+        <li class="nav-item"><a href="/app/project" class="nav-link text-white active"><i class="bi bi-building"></i> Projects</a></li>
+        <li class="nav-item"><a href="/app/user" class="nav-link text-white"><i class="bi bi-people"></i> Users</a></li>
+      </ul>
+      <hr class="text-white">
+      <div class="mt-auto pt-4">
+        <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
+        <p class="mb-1"><small class="text-muted">{{ user.email }}</small></p>
+        <form action="/auth/logout" method="POST" class="mt-2"><button type="submit" class="btn btn-sm btn-outline-light w-100"><i class="bi bi-box-arrow-right"></i> Logout</button></form>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-grow-1" style="min-width: 0;">
+      <nav class="navbar navbar-light bg-light border-bottom px-4">
+        <div class="container-fluid">
+          <div class="d-flex align-items-center">
+            <a href="/app/project-task?project_id={{ project.project_id }}" class="btn btn-outline-secondary btn-sm me-3"><i class="bi bi-arrow-left"></i> Back to List</a>
+            <div>
+              <h5 class="mb-0">{{ project.name }}</h5>
+              <small class="text-muted">{{ title }}</small>
+            </div>
+          </div>
+          <span class="navbar-text">Welcome, {{ user.first_name }}!</span>
+        </div>
+      </nav>
+
+      <div class="p-4">
+        <div class="card border-0 shadow-sm" style="max-width: 800px; margin: 0 auto;">
+          <div class="card-body p-4">
+            {{#error}}<div class="alert alert-danger">{{ error }}</div>{{/error}}
+
+            <form action="{{ formAction }}" method="POST">
+              
+              <input type="hidden" name="project_id" value="{{ project.project_id }}">
+
+              <div class="mb-3">
+                <label class="form-label">Task Name {{^isView}}<span class="text-danger">*</span>{{/isView}}</label>
+                <input type="text" class="form-control" name="name" value="{{ task.name }}" {{#isView}}disabled{{/isView}} required>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label class="form-label">Status {{^isView}}<span class="text-danger">*</span>{{/isView}}</label>
+                  <select class="form-select" name="project_task_status_id" {{#isView}}disabled{{/isView}} required>
+                    <option value="">-- Select Status --</option>
+                    {{#statuses}}
+                    <option value="{{ project_task_status_id }}" {{#selected}}selected{{/selected}}>{{ name }}</option>
+                    {{/statuses}}
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Active Status {{^isView}}<span class="text-danger">*</span>{{/isView}}</label>
+                  <select class="form-select" name="is_active" {{#isView}}disabled{{/isView}} required>
+                    <option value="1" {{#task.is_active_bool}}selected{{/task.is_active_bool}}>Active</option>
+                    <option value="0" {{^task.is_active_bool}}selected{{/task.is_active_bool}}>Inactive</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Assign To</label>
+                  <select class="form-select" name="assigned_to" {{#isView}}disabled{{/isView}}>
+                    <option value="">-- Unassigned --</option>
+                    {{#users}}
+                    <option value="{{ user_id }}" {{#selected}}selected{{/selected}}>{{ first_name }} {{ last_name }}</option>
+                    {{/users}}
+                  </select>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label class="form-label">Start Date {{^isView}}<span class="text-danger">*</span>{{/isView}}</label>
+                  <input type="date" class="form-control" name="start_date" value="{{ task.formatted_start }}" {{#isView}}disabled{{/isView}} required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Est. End Date {{^isView}}<span class="text-danger">*</span>{{/isView}}</label>
+                  <input type="date" class="form-control" name="end_date" value="{{ task.formatted_end }}" {{#isView}}disabled{{/isView}} required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Actual Finish</label>
+                  <input type="date" class="form-control" name="actual_end_date" value="{{ task.formatted_actual_end }}" {{#isView}}disabled{{/isView}}>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" name="description" rows="3" {{#isView}}disabled{{/isView}}>{{ task.description }}</textarea>
+              </div>
+
+              <!-- BUTTON GROUP -->
+              <div class="d-flex gap-2">
+                {{#isView}}
+                  <a href="/app/project-task/{{ task.project_task_id }}/edit" class="btn btn-warning px-4">Edit</a>
+                  <a href="/app/project-task?project_id={{ project.project_id }}" class="btn btn-secondary px-4">Back</a>
+                {{/isView}}
+
+                {{^isView}}
+                  <button type="submit" class="btn btn-primary px-4">{{ submitButtonText }}</button>
+                  <a href="/app/project-task?project_id={{ project.project_id }}" class="btn btn-light px-4">Cancel</a>
+                {{/isView}}
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

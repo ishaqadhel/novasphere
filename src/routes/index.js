@@ -6,6 +6,7 @@ import dashboardRouter from '../modules/app/dashboard/router.js';
 import materialCategoryRouter from '../modules/app/material-category/router.js';
 import materialRouter from '../modules/app/material/router.js';
 import userRouter from '../modules/app/user/router.js';
+import projectTaskRouter from '../modules/app/project-task/router.js';
 // 1. Import router Project
 import projectRouter from '../modules/app/project/router.js';
 
@@ -33,6 +34,7 @@ class MainRouter {
     this.router.use('/app/user', authMiddleware.isAuthenticated, userRouter);
 
     this.router.use('/app/project', authMiddleware.isAuthenticated, projectRouter);
+    this.router.use('/app/project-task', authMiddleware.isAuthenticated, projectTaskRouter);
   }
 
   getRouter() {
