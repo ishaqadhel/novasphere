@@ -40,7 +40,7 @@ class ProjectController extends BaseController {
         formatted_end: p.end_date ? moment(p.end_date).format('YYYY-MM-DD') : '',
         formatted_actual_end: p.actual_end_date
           ? moment(p.actual_end_date).format('YYYY-MM-DD')
-          : '', 
+          : '',
 
         formatted_budget: new Intl.NumberFormat('zh-TW', {
           style: 'currency',
