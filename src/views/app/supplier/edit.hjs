@@ -1,0 +1,38 @@
+<tr class="table-active border-start border-4 border-warning">
+  <td class="ps-4">{{ supplier_id }}</td>
+  <td>
+    <input type="text" name="name" value="{{name}}" class="form-control form-control-sm mb-1" placeholder="Name" required>
+    <input type="text" name="website" value="{{website}}" class="form-control form-control-sm" placeholder="Website">
+  </td>
+  <td>
+    <input type="email" name="email" value="{{email}}" class="form-control form-control-sm mb-1" placeholder="Email">
+    <input type="text" name="phone" value="{{phone}}" class="form-control form-control-sm" placeholder="Phone">
+  </td>
+  <td>
+    <input type="text" name="address" value="{{address}}" class="form-control form-control-sm" placeholder="Address">
+  </td>
+  <td>
+    <select class="form-select form-select-sm" name="is_active">
+      <option value="true" {{#is_active}}selected{{/is_active}}>Active</option>
+      <option value="false" {{^is_active}}selected{{/is_active}}>Inactive</option>
+    </select>
+  </td>
+  <td>
+    <input type="number" name="rating" value="{{rating}}" class="form-control form-control-sm" style="width: 60px;" min="0" max="5">
+  </td>
+  <td class="text-end pe-4">
+    <div class="btn-group btn-group-sm">
+      <button class="btn btn-success"
+        hx-put="/app/supplier/{{ supplier_id }}"
+        hx-include="closest tr"
+        hx-target="closest tr"
+        hx-swap="outerHTML">
+        <i class="bi bi-check-lg"></i>
+      </button>
+      
+      <a href="/app/supplier" class="btn btn-secondary" hx-boost="true">
+        <i class="bi bi-x-lg"></i>
+      </a>
+    </div>
+  </td>
+</tr>

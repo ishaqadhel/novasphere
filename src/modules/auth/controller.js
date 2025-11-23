@@ -11,7 +11,7 @@ class AuthController extends BaseController {
 
   async showLoginForm(req, res) {
     try {
-      return this.renderView(res, 'auth/login/index', {
+      return res.render('auth/login/index', {
         title: 'Login',
         error: null,
       });
@@ -30,7 +30,7 @@ class AuthController extends BaseController {
 
       return this.redirect(res, '/app/dashboard');
     } catch (error) {
-      return this.renderView(res, 'auth/login/index', {
+      return res.render('auth/login/index', {
         title: 'Login',
         error: error.message,
         email: req.body.email || '',
