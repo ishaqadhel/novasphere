@@ -1,13 +1,8 @@
 import BaseController from '../../../controllers/index.js';
 import projectService from './service.js';
 import moment from 'moment';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import userRepository from '../../../repositories/user/index.js';
 import projectStatusService from '../project-status/service.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 class ProjectController extends BaseController {
   constructor() {
@@ -41,7 +36,7 @@ class ProjectController extends BaseController {
         formatted_actual_end: p.actual_end_date
           ? moment(p.actual_end_date).format('YYYY-MM-DD')
           : '',
-
+        // eslint-disable-next-line no-undef
         formatted_budget: new Intl.NumberFormat('zh-TW', {
           style: 'currency',
           currency: 'TWD',
@@ -72,8 +67,7 @@ class ProjectController extends BaseController {
         projects = await projectService.getAllProjects();
       }
       projects = this._formatProjectData(projects);
-      const viewPath = path.join(__dirname, '../../../views/app/project/home/index');
-      return res.render(viewPath, {
+      return this.renderView(res, 'app/project/home/index', {
         title: 'Projects',
         projects,
         hasProjects: projects.length > 0,
@@ -91,8 +85,7 @@ class ProjectController extends BaseController {
       const users = await userRepository.getAll();
       const statuses = await projectStatusService.getAllActiveStatuses();
 
-      const viewPath = path.join(__dirname, '../../../views/app/project/detail/index');
-      return res.render(viewPath, {
+      return this.renderView(res, 'app/project/detail/index', {
         title: 'Create Project',
         mode: 'create',
         isCreate: true,
@@ -119,7 +112,6 @@ class ProjectController extends BaseController {
     } catch (error) {
       const users = await userRepository.getAll();
       const statuses = await projectStatusService.getAllActiveStatuses();
-      const viewPath = path.join(__dirname, '../../../views/app/project/detail/index');
 
       const usersWithSelection = users.map((u) => ({
         ...u,
@@ -135,7 +127,7 @@ class ProjectController extends BaseController {
         is_active_bool: req.body.is_active === '1',
       };
 
-      return res.render(viewPath, {
+      return this.renderView(res, 'app/project/detail/index', {
         title: 'Create Project',
         mode: 'create',
         isCreate: true,
@@ -168,8 +160,7 @@ class ProjectController extends BaseController {
         selected: s.project_status_id === project.status,
       }));
 
-      const viewPath = path.join(__dirname, '../../../views/app/project/detail/index');
-      return res.render(viewPath, {
+      return this.renderView(res, 'app/project/detail/index', {
         title: 'Edit Project',
         mode: 'edit',
         isEdit: true,

@@ -1,0 +1,90 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4>Supplier List</h4>
+  <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#addSupplierCard">
+    <i class="bi bi-plus-circle"></i> Add Supplier
+  </button>
+</div>
+
+<div class="collapse mb-4" id="addSupplierCard">
+  <div class="card card-body bg-light border-0 shadow-sm">
+    <h5 class="card-title mb-3">New Supplier Details</h5>
+    <form hx-post="/app/supplier" 
+          hx-target="#supplier-table-body" 
+          hx-swap="afterbegin" 
+          hx-on::after-request="this.reset(); new bootstrap.Collapse(document.getElementById('addSupplierCard')).hide();">
+      
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label small text-muted">Company Name</label>
+          <input type="text" name="name" class="form-control" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small text-muted">Phone</label>
+          <input type="text" name="phone" class="form-control">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small text-muted">Email</label>
+          <input type="email" name="email" class="form-control">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small text-muted">Website</label>
+          <input type="text" name="website" class="form-control" placeholder="https://">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small text-muted">Address</label>
+          <input type="text" name="address" class="form-control">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small text-muted">Status</label>
+          <select class="form-select" name="is_active">
+            <option value="true" selected>Active</option>
+            <option value="false">Inactive</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small text-muted">Rating</label>
+          <input type="number" name="rating" class="form-control" value="0" min="0" max="5">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button type="submit" class="btn btn-success w-100">
+            <i class="bi bi-save"></i> Save
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th class="ps-4">#</th>
+            <th>Name</th>
+            <th>Contact Info</th>
+            <th>Address</th>
+            <th>Status</th>
+            <th>Rating</th>
+            <th class="text-end pe-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="supplier-table-body">
+          {{#suppliers}}
+            {{> app/supplier/row}}
+          {{/suppliers}}
+          
+          {{^suppliers}}
+            <tr>
+              <td colspan="7" class="text-center text-muted py-5">
+                <i class="bi bi-inbox h2 d-block mb-2"></i>
+                No suppliers found
+              </td>
+            </tr>
+          {{/suppliers}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
