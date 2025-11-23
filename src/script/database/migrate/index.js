@@ -268,36 +268,26 @@ class MigrationScript {
     await databaseService.query(`
       CREATE TABLE project_tasks (
         project_task_id INT AUTO_INCREMENT PRIMARY KEY,
-        
-        project_id INT NOT NULL,
-        
         name VARCHAR(100) NOT NULL,
         description TEXT,
-        
-        project_task_status_id INT NOT NULL,
-        assigned_to INT DEFAULT NULL,
-        
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
         start_date TIMESTAMP NOT NULL,
         end_date TIMESTAMP NOT NULL,
-        actual_end_date TIMESTAMP NULL DEFAULT NULL,
-        
-        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        actual_end_date TIMESTAMP NULL,
         created_by INT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_by INT,
         updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
         deleted_at TIMESTAMP NULL,
-        
-        FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE,
+        status INT NOT NULL,
+        assigned_to INT NOT NULL,
         FOREIGN KEY (created_by) REFERENCES users(user_id),
         FOREIGN KEY (updated_by) REFERENCES users(user_id),
-        FOREIGN KEY (project_task_status_id) REFERENCES project_task_statuses(project_task_status_id),
-        FOREIGN KEY (assigned_to) REFERENCES users(user_id) ON DELETE SET NULL,
-        
-        INDEX idx_project_tasks_project_id (project_id),
+        FOREIGN KEY (status) REFERENCES project_task_statuses(project_task_status_id),
+        FOREIGN KEY (assigned_to) REFERENCES users(user_id),
         INDEX idx_project_tasks_name (name),
         INDEX idx_project_tasks_is_active (is_active),
-        INDEX idx_project_tasks_status (project_task_status_id)
+        INDEX idx_project_tasks_status (status)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
   }
