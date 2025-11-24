@@ -11,8 +11,13 @@ class ProjectTaskStatusRepository {
   }
 
   async getAllActive() {
-    const query = `SELECT * FROM ${this.tableName} WHERE deleted_at IS NULL AND is_active = ? ORDER BY project_task_status_id ASC`;
-    return await databaseService.query(query, [true]);
+    const query = `
+      SELECT project_task_status_id, name 
+      FROM ${this.tableName} 
+      WHERE is_active = 1 AND deleted_at IS NULL
+      ORDER BY project_task_status_id ASC
+    `;
+    return await databaseService.query(query);
   }
 
   async getOneById(id) {

@@ -13,10 +13,8 @@
         <h3 class="card-title text-center mb-4">Login</h3>
 
         {{#error}}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <i class="bi bi-exclamation-triangle-fill me-2"></i>
-          <strong>Error:</strong> {{error}}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="alert alert-danger" role="alert">
+          {{.}}
         </div>
         {{/error}}
 
