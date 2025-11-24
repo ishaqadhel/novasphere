@@ -11,7 +11,7 @@ class HomeController extends BaseController {
     try {
       const data = await homeService.getHomeData();
 
-      return res.render('home/index', {
+      return this.renderView(res, 'home/index', {
         title: 'Home',
         ...data,
       });

@@ -1,8 +1,13 @@
 import BaseController from '../../../controllers/index.js';
 import projectService from './service.js';
 import moment from 'moment';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import userRepository from '../../../repositories/user/index.js';
 import projectStatusService from '../project-status/service.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class ProjectController extends BaseController {
   constructor() {
@@ -22,11 +27,11 @@ class ProjectController extends BaseController {
       let statusBadgeClass = 'bg-secondary';
       if (p.status_name) {
         const status = p.status_name.toLowerCase();
-        if (status === 'planning') statusBadgeClass = 'bg-info text-dark';
-        else if (status === 'in progress') statusBadgeClass = 'bg-primary';
-        else if (status === 'completed') statusBadgeClass = 'bg-success';
-        else if (status === 'on hold') statusBadgeClass = 'bg-warning text-dark';
-        else if (status === 'cancelled') statusBadgeClass = 'bg-danger';
+        if (status.includes('planning')) statusBadgeClass = 'bg-info text-dark';
+        else if (status.includes('progress')) statusBadgeClass = 'bg-primary';
+        else if (status.includes('completed')) statusBadgeClass = 'bg-success';
+        else if (status.includes('hold')) statusBadgeClass = 'bg-warning text-dark';
+        else if (status.includes('cancel')) statusBadgeClass = 'bg-danger';
       }
 
       return {
@@ -36,7 +41,7 @@ class ProjectController extends BaseController {
         formatted_actual_end: p.actual_end_date
           ? moment(p.actual_end_date).format('YYYY-MM-DD')
           : '',
-        // eslint-disable-next-line no-undef
+
         formatted_budget: new Intl.NumberFormat('zh-TW', {
           style: 'currency',
           currency: 'TWD',
@@ -54,6 +59,7 @@ class ProjectController extends BaseController {
     return {
       ...body,
       is_active: body.is_active === '1' || body.is_active === 1 || body.is_active === true,
+      actual_end_date: body.actual_end_date === '' ? null : body.actual_end_date,
     };
   }
 
@@ -67,7 +73,8 @@ class ProjectController extends BaseController {
         projects = await projectService.getAllProjects();
       }
       projects = this._formatProjectData(projects);
-      return this.renderView(res, 'app/project/home/index', {
+      const viewPath = path.join(__dirname, '../../../views/app/project/home/index');
+      return res.render(viewPath, {
         title: 'Projects',
         projects,
         hasProjects: projects.length > 0,
@@ -85,7 +92,8 @@ class ProjectController extends BaseController {
       const users = await userRepository.getAll();
       const statuses = await projectStatusService.getAllActiveStatuses();
 
-      return this.renderView(res, 'app/project/detail/index', {
+      const viewPath = path.join(__dirname, '../../../views/app/project/detail/index');
+      return res.render(viewPath, {
         title: 'Create Project',
         mode: 'create',
         isCreate: true,
@@ -112,6 +120,7 @@ class ProjectController extends BaseController {
     } catch (error) {
       const users = await userRepository.getAll();
       const statuses = await projectStatusService.getAllActiveStatuses();
+      const viewPath = path.join(__dirname, '../../../views/app/project/detail/index');
 
       const usersWithSelection = users.map((u) => ({
         ...u,
@@ -127,7 +136,7 @@ class ProjectController extends BaseController {
         is_active_bool: req.body.is_active === '1',
       };
 
-      return this.renderView(res, 'app/project/detail/index', {
+      return res.render(viewPath, {
         title: 'Create Project',
         mode: 'create',
         isCreate: true,
@@ -160,7 +169,8 @@ class ProjectController extends BaseController {
         selected: s.project_status_id === project.status,
       }));
 
-      return this.renderView(res, 'app/project/detail/index', {
+      const viewPath = path.join(__dirname, '../../../views/app/project/detail/index');
+      return res.render(viewPath, {
         title: 'Edit Project',
         mode: 'edit',
         isEdit: true,
@@ -199,7 +209,23 @@ class ProjectController extends BaseController {
   }
 
   async show(req, res) {
-    res.send('Not Implemented');
+    try {
+      const { id } = req.params;
+      let project = await projectService.getProjectById(id);
+
+      [project] = this._formatProjectData([project]);
+
+      const viewPath = path.join(__dirname, '../../../views/app/project/show/index');
+
+      return res.render(viewPath, {
+        title: `Project: ${project.name}`,
+        project,
+        user: this.getSessionUser(req),
+        currentPath: '/app/project',
+      });
+    } catch (error) {
+      return this.sendError(res, 'Failed to load project details', 500, error);
+    }
   }
 }
 
