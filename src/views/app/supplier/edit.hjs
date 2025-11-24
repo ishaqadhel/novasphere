@@ -5,11 +5,11 @@
     <input type="text" name="website" value="{{website}}" class="form-control form-control-sm" placeholder="Website">
   </td>
   <td>
-    <input type="email" name="email" value="{{email}}" class="form-control form-control-sm mb-1" placeholder="Email">
-    <input type="text" name="phone" value="{{phone}}" class="form-control form-control-sm" placeholder="Phone">
+    <input type="email" name="email" value="{{email}}" class="form-control form-control-sm mb-1" placeholder="Email" required>
+    <input type="text" name="phone" value="{{phone}}" class="form-control form-control-sm" placeholder="Phone" required>
   </td>
   <td>
-    <input type="text" name="address" value="{{address}}" class="form-control form-control-sm" placeholder="Address">
+    <input type="text" name="address" value="{{address}}" class="form-control form-control-sm" placeholder="Address" required>
   </td>
   <td>
     <select class="form-select form-select-sm" name="is_active">
@@ -18,7 +18,7 @@
     </select>
   </td>
   <td>
-    <input type="number" name="rating" value="{{rating}}" class="form-control form-control-sm" style="width: 60px;" min="0" max="5">
+    <input type="number" name="rating" value="{{rating}}" class="form-control form-control-sm" style="width: 60px;" min="0" max="5" step="0.1">
   </td>
   <td class="text-end pe-4">
     <div class="btn-group btn-group-sm">

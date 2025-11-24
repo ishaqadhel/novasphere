@@ -146,7 +146,7 @@
                   <div>
                     <h5 class="card-title text-success fw-bold mb-3">Material Management</h5>
                     <p class="text-muted mb-4">Track material usage, monitor inventory for this project, and manage procurement.</p>
-                    <a href="/app/project/{{ project.project_id }}/materials" class="btn btn-success">
+                    <a href="/app/project-material-requirement?project_id={{ project.project_id }}" class="btn btn-success">
                       <i class="bi bi-box-seam me-2"></i> Manage Materials
                     </a>
                   </div>

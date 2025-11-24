@@ -1,6 +1,6 @@
 import express from 'express';
 import projectController from './controller.js';
-import projectMaterialRequirementRouter from '../project-material-requirement/routes.js';
+import projectMaterialRequirementRouter from '../project-material-requirement/router.js';
 
 class ProjectRouter {
   constructor() {
@@ -13,7 +13,6 @@ class ProjectRouter {
     this.router.get('/create', projectController.create);
     this.router.post('/', projectController.store);
 
-    // Project Materials Management - nested route (必須在 /:id 路由之前)
     this.router.use('/:projectId/materials', projectMaterialRequirementRouter);
 
     this.router.get('/:id', projectController.show); // View Dashboard

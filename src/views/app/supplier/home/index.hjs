@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} - Novasphere</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+  <div class="d-flex min-vh-100">
+    <!-- Sidebar -->
+    <div class="bg-dark text-white p-3 flex-shrink-0" style="width: 250px;">
+      <h4 class="mb-4">Novasphere</h4>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a href="/app/dashboard" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+        <li class="nav-item"><a href="/app/material-category" class="nav-link text-white"><i class="bi bi-folder"></i> Material Categories</a></li>
+        <li class="nav-item"><a href="/app/material" class="nav-link text-white"><i class="bi bi-box-seam"></i> Materials</a></li>
+        <li class="nav-item"><a href="/app/project" class="nav-link text-white"><i class="bi bi-building"></i> Projects</a></li>
+        <li class="nav-item"><a href="/app/supplier" class="nav-link text-white active"><i class="bi bi-shop"></i> Suppliers</a></li>
+        <li class="nav-item">
+          <a href="/app/report" class="nav-link text-white">
+            <i class="bi bi-graph-up"></i> Reports
+          </a>
+        </li>
+        <li class="nav-item"><a href="/app/user" class="nav-link text-white"><i class="bi bi-people"></i> Users</a></li>
+        <li class="nav-item">
+          <a href="/pricing" class="nav-link text-white">
+            <i class="bi bi-tag"></i> Pricing
+          </a>
+        </li>
+      </ul>
+      <hr class="text-white">
+      <div class="mt-auto pt-4">
+        <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
+        <p class="mb-1"><small class="text-muted">{{ user.email }}</small></p>
+        <form action="/auth/logout" method="POST" class="mt-2"><button type="submit" class="btn btn-sm btn-outline-light w-100"><i class="bi bi-box-arrow-right"></i> Logout</button></form>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="flex-grow-1" style="min-width: 0;">
+      <nav class="navbar navbar-light bg-light border-bottom px-4">
+        <div class="container-fluid"><h5 class="mb-0">{{ title }}</h5><span class="navbar-text">Welcome, {{ user.first_name }}!</span></div>
+      </nav>
+
+      <div class="p-4">
+        <!-- Container Error -->
+        <div id="alert-container"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h4>Supplier List</h4>
+          <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#addSupplierCard">
+            <i class="bi bi-plus-circle"></i> Add Supplier
+          </button>
+        </div>
+
+        <!-- Form Add Supplier -->
+        <div class="collapse mb-4" id="addSupplierCard">
+          <div class="card card-body bg-light border-0 shadow-sm">
+            <h5 class="card-title mb-3">New Supplier Details</h5>
+            <form hx-post="/app/supplier" 
+                  hx-target="#supplier-table-body" 
+                  hx-swap="afterbegin" 
+                  hx-indicator="#loading-indicator"
+                  hx-on::after-request="if(event.detail.successful) { this.reset(); new bootstrap.Collapse(document.getElementById('addSupplierCard')).hide(); checkEmptyState(); }">
+              
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <label class="form-label small text-muted">Company Name <span class="text-danger">*</span></label>
+                  <input type="text" name="name" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small text-muted">Phone <span class="text-danger">*</span></label>
+                  <input type="text" name="phone" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small text-muted">Email <span class="text-danger">*</span></label>
+                  <input type="email" name="email" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small text-muted">Website</label>
+                  <input type="text" name="website" class="form-control" placeholder="https://">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small text-muted">Address <span class="text-danger">*</span></label>
+                  <input type="text" name="address" class="form-control" required>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label small text-muted">Status</label>
+                  <select class="form-select" name="is_active">
+                    <option value="true" selected>Active</option>
+                    <option value="false">Inactive</option>
+                  </select>
+                </div>
+                <div class="col-md-1">
+                  <label class="form-label small text-muted">Rating</label>
+                  <input type="number" name="rating" class="form-control" value="0" min="0" max="5" step="0.1">
+                </div>
+                
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                  <button type="button" class="btn btn-secondary w-50" data-bs-toggle="collapse" data-bs-target="#addSupplierCard">
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn btn-success w-50">
+                    <span id="loading-indicator" class="spinner-border spinner-border-sm htmx-indicator" role="status" aria-hidden="true"></span>
+                    <i class="bi bi-save"></i> Save
+                  </button>
+                </div>
+
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Table List -->
+        <div class="card shadow-sm">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0" id="supplier-table">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="ps-4">#</th>
+                    <th>Name</th>
+                    <th>Contact Info</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th>Rating</th>
+                    <th class="text-end pe-4">Actions</th>
+                  </tr>
+                </thead>
+                
+                <!-- FIX: Tambahkan hx-on untuk memantau perubahan isi tabel (Add/Delete) -->
+                <tbody id="supplier-table-body" hx-on:htmx:after-swap="checkEmptyState()">
+                  {{#suppliers}}
+                    <tr>
+                      <td class="ps-4">{{ supplier_id }}</td>
+                      <td>
+                        <span class="fw-bold text-dark">{{ name }}</span>
+                        {{#website}}
+                          <a href="{{website}}" target="_blank" class="ms-1 text-muted">
+                            <i class="bi bi-box-arrow-up-right" style="font-size: 0.75rem;"></i>
+                          </a>
+                        {{/website}}
+                      </td>
+                      <td>
+                        {{#email}}<div class="small text-muted"><i class="bi bi-envelope me-1"></i>{{email}}</div>{{/email}}
+                        {{#phone}}<div class="small text-muted"><i class="bi bi-telephone me-1"></i>{{phone}}</div>{{/phone}}
+                      </td>
+                      <td class="text-muted small">{{ address }}</td>
+                      <td>
+                        {{#is_active}}
+                          <span class="badge bg-success bg-opacity-10 text-success px-2 py-1">Active</span>
+                        {{/is_active}}
+                        {{^is_active}}
+                          <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1">Inactive</span>
+                        {{/is_active}}
+                      </td>
+                      <td>
+                        {{#rating}}
+                          <div class="text-warning small">
+                            <i class="bi bi-star-fill"></i> {{rating}}
+                          </div>
+                        {{/rating}}
+                        {{^rating}}<span class="text-muted">-</span>{{/rating}}
+                      </td>
+                      <td class="text-end pe-4">
+                        <div class="btn-group btn-group-sm">
+                          <button class="btn btn-outline-primary"
+                            hx-get="/app/supplier/edit/{{ supplier_id }}"
+                            hx-target="closest tr"
+                            hx-swap="outerHTML">
+                            <i class="bi bi-pencil"></i>
+                          </button>
+                          
+                          <button class="btn btn-outline-danger"
+                            hx-delete="/app/supplier/{{ supplier_id }}"
+                            hx-target="closest tr"
+                            hx-swap="outerHTML"
+                            hx-confirm="Are you sure you want to delete {{name}}?">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  {{/suppliers}}
+                  
+                  {{^hasSuppliers}}
+                    <tr id="no-data-row">
+                      <td colspan="7" class="text-center text-muted py-5">
+                        <i class="bi bi-inbox h2 d-block mb-2"></i>
+                        No suppliers found
+                      </td>
+                    </tr>
+                  {{/hasSuppliers}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- SCRIPT BARU: Untuk menangani tampilan Empty State secara otomatis -->
+  <script>
+    function checkEmptyState() {
+      const tbody = document.getElementById('supplier-table-body');
+      // Hitung baris data asli (bukan baris pesan kosong)
+      const dataRows = tbody.querySelectorAll('tr:not(#no-data-row)');
+      const noDataRow = document.getElementById('no-data-row');
+
+      if (dataRows.length === 0) {
+        // Jika tidak ada data dan belum ada pesan kosong, tambahkan pesan kosong
+        if (!noDataRow) {
+          const html = `
+            <tr id="no-data-row">
+              <td colspan="7" class="text-center text-muted py-5">
+                <i class="bi bi-inbox h2 d-block mb-2"></i>
+                No suppliers found
+              </td>
+            </tr>`;
+          tbody.innerHTML = html;
+        }
+      } else {
+        // Jika ada data (baru ditambah), hapus pesan kosong jika masih ada
+        if (noDataRow) {
+          noDataRow.remove();
+        }
+      }
+    }
+  </script>
+</body>
+</html>

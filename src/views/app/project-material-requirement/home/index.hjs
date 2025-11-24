@@ -11,7 +11,7 @@
 <body>
   <div class="d-flex min-vh-100">
     <!-- Sidebar -->
-    <div class="bg-dark text-white p-3 flex-shrink-0" style="width: 250px; min-width: 250px;">
+    <div class="bg-dark text-white p-3 flex-shrink-0" style="width: 250px;">
       <h4 class="mb-4">Novasphere</h4>
       <ul class="nav nav-pills flex-column">
         <li class="nav-item"><a href="/app/dashboard" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
@@ -28,11 +28,7 @@
             <i class="bi bi-graph-up"></i> Reports
           </a>
         </li>
-        <li class="nav-item">
-          <a href="/app/user" class="nav-link text-white">
-            <i class="bi bi-people"></i> Users
-          </a>
-        </li>
+        <li class="nav-item"><a href="/app/user" class="nav-link text-white"><i class="bi bi-people"></i> Users</a></li>
         <li class="nav-item">
           <a href="/pricing" class="nav-link text-white">
             <i class="bi bi-tag"></i> Pricing
@@ -47,15 +43,15 @@
       </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Content -->
     <div class="flex-grow-1" style="min-width: 0;">
       <nav class="navbar navbar-light bg-light border-bottom px-4">
         <div class="container-fluid">
           <div class="d-flex align-items-center">
-            <a href="/app/project/{{ project.project_id }}" class="btn btn-outline-secondary btn-sm me-3"><i class="bi bi-arrow-left"></i> Back to Project</a>
+            <a href="/app/project/{{ project.project_id }}" class="btn btn-outline-secondary btn-sm me-3"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
             <div>
-              <h5 class="mb-0">{{ project.name }} - Materials</h5>
-              <small class="text-muted">Material Requirements Management</small>
+              <h5 class="mb-0">{{ project.name }}</h5>
+              <small class="text-muted">Material Requirements</small>
             </div>
           </div>
           <span class="navbar-text">Welcome, {{ user.first_name }}!</span>
@@ -63,52 +59,70 @@
       </nav>
 
       <div class="p-4">
+        <!-- Container Error -->
+        <div id="alert-container"></div>
+
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <h4>Project Materials</h4>
+          <h4>Requirements List</h4>
           <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#addReqCard">
-            <i class="bi bi-plus-circle"></i> Add Material Requirement
+            <i class="bi bi-plus-circle"></i> Add Material
           </button>
         </div>
 
+        <!-- Form Add -->
         <div class="collapse mb-4" id="addReqCard">
           <div class="card card-body bg-light border-0 shadow-sm">
-            <h5 class="card-title mb-3">Assign Material to Project</h5>
+            <h5 class="card-title mb-3">Add New Requirement (Default: Pending)</h5>
             
-            <form hx-post="/app/project/{{ project.project_id }}/materials" 
+            <form hx-post="/app/project-material-requirement" 
                   hx-target="#pmr-table-body" 
                   hx-swap="afterbegin"
-                  hx-on::after-request="this.reset(); new bootstrap.Collapse(document.getElementById('addReqCard')).hide();">
+                  hx-on::after-request="if(event.detail.successful) { this.reset(); new bootstrap.Collapse(document.getElementById('addReqCard')).hide(); }">
               
+              <input type="hidden" name="project_id" value="{{ project.project_id }}">
+
               <div class="row g-3">
-                <div class="col-md-4">
-                  <label class="form-label small text-muted">Material</label>
+                <div class="col-md-3">
+                  <label class="form-label small text-muted">Material <span class="text-danger">*</span></label>
                   <select name="material_id" class="form-select" required>
-                    <option value="">Select Material...</option>
-                    {{#materials}}
-                      <option value="{{material_id}}">{{name}}</option>
-                    {{/materials}}
+                    <option value="">Select...</option>
+                    {{#materials}}<option value="{{material_id}}">{{name}}</option>{{/materials}}
                   </select>
                 </div>
 
-                <div class="col-md-4">
-                  <label class="form-label small text-muted">Supplier</label>
+                <div class="col-md-3">
+                  <label class="form-label small text-muted">Supplier <span class="text-danger">*</span></label>
                   <select name="supplier_id" class="form-select" required>
-                    <option value="">Select Supplier...</option>
-                    {{#suppliers}}
-                      <option value="{{supplier_id}}">{{name}}</option>
-                    {{/suppliers}}
+                    <option value="">Select...</option>
+                    {{#suppliers}}<option value="{{supplier_id}}">{{name}}</option>{{/suppliers}}
                   </select>
                 </div>
 
                 <div class="col-md-2">
-                  <label class="form-label small text-muted">Quantity</label>
+                  <label class="form-label small text-muted">Qty <span class="text-danger">*</span></label>
                   <input type="number" name="quantity" class="form-control" required min="1">
                 </div>
 
-                <div class="col-md-2 d-flex align-items-end">
-                  <button type="submit" class="btn btn-success w-100">
-                    <i class="bi bi-check-lg"></i> Add
-                  </button>
+                <div class="col-md-1">
+                  <label class="form-label small text-muted">Unit <span class="text-danger">*</span></label>
+                  <input type="text" name="unit" class="form-control" placeholder="pcs" required>
+                </div>
+
+                <div class="col-md-2">
+                  <label class="form-label small text-muted">Unit Price <span class="text-danger">*</span></label>
+                  <input type="number" name="price" class="form-control" required min="0" step="0.01">
+                </div>
+
+                <div class="col-md-1">
+                  <label class="form-label small text-muted">Arrival <span class="text-danger">*</span></label>
+                  <input type="date" name="arrived_date" class="form-control" required>
+                </div>
+              </div>
+
+              <div class="row g-3 mt-3">
+                <div class="col-md-12 d-flex justify-content-end gap-2">
+                  <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#addReqCard">Cancel</button>
+                  <button type="submit" class="btn btn-success px-4"><i class="bi bi-save"></i> Save</button>
                 </div>
               </div>
             </form>
@@ -123,51 +137,71 @@
                   <tr>
                     <th class="ps-4">Material</th>
                     <th>Supplier</th>
-                    <th>Quantity</th>
+                    <th>Qty / Unit</th>
+                    <th>Price / Total</th>
+                    <th>Est. Arrival</th>
+                    <th>Delivery Info</th>
                     <th>Status</th>
                     <th class="text-end pe-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="pmr-table-body">
                   {{#requirements}}
+                    <!-- INLINE ROW START (Agar data muncul saat refresh/pindah page) -->
                     <tr>
-                      <td class="ps-4">{{material_name}}</td>
+                      <td class="ps-4 fw-bold">{{material_name}}</td>
                       <td class="text-muted">{{supplier_name}}</td>
-                      <td class="fw-bold">{{quantity}}</td>
                       <td>
-                        {{#status_name}}
-                          <span class="badge bg-info bg-opacity-10 text-info px-2 py-1">{{status_name}}</span>
-                        {{/status_name}}
-                        {{^status_name}}
-                          <span class="badge bg-secondary bg-opacity-10 text-secondary">Pending</span>
-                        {{/status_name}}
+                        <span class="fw-bold">{{quantity}}</span> <span class="small text-muted">{{unit}}</span>
                       </td>
+                      <td>
+                        <div>{{formatted_price}} <span class="text-muted small">/ {{unit}}</span></div>
+                        <div class="fw-bold text-primary">{{formatted_total}}</div>
+                      </td>
+                      <td>{{formatted_arrived_date}}</td>
+                      
+                      <!-- Delivery Info -->
+                      <td>
+                        {{#is_delivered}}
+                          <div class="small">
+                            <div>Act: <strong>{{formatted_actual_date}}</strong></div>
+                            <div class="text-success">Good: {{good_quantity}}</div>
+                            <div class="text-danger">Bad: {{bad_quantity}}</div>
+                          </div>
+                        {{/is_delivered}}
+                        {{^is_delivered}}
+                          <span class="text-muted small">-</span>
+                        {{/is_delivered}}
+                      </td>
+
+                      <td><span class="badge {{status_badge_class}}">{{status_name}}</span></td>
+                      
                       <td class="text-end pe-4">
                         <div class="btn-group btn-sm">
                           <button class="btn btn-outline-warning"
-                            hx-get="/app/project/{{project_id}}/materials/edit/{{project_material_requirement_id}}"
+                            hx-get="/app/project-material-requirement/{{project_material_requirement_id}}/edit"
                             hx-target="closest tr"
                             hx-swap="outerHTML">
                             <i class="bi bi-pencil"></i>
                           </button>
-
                           <button class="btn btn-outline-danger"
-                            hx-post="/app/project/{{project_id}}/materials/{{project_material_requirement_id}}/delete"
+                            hx-post="/app/project-material-requirement/{{project_material_requirement_id}}/delete"
                             hx-target="closest tr"
                             hx-swap="outerHTML"
-                            hx-confirm="Are you sure you want to remove this requirement?">
+                            hx-confirm="Delete requirement?">
                             <i class="bi bi-trash"></i>
                           </button>
                         </div>
                       </td>
                     </tr>
+                    <!-- INLINE ROW END -->
                   {{/requirements}}
                   
                   {{^requirements}}
                     <tr>
-                      <td colspan="5" class="text-center text-muted py-5">
+                      <td colspan="8" class="text-center text-muted py-5">
                         <i class="bi bi-clipboard-data h2 d-block mb-2"></i>
-                        No material requirements found for this project
+                        No requirements found for this project
                       </td>
                     </tr>
                   {{/requirements}}
@@ -179,7 +213,6 @@
       </div>
     </div>
   </div>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

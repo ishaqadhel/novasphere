@@ -358,29 +358,37 @@ class MigrationScript {
     await databaseService.query(`
       CREATE TABLE project_material_requirements (
         project_material_requirement_id INT AUTO_INCREMENT PRIMARY KEY,
+        
         quantity INT NOT NULL,
+        unit VARCHAR(50), -- KOLOM BARU: Satuan (kg, pcs, dll)
         price DECIMAL(15,2) NOT NULL,
         total_price DECIMAL(15,2) NOT NULL,
-        arrived_date TIMESTAMP NOT NULL,
-        actual_arrived_date TIMESTAMP NULL,
-        good_quantity INT,
-        bad_quantity INT,
+        
+        arrived_date DATE NOT NULL,
+        actual_arrived_date DATE NULL, -- Wajib diisi jika Delivered
+        
+        good_quantity INT DEFAULT 0,   -- Wajib diisi jika Delivered
+        bad_quantity INT DEFAULT 0,    -- Wajib diisi jika Delivered
+        
         is_active BOOLEAN NOT NULL DEFAULT TRUE,
         created_by INT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_by INT,
         updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
         deleted_at TIMESTAMP NULL,
+        
         project_id INT NOT NULL,
         material_id INT NOT NULL,
         supplier_id INT NOT NULL,
-        status INT NOT NULL,
+        status INT NOT NULL DEFAULT 1, -- Default 1 (Pending)
+        
         FOREIGN KEY (created_by) REFERENCES users(user_id),
         FOREIGN KEY (updated_by) REFERENCES users(user_id),
-        FOREIGN KEY (project_id) REFERENCES projects(project_id),
+        FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE,
         FOREIGN KEY (material_id) REFERENCES materials(material_id),
         FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id),
         FOREIGN KEY (status) REFERENCES project_material_requirement_statuses(project_material_requirement_status_id),
+        
         INDEX idx_pmr_material_id (material_id),
         INDEX idx_pmr_is_active (is_active),
         INDEX idx_pmr_supplier_id (supplier_id),
