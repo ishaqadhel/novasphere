@@ -18,7 +18,22 @@
         <li class="nav-item"><a href="/app/material-category" class="nav-link text-white"><i class="bi bi-folder"></i> Material Categories</a></li>
         <li class="nav-item"><a href="/app/material" class="nav-link text-white"><i class="bi bi-box-seam"></i> Materials</a></li>
         <li class="nav-item"><a href="/app/project" class="nav-link text-white active"><i class="bi bi-building"></i> Projects</a></li>
+        <li class="nav-item">
+          <a href="/app/supplier" class="nav-link text-white">
+            <i class="bi bi-shop"></i> Suppliers
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/report" class="nav-link text-white">
+            <i class="bi bi-graph-up"></i> Reports
+          </a>
+        </li>
         <li class="nav-item"><a href="/app/user" class="nav-link text-white"><i class="bi bi-people"></i> Users</a></li>
+        <li class="nav-item">
+          <a href="/pricing" class="nav-link text-white">
+            <i class="bi bi-tag"></i> Pricing
+          </a>
+        </li>
       </ul>
       <hr class="text-white">
       <div class="mt-auto pt-4">

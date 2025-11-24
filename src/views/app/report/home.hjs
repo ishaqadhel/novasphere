@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} - Novasphere</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+  <div class="d-flex min-vh-100">
+    <!-- Sidebar -->
+    <div class="bg-dark text-white p-3 flex-shrink-0" style="width: 250px; min-width: 250px;">
+      <h4 class="mb-4">Novasphere</h4>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a href="/app/dashboard" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+        <li class="nav-item"><a href="/app/material-category" class="nav-link text-white"><i class="bi bi-folder"></i> Material Categories</a></li>
+        <li class="nav-item"><a href="/app/material" class="nav-link text-white"><i class="bi bi-box-seam"></i> Materials</a></li>
+        <li class="nav-item"><a href="/app/project" class="nav-link text-white"><i class="bi bi-building"></i> Projects</a></li>
+        <li class="nav-item">
+          <a href="/app/supplier" class="nav-link text-white">
+            <i class="bi bi-shop"></i> Suppliers
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/report" class="nav-link text-white active">
+            <i class="bi bi-graph-up"></i> Reports
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/user" class="nav-link text-white">
+            <i class="bi bi-people"></i> Users
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/pricing" class="nav-link text-white">
+            <i class="bi bi-tag"></i> Pricing
+          </a>
+        </li>
+      </ul>
+      <hr class="text-white">
+      <div class="mt-auto pt-4">
+        <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
+        <p class="mb-1"><small class="text-muted">{{ user.email }}</small></p>
+        <form action="/auth/logout" method="POST" class="mt-2"><button type="submit" class="btn btn-sm btn-outline-light w-100"><i class="bi bi-box-arrow-right"></i> Logout</button></form>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-grow-1" style="min-width: 0;">
+      <nav class="navbar navbar-light bg-light border-bottom px-4">
+        <div class="container-fluid"><h5 class="mb-0">{{ title }}</h5><span class="navbar-text">Welcome, {{ user.first_name }}!</span></div>
+      </nav>
+
+      <div class="p-4">
+        <div class="mb-4">
+          <h4>Reports & Analytics</h4>
+          <p class="text-muted">Advanced reporting and analytics features</p>
+        </div>
+
+<!-- Advanced Analytics Features -->
+<div class="row g-4">
+  <!-- Advanced Supplier Performance Analytics -->
+  <div class="col-12">
+    <div class="card border-secondary h-100">
+      <div class="card-header bg-secondary bg-opacity-25">
+        <h6 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Advanced Supplier Performance</h6>
+      </div>
+      <div class="card-body">
+        <p class="card-text text-muted">
+          <i class="bi bi-graph-up-arrow me-2"></i>
+          Comprehensive supplier performance analytics including delivery rates, quality metrics, and cost analysis.
+        </p>
+        <div class="alert alert-light border small mb-2">
+          <i class="bi bi-info-circle me-1"></i> Feature in development
+        </div>
+        <button class="btn btn-outline-secondary btn-sm" disabled>
+          <i class="bi bi-lock-fill me-2"></i>Coming Soon
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI-driven Predictive Delay Alerts -->
+  <div class="col-12">
+    <div class="card border-secondary h-100">
+      <div class="card-header bg-secondary bg-opacity-25">
+        <h6 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>AI Predictive Delay Alerts</h6>
+      </div>
+      <div class="card-body">
+        <p class="card-text text-muted">
+          <i class="bi bi-robot me-2"></i>
+          Machine learning-powered predictions to forecast potential project delays and supply chain disruptions.
+        </p>
+        <div class="alert alert-light border small mb-2">
+          <i class="bi bi-info-circle me-1"></i> Feature in development
+        </div>
+        <button class="btn btn-outline-secondary btn-sm" disabled>
+          <i class="bi bi-lock-fill me-2"></i>Coming Soon
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-depth Performance Analytics -->
+  <div class="col-12">
+    <div class="card border-secondary h-100">
+      <div class="card-header bg-secondary bg-opacity-25">
+        <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>In-depth Performance Analytics</h6>
+      </div>
+      <div class="card-body">
+        <p class="card-text text-muted">
+          <i class="bi bi-bar-chart-line me-2"></i>
+          Detailed performance dashboards with KPIs, trends, and custom reporting capabilities.
+        </p>
+        <div class="alert alert-light border small mb-2">
+          <i class="bi bi-info-circle me-1"></i> Feature in development
+        </div>
+        <button class="btn btn-outline-secondary btn-sm" disabled>
+          <i class="bi bi-lock-fill me-2"></i>Coming Soon
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

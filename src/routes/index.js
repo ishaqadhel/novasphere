@@ -10,6 +10,11 @@ import projectTaskRouter from '../modules/app/project-task/router.js';
 // 1. Import router Project
 import projectRouter from '../modules/app/project/router.js';
 
+// Additional routers
+import supplierRouter from '../modules/supplier/routes.js';
+import pricingRouter from '../modules/home/pricing/routes.js';
+import reportRouter from '../modules/app/report/routes.js';
+
 class MainRouter {
   constructor() {
     this.router = express.Router();
@@ -20,6 +25,7 @@ class MainRouter {
     // Public routes
     this.router.use('/', homeRouter);
     this.router.use('/auth', authRouter);
+    this.router.use('/pricing', pricingRouter);
 
     // Protected routes (require authentication)
     this.router.use('/app/dashboard', authMiddleware.isAuthenticated, dashboardRouter);
@@ -35,6 +41,8 @@ class MainRouter {
 
     this.router.use('/app/project', authMiddleware.isAuthenticated, projectRouter);
     this.router.use('/app/project-task', authMiddleware.isAuthenticated, projectTaskRouter);
+    this.router.use('/app/supplier', authMiddleware.isAuthenticated, supplierRouter);
+    this.router.use('/app/report', authMiddleware.isAuthenticated, reportRouter);
   }
 
   getRouter() {

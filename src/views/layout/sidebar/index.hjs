@@ -16,8 +16,43 @@
       <h4 class="mb-4">Novasphere</h4>
       <ul class="nav nav-pills flex-column">
         <li class="nav-item">
+          <a href="/app/dashboard" class="nav-link text-white">
+            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/project" class="nav-link text-white">
+            <i class="bi bi-folder-fill me-2"></i> Projects
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/material-category" class="nav-link text-white">
+            <i class="bi bi-tags me-2"></i> Categories
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/material" class="nav-link text-white">
+            <i class="bi bi-box-seam me-2"></i> Materials
+          </a>
+        </li>
+        <li class="nav-item">
           <a href="/app/supplier" class="nav-link text-white {{ #if (eq currentPage 'supplier') }}active{{ /if }}">
-            <i class="bi bi-building"></i> Suppliers
+            <i class="bi bi-building me-2"></i> Suppliers
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/report" class="nav-link text-white">
+            <i class="bi bi-graph-up me-2"></i> Reports
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/user" class="nav-link text-white">
+            <i class="bi bi-people me-2"></i> Users
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/pricing" class="nav-link text-white">
+            <i class="bi bi-tag me-2"></i> Pricing
           </a>
         </li>
       </ul>
