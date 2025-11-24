@@ -1,0 +1,45 @@
+<tr>
+  <td class="ps-4 fw-bold">{{material_name}}</td>
+  <td class="text-muted">{{supplier_name}}</td>
+  <td>
+    <span class="fw-bold">{{quantity}}</span> <span class="small text-muted">{{unit}}</span>
+  </td>
+  <td>
+    <div>{{formatted_price}} <span class="text-muted small">/ {{unit}}</span></div>
+    <div class="fw-bold text-primary">{{formatted_total}}</div>
+  </td>
+  <td>{{formatted_arrived_date}}</td>
+  
+  <td>
+    {{#is_delivered}}
+      <div class="small">
+        <div>Act: <strong>{{formatted_actual_date}}</strong></div>
+        <div class="text-success">Good: {{good_quantity}}</div>
+        <div class="text-danger">Bad: {{bad_quantity}}</div>
+      </div>
+    {{/is_delivered}}
+    {{^is_delivered}}
+      <span class="text-muted small">-</span>
+    {{/is_delivered}}
+  </td>
+
+  <td><span class="badge {{status_badge_class}}">{{status_name}}</span></td>
+  
+  <td class="text-end pe-4">
+    <div class="btn-group btn-sm">
+      <button class="btn btn-outline-warning"
+        hx-get="/app/project-material-requirement/{{project_material_requirement_id}}/edit"
+        hx-target="closest tr"
+        hx-swap="outerHTML">
+        <i class="bi bi-pencil"></i>
+      </button>
+      <button class="btn btn-outline-danger"
+        hx-post="/app/project-material-requirement/{{project_material_requirement_id}}/delete"
+        hx-target="closest tr"
+        hx-swap="outerHTML"
+        hx-confirm="Delete?">
+        <i class="bi bi-trash"></i>
+      </button>
+    </div>
+  </td>
+</tr>

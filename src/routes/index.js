@@ -11,9 +11,10 @@ import projectTaskRouter from '../modules/app/project-task/router.js';
 import projectRouter from '../modules/app/project/router.js';
 
 // Additional routers
-import supplierRouter from '../modules/supplier/routes.js';
+import supplierRouter from '../modules/app/supplier/router.js';
 import pricingRouter from '../modules/home/pricing/routes.js';
 import reportRouter from '../modules/app/report/routes.js';
+import projectMaterialRequirementRouter from '../modules/app/project-material-requirement/router.js';
 
 class MainRouter {
   constructor() {
@@ -43,6 +44,11 @@ class MainRouter {
     this.router.use('/app/project-task', authMiddleware.isAuthenticated, projectTaskRouter);
     this.router.use('/app/supplier', authMiddleware.isAuthenticated, supplierRouter);
     this.router.use('/app/report', authMiddleware.isAuthenticated, reportRouter);
+    this.router.use(
+      '/app/project-material-requirement',
+      authMiddleware.isAuthenticated,
+      projectMaterialRequirementRouter
+    );
   }
 
   getRouter() {
