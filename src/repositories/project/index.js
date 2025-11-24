@@ -39,6 +39,10 @@ class ProjectRepository {
     return rows[0] || null;
   }
 
+  async getById(id) {
+    return await this.getOneById(id);
+  }
+
   async createOne(data) {
     const query = `
       INSERT INTO ${this.tableName} 

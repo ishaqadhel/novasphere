@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing - Novasphere</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+  <div class="d-flex min-vh-100">
+    <!-- Sidebar -->
+    <div class="bg-dark text-white p-3" style="width: 250px;">
+      <h4 class="mb-4">Novasphere</h4>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a href="/app/dashboard" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+        <li class="nav-item"><a href="/app/material-category" class="nav-link text-white"><i class="bi bi-folder"></i> Material Categories</a></li>
+        <li class="nav-item"><a href="/app/material" class="nav-link text-white"><i class="bi bi-box-seam"></i> Materials</a></li>
+        <li class="nav-item"><a href="/app/project" class="nav-link text-white"><i class="bi bi-building"></i> Projects</a></li>
+        <li class="nav-item">
+          <a href="/app/supplier" class="nav-link text-white">
+            <i class="bi bi-shop"></i> Suppliers
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/report" class="nav-link text-white">
+            <i class="bi bi-graph-up"></i> Reports
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/user" class="nav-link text-white">
+            <i class="bi bi-people"></i> Users
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/pricing" class="nav-link text-white active">
+            <i class="bi bi-tag"></i> Pricing
+          </a>
+        </li>
+      </ul>
+      <hr class="text-white">
+      <div class="mt-auto pt-4">
+        <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
+        <p class="mb-1"><small class="text-muted">{{ user.email }}</small></p>
+        <form action="/auth/logout" method="POST" class="mt-2"><button type="submit" class="btn btn-sm btn-outline-light w-100"><i class="bi bi-box-arrow-right"></i> Logout</button></form>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-grow-1">
+      <nav class="navbar navbar-light bg-light border-bottom px-4">
+        <div class="container-fluid"><h5 class="mb-0">Pricing Plans</h5><span class="navbar-text">Welcome, {{ user.first_name }}!</span></div>
+      </nav>
+
+      <div class="p-4">
+        <div class="container py-5">
+          <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold mb-3">Choose Your Plan</h1>
+            <p class="lead text-muted">Select the perfect plan for your construction management needs</p>
+          </div>
+          
+          <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+            <!-- Basic Plan -->
+            <div class="col">
+              <div class="card h-100 shadow-sm">
+                <div class="card-header py-3 bg-light">
+                  <h4 class="my-0 fw-normal text-center">Basic</h4>
+                </div>
+                <div class="card-body d-flex flex-column">
+                  <h1 class="card-title pricing-card-title text-center mb-4">
+                    $29<small class="text-muted fw-light">/month</small>
+                  </h1>
+                  <p class="text-muted text-center mb-4">Perfect for small teams</p>
+                  <ul class="list-unstyled mb-4 flex-grow-1">
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Up to 5 projects</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Basic supplier management</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Material tracking</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Email support</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Standard reporting</li>
+                  </ul>
+                  <button type="button" class="w-100 btn btn-lg btn-outline-secondary">Get Started</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Professional Plan -->
+            <div class="col">
+              <div class="card h-100 shadow border-primary" style="border-width: 2px;">
+                <div class="card-header py-3 bg-primary text-white position-relative">
+                  <h4 class="my-0 fw-normal text-center">Professional</h4>
+                  <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-warning text-dark">
+                    Most Popular
+                  </span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                  <h1 class="card-title pricing-card-title text-center mb-4">
+                    $79<small class="text-muted fw-light">/month</small>
+                  </h1>
+                  <p class="text-muted text-center mb-4">Ideal for growing businesses</p>
+                  <ul class="list-unstyled mb-4 flex-grow-1">
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Unlimited projects</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Advanced supplier analytics</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Real-time inventory tracking</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Priority support</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Custom reports & dashboards</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Team collaboration tools</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Mobile app access</li>
+                  </ul>
+                  <button type="button" class="w-100 btn btn-lg btn-primary">Get Started</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="col">
+              <div class="card h-100 shadow-sm">
+                <div class="card-header py-3 bg-dark text-white">
+                  <h4 class="my-0 fw-normal text-center">Enterprise</h4>
+                </div>
+                <div class="card-body d-flex flex-column">
+                  <h1 class="card-title pricing-card-title text-center mb-4">
+                    Custom
+                  </h1>
+                  <p class="text-muted text-center mb-4">Tailored for large organizations</p>
+                  <ul class="list-unstyled mb-4 flex-grow-1">
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Everything in Professional</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Dedicated account manager</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Custom integrations</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Advanced security features</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>24/7 phone support</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>On-premise deployment option</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Training & onboarding</li>
+                  </ul>
+                  <button type="button" class="w-100 btn btn-lg btn-dark">Contact Sales</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional Information -->
+          <div class="row mt-5">
+            <div class="col-12">
+              <div class="card bg-light">
+                <div class="card-body text-center py-4">
+                  <h5 class="mb-3">All plans include:</h5>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <i class="bi bi-shield-check fs-3 text-primary mb-2"></i>
+                      <p class="mb-0">Secure data encryption</p>
+                    </div>
+                    <div class="col-md-3">
+                      <i class="bi bi-cloud-check fs-3 text-primary mb-2"></i>
+                      <p class="mb-0">Cloud-based storage</p>
+                    </div>
+                    <div class="col-md-3">
+                      <i class="bi bi-arrow-clockwise fs-3 text-primary mb-2"></i>
+                      <p class="mb-0">Regular updates</p>
+                    </div>
+                    <div class="col-md-3">
+                      <i class="bi bi-person-check fs-3 text-primary mb-2"></i>
+                      <p class="mb-0">User training resources</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

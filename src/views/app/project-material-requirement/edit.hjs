@@ -1,0 +1,48 @@
+<tr class="table-active border-start border-4 border-warning">
+  <td class="ps-4">
+    <span class="fw-bold">{{material_name}}</span>
+  </td>
+  <td>
+    <select name="supplier_id" class="form-select form-select-sm" required>
+      <option value="">Select Supplier</option>
+      {{#suppliers}}
+      <option value="{{supplier_id}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+      {{/suppliers}}
+    </select>
+  </td>
+  <td>
+    <input type="number" name="quantity" value="{{quantity}}" class="form-control form-control-sm" style="width: 80px;" min="1" required>
+  </td>
+  <td>
+    <input type="number" name="price" value="{{price}}" class="form-control form-control-sm" style="width: 100px;" min="0" step="0.01">
+  </td>
+  <td>
+    <span class="text-muted small">Auto-calc</span>
+  </td>
+  <td>
+    <select name="status" class="form-select form-select-sm">
+      <option value="1" {{#status_1}}selected{{/status_1}}>Pending</option>
+      <option value="2" {{#status_2}}selected{{/status_2}}>Approved</option>
+      <option value="3" {{#status_3}}selected{{/status_3}}>Rejected</option>
+    </select>
+  </td>
+  <td class="text-end pe-4">
+    <div class="btn-group btn-sm">
+      <button class="btn btn-success"
+        hx-put="/app/project/{{project_id}}/materials/{{project_material_requirement_id}}"
+        hx-include="closest tr"
+        hx-target="closest tr"
+        hx-swap="outerHTML">
+        <i class="bi bi-check-lg"></i>
+      </button>
+      
+      <button class="btn btn-secondary"
+        hx-get="/app/project/{{project_id}}/materials"
+        hx-target="#pmr-table-body"
+        hx-select="#pmr-table-body"
+        hx-swap="outerHTML">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  </td>
+</tr>

@@ -18,7 +18,22 @@
         <li class="nav-item"><a href="/app/material-category" class="nav-link text-white"><i class="bi bi-folder"></i> Material Categories</a></li>
         <li class="nav-item"><a href="/app/material" class="nav-link text-white"><i class="bi bi-box-seam"></i> Materials</a></li>
         <li class="nav-item"><a href="/app/project" class="nav-link active bg-primary text-white"><i class="bi bi-building"></i> Projects</a></li>
+        <li class="nav-item">
+          <a href="/app/supplier" class="nav-link text-white">
+            <i class="bi bi-shop"></i> Suppliers
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/app/report" class="nav-link text-white">
+            <i class="bi bi-graph-up"></i> Reports
+          </a>
+        </li>
         <li class="nav-item"><a href="/app/user" class="nav-link text-white"><i class="bi bi-people"></i> Users</a></li>
+        <li class="nav-item">
+          <a href="/pricing" class="nav-link text-white">
+            <i class="bi bi-tag"></i> Pricing
+          </a>
+        </li>
       </ul>
       <hr class="text-white">
       <div class="mt-auto pt-4">
@@ -131,7 +146,9 @@
                   <div>
                     <h5 class="card-title text-success fw-bold mb-3">Material Management</h5>
                     <p class="text-muted mb-4">Track material usage, monitor inventory for this project, and manage procurement.</p>
-                    <a href="#" class="btn btn-success disabled"><i class="bi bi-box-seam me-2"></i> Manage Materials <span class="badge bg-white text-success ms-2">Soon</span></a>
+                    <a href="/app/project/{{ project.project_id }}/materials" class="btn btn-success">
+                      <i class="bi bi-box-seam me-2"></i> Manage Materials
+                    </a>
                   </div>
                   <div class="bg-success bg-opacity-10 p-3 rounded-3"><i class="bi bi-cart4 fs-1 text-success"></i></div>
                 </div>

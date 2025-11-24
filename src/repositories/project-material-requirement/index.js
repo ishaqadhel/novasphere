@@ -23,6 +23,24 @@ class ProjectMaterialRequirementRepository {
     return await databaseService.query(query);
   }
 
+  async getByProjectId(projectId) {
+    const query = `
+      SELECT pmr.*,
+        p.name as project_name,
+        m.name as material_name,
+        s.name as supplier_name,
+        pmrs.name as status_name
+      FROM ${this.tableName} pmr
+      LEFT JOIN projects p ON pmr.project_id = p.project_id
+      LEFT JOIN materials m ON pmr.material_id = m.material_id
+      LEFT JOIN suppliers s ON pmr.supplier_id = s.supplier_id
+      LEFT JOIN project_material_requirement_statuses pmrs ON pmr.status = pmrs.project_material_requirement_status_id
+      WHERE pmr.project_id = ? AND pmr.deleted_at IS NULL
+      ORDER BY pmr.project_material_requirement_id DESC
+    `;
+    return await databaseService.query(query, [projectId]);
+  }
+
   async getOneById(id) {
     const query = `
       SELECT pmr.*,
@@ -87,6 +105,10 @@ class ProjectMaterialRequirementRepository {
       id,
     ]);
     return result.affectedRows > 0;
+  }
+
+  async updateOne(id, data, userId) {
+    return await this.updateOneById(id, data, userId);
   }
 
   async deleteOneById(id) {

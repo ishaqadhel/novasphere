@@ -14,6 +14,9 @@ class SeedScript {
       // 2. Seed Project Task Statuses (Level Task)
       await this.seedProjectTaskStatuses();
 
+      // 3. Seed Project Material Requirement Statuses
+      await this.seedProjectMaterialRequirementStatuses();
+
       await this.seedRoles();
       await this.seedDefaultAdminUser();
 
@@ -78,6 +81,34 @@ class SeedScript {
     }
 
     console.log('Project task statuses seeded.');
+  }
+
+  async seedProjectMaterialRequirementStatuses() {
+    console.log('Seeding project material requirement statuses...');
+
+    const statuses = [
+      { name: 'Pending' },
+      { name: 'Approved' },
+      { name: 'Ordered' },
+      { name: 'Delivered' },
+      { name: 'Rejected' },
+    ];
+
+    for (const status of statuses) {
+      const existing = await databaseService.query(
+        'SELECT project_material_requirement_status_id FROM project_material_requirement_statuses WHERE name = ?',
+        [status.name]
+      );
+
+      if (existing.length === 0) {
+        await databaseService.execute(
+          'INSERT INTO project_material_requirement_statuses (name, is_active) VALUES (?, ?)',
+          [status.name, true]
+        );
+      }
+    }
+
+    console.log('Project material requirement statuses seeded.');
   }
   // -----------------------------------------------
 
