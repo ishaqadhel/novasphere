@@ -2,6 +2,7 @@ import BaseController from '../../../controllers/index.js';
 import userService from '../user/service.js';
 import materialService from '../material/service.js';
 import supplierRepository from '../../../repositories/supplier/index.js';
+import projectRepository from '../../../repositories/project/index.js';
 
 class DashboardController extends BaseController {
   constructor() {
@@ -11,17 +12,18 @@ class DashboardController extends BaseController {
 
   async index(req, res) {
     try {
-      // Fetch real counts from database in parallel
-      const [userCount, materialCount, supplierCount] = await Promise.all([
+      const [userCount, materialCount, supplierCount, projectCount] = await Promise.all([
         userService.countUsers(),
         materialService.countMaterials(),
         supplierRepository.count(),
+        projectRepository.count(),
       ]);
 
       const stats = {
         userCount,
         materialCount,
         supplierCount,
+        projectCount,
       };
 
       return this.renderView(res, 'app/dashboard/index', {

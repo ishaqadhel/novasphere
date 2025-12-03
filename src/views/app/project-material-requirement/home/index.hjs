@@ -8,10 +8,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
-<body>
+<body hx-on:htmx:after-swap="checkEmptyState()">
   <div class="d-flex min-vh-100">
     <!-- Sidebar -->
-    <div class="bg-dark text-white p-3 flex-shrink-0" style="width: 250px;">
+    <div class="bg-dark text-white p-3" style="width: 250px;">
       <h4 class="mb-4">Novasphere</h4>
       <ul class="nav nav-pills flex-column">
         <li class="nav-item"><a href="/app/dashboard" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
@@ -29,11 +29,6 @@
           </a>
         </li>
         <li class="nav-item"><a href="/app/user" class="nav-link text-white"><i class="bi bi-people"></i> Users</a></li>
-        <li class="nav-item">
-          <a href="/pricing" class="nav-link text-white">
-            <i class="bi bi-tag"></i> Pricing
-          </a>
-        </li>
       </ul>
       <hr class="text-white">
       <div class="mt-auto pt-4">
@@ -59,7 +54,6 @@
       </nav>
 
       <div class="p-4">
-        <!-- Container Error -->
         <div id="alert-container"></div>
 
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -69,7 +63,6 @@
           </button>
         </div>
 
-        <!-- Form Add -->
         <div class="collapse mb-4" id="addReqCard">
           <div class="card card-body bg-light border-0 shadow-sm">
             <h5 class="card-title mb-3">Add New Requirement (Default: Pending)</h5>
@@ -77,21 +70,21 @@
             <form hx-post="/app/project-material-requirement" 
                   hx-target="#pmr-table-body" 
                   hx-swap="afterbegin"
-                  hx-on::after-request="if(event.detail.successful) { this.reset(); new bootstrap.Collapse(document.getElementById('addReqCard')).hide(); }">
+                  hx-on::after-request="if(event.detail.successful) { this.reset(); new bootstrap.Collapse(document.getElementById('addReqCard')).hide(); checkEmptyState(); }">
               
               <input type="hidden" name="project_id" value="{{ project.project_id }}">
 
               <div class="row g-3">
-                <div class="col-md-3">
-                  <label class="form-label small text-muted">Material <span class="text-danger">*</span></label>
+                <div class="col-md-4">
+                  <label class="form-label small text-muted fw-bold">Material <span class="text-danger">*</span></label>
                   <select name="material_id" class="form-select" required>
                     <option value="">Select...</option>
                     {{#materials}}<option value="{{material_id}}">{{name}}</option>{{/materials}}
                   </select>
                 </div>
 
-                <div class="col-md-3">
-                  <label class="form-label small text-muted">Supplier <span class="text-danger">*</span></label>
+                <div class="col-md-4">
+                  <label class="form-label small text-muted fw-bold">Supplier <span class="text-danger">*</span></label>
                   <select name="supplier_id" class="form-select" required>
                     <option value="">Select...</option>
                     {{#suppliers}}<option value="{{supplier_id}}">{{name}}</option>{{/suppliers}}
@@ -99,32 +92,33 @@
                 </div>
 
                 <div class="col-md-2">
-                  <label class="form-label small text-muted">Qty <span class="text-danger">*</span></label>
+                  <label class="form-label small text-muted fw-bold">Qty <span class="text-danger">*</span></label>
                   <input type="number" name="quantity" class="form-control" required min="1">
                 </div>
 
-                <div class="col-md-1">
-                  <label class="form-label small text-muted">Unit <span class="text-danger">*</span></label>
-                  <input type="text" name="unit" class="form-control" placeholder="pcs" required>
-                </div>
-
                 <div class="col-md-2">
-                  <label class="form-label small text-muted">Unit Price <span class="text-danger">*</span></label>
-                  <input type="number" name="price" class="form-control" required min="0" step="0.01">
-                </div>
-
-                <div class="col-md-1">
-                  <label class="form-label small text-muted">Arrival <span class="text-danger">*</span></label>
-                  <input type="date" name="arrived_date" class="form-control" required>
+                  <label class="form-label small text-muted fw-bold">Unit <span class="text-danger">*</span></label>
+                  <input type="text" name="unit" class="form-control" placeholder="pcs" required>
                 </div>
               </div>
 
-              <div class="row g-3 mt-3">
-                <div class="col-md-12 d-flex justify-content-end gap-2">
+              <div class="row g-3 mt-1">
+                <div class="col-md-4">
+                  <label class="form-label small text-muted fw-bold">Est. Price <span class="text-danger">*</span></label>
+                  <input type="number" name="price" class="form-control" required min="0" step="0.01">
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label small text-muted fw-bold">Est. Arrival <span class="text-danger">*</span></label>
+                  <input type="date" name="arrived_date" class="form-control" required>
+                </div>
+
+                <div class="col-md-4 d-flex align-items-end justify-content-end gap-2">
                   <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#addReqCard">Cancel</button>
                   <button type="submit" class="btn btn-success px-4"><i class="bi bi-save"></i> Save</button>
                 </div>
               </div>
+
             </form>
           </div>
         </div>
@@ -147,7 +141,7 @@
                 </thead>
                 <tbody id="pmr-table-body">
                   {{#requirements}}
-                    <!-- INLINE ROW START (Agar data muncul saat refresh/pindah page) -->
+                    <!-- INLINE ROW -->
                     <tr>
                       <td class="ps-4 fw-bold">{{material_name}}</td>
                       <td class="text-muted">{{supplier_name}}</td>
@@ -159,8 +153,6 @@
                         <div class="fw-bold text-primary">{{formatted_total}}</div>
                       </td>
                       <td>{{formatted_arrived_date}}</td>
-                      
-                      <!-- Delivery Info -->
                       <td>
                         {{#is_delivered}}
                           <div class="small">
@@ -169,13 +161,9 @@
                             <div class="text-danger">Bad: {{bad_quantity}}</div>
                           </div>
                         {{/is_delivered}}
-                        {{^is_delivered}}
-                          <span class="text-muted small">-</span>
-                        {{/is_delivered}}
+                        {{^is_delivered}}<span class="text-muted small">-</span>{{/is_delivered}}
                       </td>
-
                       <td><span class="badge {{status_badge_class}}">{{status_name}}</span></td>
-                      
                       <td class="text-end pe-4">
                         <div class="btn-group btn-sm">
                           <button class="btn btn-outline-warning"
@@ -194,11 +182,11 @@
                         </div>
                       </td>
                     </tr>
-                    <!-- INLINE ROW END -->
+                    <!-- END INLINE ROW -->
                   {{/requirements}}
                   
                   {{^requirements}}
-                    <tr>
+                    <tr id="no-data-row">
                       <td colspan="8" class="text-center text-muted py-5">
                         <i class="bi bi-clipboard-data h2 d-block mb-2"></i>
                         No requirements found for this project
@@ -214,5 +202,35 @@
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    function checkEmptyState() {
+      setTimeout(() => {
+          const tbody = document.getElementById('pmr-table-body');
+          if (!tbody) return;
+
+          const dataRows = Array.from(tbody.querySelectorAll('tr')).filter(row => row.id !== 'no-data-row');
+          
+          const noDataRow = document.getElementById('no-data-row');
+
+          if (dataRows.length === 0) {
+            if (!noDataRow) {
+              const html = `
+                <tr id="no-data-row">
+                  <td colspan="8" class="text-center text-muted py-5">
+                    <i class="bi bi-clipboard-data h2 d-block mb-2"></i>
+                    No requirements found for this project
+                  </td>
+                </tr>`;
+              tbody.insertAdjacentHTML('beforeend', html);
+            }
+          } else {
+            if (noDataRow) {
+              noDataRow.remove();
+            }
+          }
+      }, 100);
+    }
+  </script>
 </body>
 </html>

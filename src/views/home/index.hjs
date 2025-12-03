@@ -3,17 +3,409 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ title }} - Novasphere</title>
+  <title>{{ title }} - NovaSphere</title>
+  <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  
+  <style>
+    :root {
+      /* Trinova/NovaSphere Blue Scheme */
+      --primary-color: #0d47a1; 
+      --accent-color: #42a5f5;
+      --text-dark: #212529;
+    }
+    
+    body {
+      padding-top: 76px; /* Space for fixed navbar */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Navbar Styling */
+    .navbar {
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      background-color: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(10px);
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--primary-color) !important;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      background: linear-gradient(135deg, #f0f4f8 0%, #e1e8ed 100%);
+      padding: 120px 0 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-tagline {
+      color: var(--accent-color);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    /* Features */
+    .feature-card {
+      padding: 2.5rem;
+      border-radius: 1rem;
+      background: white;
+      transition: all 0.3s ease;
+      height: 100%;
+      border: 1px solid #eee;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 1rem 2rem rgba(0,0,0,0.08);
+      border-color: var(--accent-color);
+    }
+
+    .feature-icon {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      background-color: rgba(13, 71, 161, 0.1);
+      color: var(--primary-color);
+      font-size: 2rem;
+    }
+
+    /* Pricing */
+    .pricing-card {
+      transition: all 0.3s;
+      border: 1px solid #dee2e6;
+      border-radius: 1rem;
+      overflow: visible; /* Changed from hidden to visible so badge can float */
+    }
+
+    .pricing-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 1rem 3rem rgba(0,0,0,0.1);
+    }
+
+    .pricing-header {
+      background: #f8f9fa;
+      padding: 2rem 0;
+      border-bottom: 1px solid #eee;
+      border-radius: 1rem 1rem 0 0; /* Re-add radius since overflow is visible */
+    }
+    
+    .card-pro {
+      border: 2px solid var(--primary-color);
+      position: relative;
+    }
+    
+    .badge-popular {
+      position: absolute;
+      top: -15px; /* Move up to sit on the border */
+      left: 50%; /* Center horizontally */
+      transform: translateX(-50%); /* Center alignment correction */
+      background: var(--primary-color);
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    /* About Section */
+    .founder-card {
+      text-align: center;
+      padding: 2rem;
+      background: #f8f9fa;
+      border-radius: 1rem;
+      transition: transform 0.3s;
+    }
+    .founder-card:hover {
+      transform: translateY(-5px);
+      background: #fff;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+    .founder-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background-color: #e9ecef;
+      margin: 0 auto 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: var(--primary-color);
+      border: 4px solid white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    section {
+      padding: 100px 0;
+    }
+  </style>
 </head>
 <body>
-  <div class="min-vh-100 d-flex align-items-center justify-content-center bg-light">
-    <div class="text-center">
-      <h1 class="display-4 mb-4">{{ appName }}</h1>
-      <p class="lead mb-4">{{ description }}</p>
-      <a href="/auth/login" class="btn btn-primary btn-lg">Open App</a>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand fs-3" href="#">
+        <i class="bi bi-box-seam-fill me-2"></i>NovaSphere
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#features">Solutions</a></li>
+          <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About Trinova</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+          <li class="nav-item ms-lg-3">
+            <a href="/auth/login" class="btn btn-primary px-4">START APP</a>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-7">
+          <span class="hero-tagline">By Trinova Company</span>
+          <h1 class="display-3 fw-bold mb-4 text-dark">Stay Ahead,<br>Finish On Time!</h1>
+          <p class="lead text-muted mb-5">
+            Empowering construction professionals with a unified platform to centralize project data and streamline material procurement. Eliminate inefficiencies and manage your supply chain with confidence.
+          </p>
+          <div class="d-flex gap-3">
+            <a href="/auth/login" class="btn btn-primary btn-lg px-5 shadow-sm">START APP</a>
+            <a href="#features" class="btn btn-outline-secondary btn-lg px-4">Explore MVP</a>
+          </div>
+          <div class="mt-5 text-muted small">
+            <i class="bi bi-check-circle-fill text-success me-2"></i>Cloud SaaS
+            <span class="mx-3">|</span>
+            <i class="bi bi-check-circle-fill text-success me-2"></i>On-Premise Options
+            <span class="mx-3">|</span>
+            <i class="bi bi-check-circle-fill text-success me-2"></i>Real-Time Tracking
+          </div>
+        </div>
+        <div class="col-lg-5 d-none d-lg-block">
+          <div class="p-5 text-center">
+             <i class="bi bi-buildings text-primary opacity-25" style="font-size: 15rem;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="bg-white">
+    <div class="container">
+      <div class="text-center mb-5 mw-75 mx-auto">
+        <h2 class="fw-bold display-6 mb-3">Core Solutions</h2>
+        <p class="text-muted fs-5">Addressing the 9 out of 10 projects that face cost overruns through data-driven supplier management.</p>
+      </div>
+      
+      <div class="row g-4">
+        <!-- Feature 1: Supplier Management (MVP) -->
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <h4>Supplier Comparison</h4>
+            <p class="text-muted">Compare suppliers based on material costs, delivery schedules, and availability to find the perfect match for your project.</p>
+          </div>
+        </div>
+        
+        <!-- Feature 2: Material Tracking (MVP) -->
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="bi bi-truck"></i>
+            </div>
+            <h4>Material Tracking</h4>
+            <p class="text-muted">Track material orders from the supplier to the site. Receive simple pre-delay alerts if orders fall behind schedule.</p>
+          </div>
+        </div>
+        
+        <!-- Feature 3: Quality (MVP) -->
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="bi bi-shield-check"></i>
+            </div>
+            <h4>Quality Verification</h4>
+            <p class="text-muted">Verify material quality standards upon delivery and track non-compliant items to prevent costly rework.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section id="pricing" class="bg-light">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold display-6">Flexible Deployment</h2>
+        <p class="text-muted">From small contractors to government enterprises.</p>
+      </div>
+      
+      <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+        <!-- Free Tier -->
+        <div class="col">
+          <div class="card mb-4 rounded-4 shadow-sm pricing-card h-100 border-0">
+            <div class="pricing-header">
+              <h4 class="my-0 fw-normal">Basic</h4>
+              <h1 class="card-title pricing-card-title mt-3">$0<small class="text-muted fw-light">/mo</small></h1>
+            </div>
+            <div class="card-body d-flex flex-column">
+              <ul class="list-unstyled mt-3 mb-4 text-start mx-auto">
+                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Up to 10 Users</li>
+                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Max 5 Projects</li>
+                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Supplier Comparison</li>
+                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Material Tracking</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Pro Tier -->
+        <div class="col">
+          <div class="card mb-4 rounded-4 shadow-sm pricing-card h-100 card-pro">
+            <span class="badge-popular">MOST POPULAR</span>
+            <div class="pricing-header bg-white">
+              <h4 class="my-0 fw-bold text-primary">Pro & Pro+</h4>
+              <h1 class="card-title pricing-card-title mt-3">Subscription<small class="text-muted fw-light"></small></h1>
+              <small class="text-muted">Cloud SaaS Model</small>
+            </div>
+            <div class="card-body d-flex flex-column">
+              <ul class="list-unstyled mt-3 mb-4 text-start mx-auto">
+                <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i><strong>Unlimited</strong> Users & Projects</li>
+                <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Basic Progress Reports</li>
+                <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i><strong>Pre-Delay Alerts</strong></li>
+                <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Priority Support</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Enterprise Tier -->
+        <div class="col">
+          <div class="card mb-4 rounded-4 shadow-sm pricing-card h-100 border-0">
+            <div class="pricing-header">
+              <h4 class="my-0 fw-normal">Enterprise</h4>
+              <h1 class="card-title pricing-card-title mt-3">On-Prem<small class="text-muted fw-light"></small></h1>
+              <small class="text-muted">Private Server Deployment</small>
+            </div>
+            <div class="card-body d-flex flex-column">
+              <ul class="list-unstyled mt-3 mb-4 text-start mx-auto">
+                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Full Data Control</li>
+                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Custom Integrations (ERP/BIM)</li>
+                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Government Compliance</li>
+                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Dedicated Account Manager</li>
+                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>SLA-backed Support</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section (Redesigned) -->
+  <section id="about" class="bg-white">
+    <div class="container">
+      
+      <!-- Top: Text Content -->
+      <div class="row justify-content-center mb-5">
+        <div class="col-lg-10 text-center">
+          <h2 class="fw-bold mb-4">About Trinova Company</h2>
+          <p class="lead text-primary fw-bold mb-3">"Tri" (Three Pillars) + "Nova" (New Star)</p>
+          <p class="lead text-muted mb-4">
+            Our mission is to eliminate the inefficiencies that have plagued construction for decades. 
+            We believe that true success lies in the perfect balance of <strong>Cost, Schedule, and Quality</strong>.
+          </p>
+          <p class="text-muted fs-5">
+            NovaSphere is our promise to be a guiding light for the industry, relentlessly pursuing bright, innovative solutions that set a new standard for how the world builds.
+          </p>
+        </div>
+      </div>
+
+      <!-- Bottom: Founders Cards -->
+      <div class="row justify-content-center g-4">
+         <div class="col-md-4 col-lg-4">
+             <div class="founder-card h-100">
+                <div class="founder-avatar"><i class="bi bi-person"></i></div>
+                <h5 class="fw-bold mb-2">Ishaq Adheltyo</h5>
+                <small class="text-primary fw-bold text-uppercase tracking-wide">Chief Technology Officer (CTO)</small>
+             </div>
+         </div>
+         <div class="col-md-4 col-lg-4">
+             <div class="founder-card h-100">
+                <div class="founder-avatar"><i class="bi bi-person"></i></div>
+                <h5 class="fw-bold mb-2">王紹帆</h5>
+                <small class="text-primary fw-bold text-uppercase tracking-wide">Chief Operating Officer (COO)</small>
+             </div>
+         </div>
+         <div class="col-md-4 col-lg-4">
+             <div class="founder-card h-100">
+                <div class="founder-avatar"><i class="bi bi-person"></i></div>
+                <h5 class="fw-bold mb-2">Cornelius Jefferson Tjahjono</h5>
+                <small class="text-primary fw-bold text-uppercase tracking-wide">Chief Executive Officer (CEO)</small>
+             </div>
+         </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="bg-dark text-white">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+          <h2 class="fw-bold mb-4">Get in Touch</h2>
+          <p class="mb-5 text-white-50">Ready to transform your construction workflow? Contact our team at NTUST.</p>
+          
+          <div class="row justify-content-center gap-4">
+            <div class="col-md-6 bg-white text-dark rounded p-4 mb-3">
+              <i class="bi bi-envelope-fill text-primary fs-3 mb-2"></i>
+              <h5 class="fw-bold mb-3">Email Us</h5>
+              <ul class="list-unstyled">
+                <li class="mb-2"><a href="mailto:M11402805@mail.ntust.edu.tw" class="text-decoration-none text-muted">M11402805@mail.ntust.edu.tw</a></li>
+                <li class="mb-2"><a href="mailto:M11405505@mail.ntust.edu.tw" class="text-decoration-none text-muted">M11405505@mail.ntust.edu.tw</a></li>
+                <li class="mb-2"><a href="mailto:M11405806@mail.ntust.edu.tw" class="text-decoration-none text-muted">M11405806@mail.ntust.edu.tw</a></li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-4 bg-black text-white-50 border-top border-secondary">
+    <div class="container text-center">
+      <p class="mb-1">&copy; 2025 Trinova Company. All rights reserved.</p>
+      <small>National Taiwan University of Science and Technology (NTUST)</small>
+    </div>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
