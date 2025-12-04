@@ -37,7 +37,7 @@ class ProjectMaterialRequirementService extends BaseService {
       price,
       total_price,
       status,
-      unit: data.unit,
+      unit_id: data.unit_id,
       is_active: true,
     };
 
@@ -85,7 +85,7 @@ class ProjectMaterialRequirementService extends BaseService {
       quantity,
       price,
       total_price,
-      unit: data.unit,
+      unit_id: data.unit_id,
       status: newStatusId,
       actual_arrived_date: actual_arrived_date || null,
       good_quantity: good_quantity ? parseInt(good_quantity) : 0,

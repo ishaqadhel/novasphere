@@ -96,9 +96,12 @@
                   <input type="number" name="quantity" class="form-control" required min="1">
                 </div>
 
-                <div class="col-md-2">
-                  <label class="form-label small text-muted fw-bold">Unit <span class="text-danger">*</span></label>
-                  <input type="text" name="unit" class="form-control" placeholder="pcs" required>
+                <div class="col-md-1">
+                  <label class="form-label small text-muted">Unit <span class="text-danger">*</span></label>
+                  <select name="unit_id" class="form-select" required>
+                    <option value="">Select...</option>
+                    {{#units}}<option value="{{unit_id}}">{{name}}</option>{{/units}}
+                  </select>
                 </div>
               </div>
 
@@ -146,10 +149,10 @@
                       <td class="ps-4 fw-bold">{{material_name}}</td>
                       <td class="text-muted">{{supplier_name}}</td>
                       <td>
-                        <span class="fw-bold">{{quantity}}</span> <span class="small text-muted">{{unit}}</span>
+                        <span class="fw-bold">{{quantity}}</span> <span class="small text-muted">{{unit_name}}</span>
                       </td>
                       <td>
-                        <div>{{formatted_price}} <span class="text-muted small">/ {{unit}}</span></div>
+                        <div>{{formatted_price}} <span class="text-muted small">/ {{unit_name}}</span></div>
                         <div class="fw-bold text-primary">{{formatted_total}}</div>
                       </td>
                       <td>{{formatted_arrived_date}}</td>

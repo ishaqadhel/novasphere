@@ -17,6 +17,9 @@ class SeedScript {
       // 3. Seed Project Material Requirement Statuses
       await this.seedProjectMaterialRequirementStatuses();
 
+      // 4. Seed Project Material Requirement Units
+      await this.seedProjectMaterialRequirementUnits();
+
       await this.seedRoles();
       await this.seedDefaultAdminUser();
 
@@ -109,6 +112,47 @@ class SeedScript {
     }
 
     console.log('Project material requirement statuses seeded.');
+  }
+
+  async seedProjectMaterialRequirementUnits() {
+    console.log('Seeding project material requirement units...');
+
+    const units = [
+      '900㎠',
+      'Bag',
+      'B.㎥',
+      'C.㎥',
+      'kg',
+      'km',
+      'L',
+      'L.㎥',
+      'm',
+      'm²',
+      '㎥',
+      'Metric Ton',
+      'One Test',
+      'Pair',
+      'Piece',
+      'root',
+      'Set',
+      'Trip',
+    ];
+
+    for (const unitName of units) {
+      const existing = await databaseService.query(
+        'SELECT unit_id FROM project_material_requirement_units WHERE name = ?',
+        [unitName]
+      );
+
+      if (existing.length === 0) {
+        await databaseService.execute(
+          'INSERT INTO project_material_requirement_units (name, is_active) VALUES (?, ?)',
+          [unitName, true]
+        );
+      }
+    }
+
+    console.log('Project material requirement units seeded.');
   }
   // -----------------------------------------------
 

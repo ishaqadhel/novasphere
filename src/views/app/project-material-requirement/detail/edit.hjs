@@ -29,7 +29,9 @@
         </div>
         <div class="col-md-1">
            <label class="small text-muted">Unit</label>
-           <input type="text" name="unit" value="{{unit}}" class="form-control form-control-sm" required>
+           <select name="unit_id" class="form-select form-select-sm" required>
+             {{#units}}<option value="{{unit_id}}" {{#selected}}selected{{/selected}}>{{name}}</option>{{/units}}
+           </select>
         </div>
         <div class="col-md-2">
            <label class="small text-muted">Price</label>

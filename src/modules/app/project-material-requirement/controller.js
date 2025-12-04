@@ -4,6 +4,7 @@ import projectRepository from '../../../repositories/project/index.js';
 import materialRepository from '../../../repositories/material/index.js';
 import supplierRepository from '../../../repositories/supplier/index.js';
 import pmrStatusRepository from '../../../repositories/project-material-requirement-status/index.js';
+import pmrUnitRepository from '../../../repositories/project-material-requirement-unit/index.js';
 import moment from 'moment';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -62,12 +63,13 @@ class ProjectMaterialRequirementController extends BaseController {
       const projectId = req.query.project_id;
       if (!projectId) return res.redirect('/app/project');
 
-      const [requirements, project, materials, suppliers, statuses] = await Promise.all([
+      const [requirements, project, materials, suppliers, statuses, units] = await Promise.all([
         pmrService.getRequirementsByProjectId(projectId),
         projectRepository.getOneById(projectId),
         materialRepository.getAll(),
         supplierRepository.getAll(),
         pmrStatusRepository.getAllActive(),
+        pmrUnitRepository.getAllActive(),
       ]);
 
       const formattedRequirements = this._formatData(requirements);
@@ -80,6 +82,7 @@ class ProjectMaterialRequirementController extends BaseController {
         materials,
         suppliers,
         statuses,
+        units,
         user: this.getSessionUser(req),
         currentPath: '/app/project',
       });
@@ -110,10 +113,11 @@ class ProjectMaterialRequirementController extends BaseController {
       const { id } = req.params;
       let requirement = await pmrService.getRequirementById(id);
 
-      const [materials, suppliers, statuses] = await Promise.all([
+      const [materials, suppliers, statuses, units] = await Promise.all([
         materialRepository.getAll(),
         supplierRepository.getAll(),
         pmrStatusRepository.getAllActive(),
+        pmrUnitRepository.getAllActive(),
       ]);
 
       [requirement] = this._formatData([requirement]);
@@ -130,12 +134,17 @@ class ProjectMaterialRequirementController extends BaseController {
         ...s,
         selected: s.project_material_requirement_status_id === requirement.status,
       }));
+      const unitsSel = units.map((u) => ({
+        ...u,
+        selected: u.unit_id === requirement.unit_id,
+      }));
 
       return res.render('app/project-material-requirement/detail/edit', {
         ...requirement,
         materials: materialsSel,
         suppliers: suppliersSel,
         statuses: statusesSel,
+        units: unitsSel,
         layout: false,
       });
     } catch (error) {
@@ -160,10 +169,11 @@ class ProjectMaterialRequirementController extends BaseController {
 
         const original = await pmrService.getRequirementById(id);
 
-        const [materials, suppliers, statuses] = await Promise.all([
+        const [materials, suppliers, statuses, units] = await Promise.all([
           materialRepository.getAll(),
           supplierRepository.getAll(),
           pmrStatusRepository.getAllActive(),
+          pmrUnitRepository.getAllActive(),
         ]);
 
         const mergedData = { ...original, ...req.body };
@@ -180,6 +190,10 @@ class ProjectMaterialRequirementController extends BaseController {
           ...s,
           selected: String(s.project_material_requirement_status_id) === String(req.body.status),
         }));
+        const unitsSel = units.map((u) => ({
+          ...u,
+          selected: String(u.unit_id) === String(req.body.unit_id),
+        }));
 
         const isDelivered = String(req.body.status) === '4';
 
@@ -192,6 +206,7 @@ class ProjectMaterialRequirementController extends BaseController {
           materials: materialsSel,
           suppliers: suppliersSel,
           statuses: statusesSel,
+          units: unitsSel,
 
           error: error.message,
           is_delivered: isDelivered,

@@ -2,10 +2,10 @@
   <td class="ps-4 fw-bold">{{material_name}}</td>
   <td class="text-muted">{{supplier_name}}</td>
   <td>
-    <span class="fw-bold">{{quantity}}</span> <span class="small text-muted">{{unit}}</span>
+    <span class="fw-bold">{{quantity}}</span> <span class="small text-muted">{{unit_name}}</span>
   </td>
   <td>
-    <div>{{formatted_price}} <span class="text-muted small">/ {{unit}}</span></div>
+    <div>{{formatted_price}} <span class="text-muted small">/ {{unit_name}}</span></div>
     <div class="fw-bold text-primary">{{formatted_total}}</div>
   </td>
   <td>{{formatted_arrived_date}}</td>
