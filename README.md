@@ -241,9 +241,6 @@ The application includes an ETL (Extract, Transform, Load) script to import data
 
 ### TSV Files Required
 
-Place the following TSV files in the directory:
-`../ntust-graduate-ece-114-CT5805701-assignment-3/novasphere-files/`
-
 1. **companies.tsv** - Contains company/supplier information (500 records)
 2. **materials.tsv** - Contains material catalog with units and pricing (458 records)
 3. **transactions.tsv** - Contains transaction history (51,947 records)
