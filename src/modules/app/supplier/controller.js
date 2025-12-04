@@ -65,7 +65,8 @@ class SupplierController extends BaseController {
 
   async delete(req, res) {
     try {
-      await supplierService.deleteSupplier(req.params.id);
+      const userId = this.getSessionUser(req).user_id;
+      await supplierService.deleteSupplier(req.params.id, userId);
       return res.send('');
     } catch (error) {
       return res.status(500).send(error.message);

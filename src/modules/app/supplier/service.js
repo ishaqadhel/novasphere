@@ -1,5 +1,7 @@
 import BaseService from '../../../services/index.js';
 import supplierRepository from '../../../repositories/supplier/index.js';
+import notificationService from '../../../services/notification/index.js';
+import userRepository from '../../../repositories/user/index.js';
 
 class SupplierService extends BaseService {
   async getAllSuppliers() {
@@ -31,7 +33,21 @@ class SupplierService extends BaseService {
       };
 
       const insertId = await supplierRepository.createOne(supplierData, userId);
-      return await this.getSupplierById(insertId);
+      const newSupplier = await this.getSupplierById(insertId);
+
+      // Create notification
+      const user = await userRepository.getOneById(userId);
+      if (user) {
+        await notificationService.notifyOnCRUD(
+          'created',
+          'Supplier',
+          data.name,
+          userId,
+          `${user.first_name} ${user.last_name}`
+        );
+      }
+
+      return newSupplier;
     } catch (error) {
       throw this.handleError(error, 'Failed to create supplier');
     }
@@ -41,7 +57,7 @@ class SupplierService extends BaseService {
     try {
       this.validateRequired(data, ['name', 'email', 'phone', 'address']);
 
-      await this.getSupplierById(id);
+      const existing = await this.getSupplierById(id);
 
       const supplierData = {
         ...data,
@@ -50,16 +66,46 @@ class SupplierService extends BaseService {
       };
 
       await supplierRepository.updateOneById(id, supplierData, userId);
-      return await this.getSupplierById(id);
+      const updated = await this.getSupplierById(id);
+
+      // Create notification
+      const user = await userRepository.getOneById(userId);
+      if (user) {
+        await notificationService.notifyOnCRUD(
+          'updated',
+          'Supplier',
+          data.name || existing.name,
+          userId,
+          `${user.first_name} ${user.last_name}`
+        );
+      }
+
+      return updated;
     } catch (error) {
       throw this.handleError(error, 'Failed to update supplier');
     }
   }
 
-  async deleteSupplier(id) {
+  async deleteSupplier(id, userId) {
     try {
-      await this.getSupplierById(id);
-      return await supplierRepository.deleteOneById(id);
+      const existing = await this.getSupplierById(id);
+      const result = await supplierRepository.deleteOneById(id);
+
+      // Create notification
+      if (userId) {
+        const user = await userRepository.getOneById(userId);
+        if (user) {
+          await notificationService.notifyOnCRUD(
+            'deleted',
+            'Supplier',
+            existing.name,
+            userId,
+            `${user.first_name} ${user.last_name}`
+          );
+        }
+      }
+
+      return result;
     } catch (error) {
       throw this.handleError(error, 'Failed to delete supplier');
     }

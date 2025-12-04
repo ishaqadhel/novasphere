@@ -53,13 +53,14 @@ class MaterialController extends BaseController {
 
   async store(req, res) {
     try {
+      const userId = this.getSessionUser(req).user_id;
       const data = {
         name: req.body.name,
         material_category_id: req.body.material_category_id,
         is_active: req.body.is_active === 'true' || req.body.is_active === true,
       };
 
-      await materialService.createMaterial(data);
+      await materialService.createMaterial(data, userId);
 
       return this.redirect(res, '/app/material');
     } catch (error) {
@@ -142,6 +143,7 @@ class MaterialController extends BaseController {
 
   async update(req, res) {
     try {
+      const userId = this.getSessionUser(req).user_id;
       const { id } = req.params;
       const data = {
         name: req.body.name,
@@ -149,7 +151,7 @@ class MaterialController extends BaseController {
         is_active: req.body.is_active === 'true' || req.body.is_active === true,
       };
 
-      await materialService.updateMaterial(id, data);
+      await materialService.updateMaterial(id, data, userId);
 
       return this.redirect(res, '/app/material');
     } catch (error) {
@@ -181,8 +183,9 @@ class MaterialController extends BaseController {
 
   async destroy(req, res) {
     try {
+      const userId = this.getSessionUser(req).user_id;
       const { id } = req.params;
-      await materialService.deleteMaterial(id);
+      await materialService.deleteMaterial(id, userId);
 
       return this.redirect(res, '/app/material');
     } catch (error) {

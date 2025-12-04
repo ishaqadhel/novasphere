@@ -1,0 +1,38 @@
+<tr class="{{row_class}}" id="notification-row-{{notification_id}}">
+  <td class="ps-4">
+    <i class="bi {{type_icon}} {{type_color}}" style="font-size: 1.5rem;"></i>
+  </td>
+  <td>
+    <span class="fw-bold">{{title}}</span>
+  </td>
+  <td>
+    <span class="text-muted small">{{message}}</span>
+  </td>
+  <td>
+    <span class="small text-muted">{{time_ago}}</span>
+  </td>
+  <td>
+    <span class="badge {{badge_class}}">{{read_badge_text}}</span>
+  </td>
+  <td class="text-end pe-4">
+    <div class="btn-group btn-group-sm">
+      {{^is_read}}
+        <button class="btn btn-outline-primary"
+          hx-post="/app/notification/{{notification_id}}/mark-read"
+          hx-target="closest tr"
+          hx-swap="outerHTML"
+          title="Mark as read">
+          <i class="bi bi-check2"></i>
+        </button>
+      {{/is_read}}
+
+      <button class="btn btn-outline-danger"
+        hx-post="/app/notification/{{notification_id}}/delete"
+        hx-target="closest tr"
+        hx-swap="outerHTML"
+        hx-confirm="Delete this notification?">
+        <i class="bi bi-trash"></i>
+      </button>
+    </div>
+  </td>
+</tr>

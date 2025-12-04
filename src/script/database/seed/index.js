@@ -23,6 +23,9 @@ class SeedScript {
       await this.seedRoles();
       await this.seedDefaultAdminUser();
 
+      // 5. Seed Modules
+      await this.seedModules();
+
       console.log('Database seeding completed successfully!');
       process.exit(0);
     } catch (error) {
@@ -156,6 +159,40 @@ class SeedScript {
   }
   // -----------------------------------------------
 
+  async seedModules() {
+    console.log('Seeding modules...');
+
+    const modules = [
+      { name: 'Dashboard', description: 'Main dashboard for overview and analytics' },
+      { name: 'Material', description: 'Material management module' },
+      { name: 'Material Category', description: 'Material category management module' },
+      { name: 'Project', description: 'Project management module' },
+      { name: 'Project Task', description: 'Project task management module' },
+      {
+        name: 'Project Material Requirement',
+        description: 'Project material requirement management module',
+      },
+      { name: 'Supplier', description: 'Supplier management module' },
+      { name: 'User', description: 'User management module' },
+      { name: 'Report', description: 'Report generation and viewing module' },
+    ];
+
+    for (const module of modules) {
+      const existing = await databaseService.query('SELECT module_id FROM modules WHERE name = ?', [
+        module.name,
+      ]);
+
+      if (existing.length === 0) {
+        await databaseService.execute(
+          'INSERT INTO modules (name, description, is_active) VALUES (?, ?, ?)',
+          [module.name, module.description, true]
+        );
+      }
+    }
+
+    console.log('Modules seeded.');
+  }
+
   async seedRoles() {
     console.log('Seeding roles...');
     const roles = [{ name: 'admin' }, { name: 'pm' }, { name: 'supervisor' }];
@@ -175,33 +212,99 @@ class SeedScript {
   }
 
   async seedDefaultAdminUser() {
-    console.log('Seeding default admin user...');
-    const existingUser = await databaseService.query('SELECT user_id FROM users WHERE email = ?', [
-      'admin@example.com',
-    ]);
-    if (existingUser.length > 0) {
-      console.log('Default admin user already exists. Skipping.');
-      return;
+    console.log('Seeding default users...');
+
+    // Define users for each role
+    const usersToSeed = [
+      // Admin users
+      {
+        email: 'admin1@example.com',
+        password: 'password',
+        firstName: 'Admin',
+        lastName: 'One',
+        phone: '1234567890',
+        roleName: 'admin',
+      },
+      {
+        email: 'admin2@example.com',
+        password: 'password',
+        firstName: 'Admin',
+        lastName: 'Two',
+        phone: '1234567891',
+        roleName: 'admin',
+      },
+      // PM users
+      {
+        email: 'pm1@example.com',
+        password: 'password',
+        firstName: 'Project Manager',
+        lastName: 'One',
+        phone: '2234567890',
+        roleName: 'pm',
+      },
+      {
+        email: 'pm2@example.com',
+        password: 'password',
+        firstName: 'Project Manager',
+        lastName: 'Two',
+        phone: '2234567891',
+        roleName: 'pm',
+      },
+      // Supervisor users
+      {
+        email: 'supervisor1@example.com',
+        password: 'password',
+        firstName: 'Supervisor',
+        lastName: 'One',
+        phone: '3234567890',
+        roleName: 'supervisor',
+      },
+      {
+        email: 'supervisor2@example.com',
+        password: 'password',
+        firstName: 'Supervisor',
+        lastName: 'Two',
+        phone: '3234567891',
+        roleName: 'supervisor',
+      },
+    ];
+
+    // Get all roles
+    const rolesData = await databaseService.query('SELECT role_id, name FROM roles');
+    const roleMap = {};
+    rolesData.forEach((role) => {
+      roleMap[role.name] = role.role_id;
+    });
+
+    // Seed each user
+    for (const user of usersToSeed) {
+      const existingUser = await databaseService.query(
+        'SELECT user_id FROM users WHERE email = ?',
+        [user.email]
+      );
+
+      if (existingUser.length > 0) {
+        console.log(`User ${user.email} already exists. Skipping.`);
+        continue;
+      }
+
+      const roleId = roleMap[user.roleName];
+      if (!roleId) {
+        console.log(`Role ${user.roleName} not found. Skipping user ${user.email}.`);
+        continue;
+      }
+
+      const hashedPassword = await bcrypt.hash(user.password, 10);
+
+      await databaseService.execute(
+        `INSERT INTO users (email, password, first_name, last_name, phone, role_id, is_active)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [user.email, hashedPassword, user.firstName, user.lastName, user.phone, roleId, true]
+      );
+      console.log(`User ${user.email} (${user.roleName}) created.`);
     }
 
-    const hashedPassword = await bcrypt.hash('admin123', 10);
-
-    const roles = await databaseService.query('SELECT role_id FROM roles WHERE name = ?', [
-      'admin',
-    ]);
-
-    if (roles.length === 0) {
-      throw new Error('Admin role not found. Seed roles failed?');
-    }
-
-    const adminRoleId = roles[0].role_id;
-
-    await databaseService.execute(
-      `INSERT INTO users (email, password, first_name, last_name, phone, role_id, is_active)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      ['admin@example.com', hashedPassword, 'Admin', 'User', '1234567890', adminRoleId, true]
-    );
-    console.log('Default admin user created.');
+    console.log('Default users seeded.');
   }
 }
 

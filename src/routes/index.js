@@ -15,6 +15,7 @@ import supplierRouter from '../modules/app/supplier/router.js';
 import pricingRouter from '../modules/home/pricing/routes.js';
 import reportRouter from '../modules/app/report/routes.js';
 import projectMaterialRequirementRouter from '../modules/app/project-material-requirement/router.js';
+import notificationRouter from '../modules/app/notification/router.js';
 
 class MainRouter {
   constructor() {
@@ -49,6 +50,7 @@ class MainRouter {
       authMiddleware.isAuthenticated,
       projectMaterialRequirementRouter
     );
+    this.router.use('/app/notification', authMiddleware.isAuthenticated, notificationRouter);
   }
 
   getRouter() {

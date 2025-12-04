@@ -1,5 +1,8 @@
 import BaseService from '../../../services/index.js';
 import pmrRepository from '../../../repositories/project-material-requirement/index.js';
+import notificationService from '../../../services/notification/index.js';
+import userRepository from '../../../repositories/user/index.js';
+import materialRepository from '../../../repositories/material/index.js';
 
 class ProjectMaterialRequirementService extends BaseService {
   async getRequirementsByProjectId(projectId) {
@@ -42,7 +45,22 @@ class ProjectMaterialRequirementService extends BaseService {
     };
 
     const insertId = await pmrRepository.createOne(prepareData, userId);
-    return await this.getRequirementById(insertId);
+    const newRequirement = await this.getRequirementById(insertId);
+
+    // Create notification
+    const user = await userRepository.getOneById(userId);
+    const material = await materialRepository.getOneById(data.material_id);
+    if (user && material) {
+      await notificationService.notifyOnCRUD(
+        'created',
+        'Project Material Requirement',
+        material.name,
+        userId,
+        `${user.first_name} ${user.last_name}`
+      );
+    }
+
+    return newRequirement;
   }
 
   async update(id, data, userId) {
@@ -93,12 +111,42 @@ class ProjectMaterialRequirementService extends BaseService {
     };
 
     await pmrRepository.updateOneById(id, prepareData, userId);
-    return await this.getRequirementById(id);
+    const updatedRequirement = await this.getRequirementById(id);
+
+    // Create notification
+    const user = await userRepository.getOneById(userId);
+    const material = await materialRepository.getOneById(data.material_id || existing.material_id);
+    if (user && material) {
+      await notificationService.notifyOnCRUD(
+        'updated',
+        'Project Material Requirement',
+        material.name,
+        userId,
+        `${user.first_name} ${user.last_name}`
+      );
+    }
+
+    return updatedRequirement;
   }
 
   async deleteRequirement(id, userId) {
-    await this.getRequirementById(id);
-    return await pmrRepository.deleteOneById(id, userId);
+    const existing = await this.getRequirementById(id);
+    const result = await pmrRepository.deleteOneById(id, userId);
+
+    // Create notification
+    const user = await userRepository.getOneById(userId);
+    const material = await materialRepository.getOneById(existing.material_id);
+    if (user && material) {
+      await notificationService.notifyOnCRUD(
+        'deleted',
+        'Project Material Requirement',
+        material.name,
+        userId,
+        `${user.first_name} ${user.last_name}`
+      );
+    }
+
+    return result;
   }
 }
 
