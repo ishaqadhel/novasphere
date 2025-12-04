@@ -227,11 +227,144 @@ novasphere/
 - `npm run dev` - Start the application in development mode with watch
 - `npm run migrate` - Run database migrations
 - `npm run seed` - Seed the database with initial data
+- `npm run etl` - Run ETL script to load TSV data
 - `npm run db:reset` - Reset database (migrate + seed)
+- `npm run db:full-reset` - Full database reset (migrate + seed + ETL)
 - `npm run lint` - Run ESLint
 - `npm run lint:fix` - Fix ESLint issues
 - `npm run format` - Format code with Prettier
 - `npm run format:check` - Check code formatting
+
+## ETL Process
+
+The application includes an ETL (Extract, Transform, Load) script to import data from TSV files into the database.
+
+### TSV Files Required
+
+Place the following TSV files in the directory:
+`../ntust-graduate-ece-114-CT5805701-assignment-3/novasphere-files/`
+
+1. **companies.tsv** - Contains company/supplier information (500 records)
+2. **materials.tsv** - Contains material catalog with units and pricing (458 records)
+3. **transactions.tsv** - Contains transaction history (51,947 records)
+
+### Running the ETL Script
+
+**Prerequisites:**
+- Database must be migrated and seeded first
+- TSV files must be present at the expected location
+
+**Steps:**
+
+1. **Reset database with base data**
+   ```bash
+   npm run db:reset
+   ```
+
+2. **Run ETL script**
+   ```bash
+   npm run etl
+   ```
+
+3. **Or run all in sequence**
+   ```bash
+   npm run db:full-reset
+   ```
+
+### What the ETL Script Does
+
+1. **Seeds Material Categories**: Creates 7 categories (Products, Equipment, Machinery, Labor types, Other)
+
+2. **Loads Suppliers**: Imports company data from `companies.tsv` into the `suppliers` table
+   - Maps company information to supplier records
+   - Validates required fields (name, email, phone, address)
+   - Skips duplicates based on supplier name
+
+3. **Loads Materials**: Imports materials from `materials.tsv` into the `materials` table
+   - **Filters out** materials with unit="Day" or unit="Hour" (labor services)
+   - Auto-categorizes materials based on item names
+   - Associates materials with normalized unit lookup table
+   - Excludes ~22 materials with Day/Hour units
+
+4. **Creates Projects by Year**: Generates one project per year from transaction dates
+   - Project naming: "Import Project YYYY"
+   - Date range: Based on transaction data (1959-2025)
+   - Sets all projects to "In Progress" status
+
+5. **Loads Material Requirements**: Imports transactions into `project_material_requirements`
+   - Maps transactions to appropriate projects by year
+   - Links materials and suppliers using name matching
+   - Associates normalized units from lookup table
+   - Sets all requirements to "Delivered" status
+   - Records quantity, price, and transaction date
+
+### Unit Normalization
+
+The ETL script normalizes unit names from the TSV files:
+- **Piece** / **piece** → **Piece**
+- **One test** / **one test** → **One Test**
+- Other units preserved as-is
+
+Units available: 900㎠, Bag, B.㎥, C.㎥, kg, km, L, L.㎥, m, m², ㎥, Metric Ton, One Test, Pair, Piece, root, Set, Trip
+
+### ETL Output
+
+After successful execution, you'll see a summary:
+```
+=== ETL Summary ===
+Material Categories      : 7 records
+Suppliers                : 500 records
+Materials                : 436 records
+Units                    : 18 records
+Projects                 : 67 records
+Material Requirements    : ~51,000 records
+```
+
+### Troubleshooting ETL
+
+**File not found error:**
+- Verify TSV files exist in the correct directory
+- Check file permissions
+- Ensure path is correct: `../ntust-graduate-ece-114-CT5805701-assignment-3/novasphere-files/`
+
+**Duplicate key error:**
+- Run `npm run db:reset` before ETL
+- ETL script checks for duplicates but requires clean slate
+
+**Foreign key constraint error:**
+- Ensure seed script ran successfully
+- Check that lookup tables (statuses, units, categories) are populated
+- Verify `npm run seed` completed without errors
+
+**Performance notes:**
+- ETL processes ~52,000 transactions
+- Progress updates shown every 5,000 records
+- Typical execution time: 5-10 minutes depending on system
+
+### ETL Data Mapping
+
+| TSV File | Database Table | Key Mappings |
+|----------|---------------|--------------|
+| companies.tsv | suppliers | company_id preserved as reference, name/email/phone/address mapped |
+| materials.tsv | materials | material_id preserved, Item → name, auto-categorized into 7 categories |
+| materials.tsv | project_material_requirement_units | Unit extracted and normalized (18 unique units, excluding Day/Hour) |
+| transactions.tsv | projects | Year extracted → "Import Project YYYY" (one project per year) |
+| transactions.tsv | project_material_requirements | All transaction fields mapped, status set to Delivered, unit linked via lookup |
+
+### Database Schema Changes
+
+The ETL implementation includes a new normalized units system:
+
+**New Table**: `project_material_requirement_units`
+- `unit_id` (PK)
+- `name` (UNIQUE)
+- `is_active`, timestamps, soft delete fields
+
+**Modified Table**: `project_material_requirements`
+- **Before**: `unit VARCHAR(50)` (free text)
+- **After**: `unit_id INT` (FK to project_material_requirement_units)
+
+This normalization ensures data consistency and provides dropdown selection in the UI.
 
 ## Environment Variables
 
