@@ -12,23 +12,66 @@
     <!-- Sidebar -->
     <div class="bg-dark text-white p-3 flex-shrink-0" style="width: 250px; min-width: 250px;">
       <h4 class="mb-4">Novasphere</h4>
-      <ul class="nav nav-pills flex-column">
-        <li class="nav-item"><a href="/app/dashboard" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-        <li class="nav-item"><a href="/app/material-category" class="nav-link text-white"><i class="bi bi-folder"></i> Material Categories</a></li>
-        <li class="nav-item"><a href="/app/material" class="nav-link text-white"><i class="bi bi-box-seam"></i> Materials</a></li>
-        <li class="nav-item"><a href="/app/project" class="nav-link text-white active"><i class="bi bi-building"></i> Projects</a></li>
+            <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <a href="/app/dashboard" class="nav-link text-white">
+            <i class="bi bi-speedometer2"></i> Dashboard
+          </a>
+        </li>
+        {{#permissions.canAccessMaterialCategory}}
+        <li class="nav-item">
+          <a href="/app/material-category" class="nav-link text-white">
+            <i class="bi bi-folder"></i> Material Categories
+          </a>
+        </li>
+        {{/permissions.canAccessMaterialCategory}}
+        {{#permissions.canAccessMaterial}}
+        <li class="nav-item">
+          <a href="/app/material" class="nav-link text-white">
+            <i class="bi bi-box-seam"></i> Materials
+          </a>
+        </li>
+        {{/permissions.canAccessMaterial}}
+        {{#permissions.canAccessProject}}
+        <li class="nav-item">
+          <a href="/app/project" class="nav-link text-white">
+            <i class="bi bi-building"></i> Projects
+          </a>
+        </li>
+        {{/permissions.canAccessProject}}
+        {{#permissions.canAccessProjectTask}}
+        <li class="nav-item">
+          <a href="/app/project-task" class="nav-link text-white active">
+            <i class="bi bi-list-task"></i> Project Tasks
+          </a>
+        </li>
+        {{/permissions.canAccessProjectTask}}
+        {{#permissions.canAccessSupplier}}
         <li class="nav-item">
           <a href="/app/supplier" class="nav-link text-white">
             <i class="bi bi-shop"></i> Suppliers
           </a>
         </li>
+        {{/permissions.canAccessSupplier}}
+        {{#permissions.canAccessReport}}
         <li class="nav-item">
           <a href="/app/report" class="nav-link text-white">
             <i class="bi bi-graph-up"></i> Reports
           </a>
         </li>
-        <li class="nav-item"><a href="/app/user" class="nav-link text-white"><i class="bi bi-people"></i> Users</a></li>
-        <li class="nav-item"><a href="/app/notification" class="nav-link text-white"><i class="bi bi-bell"></i> Notifications</a></li>
+        {{/permissions.canAccessReport}}
+        {{#permissions.canAccessUser}}
+        <li class="nav-item">
+          <a href="/app/user" class="nav-link text-white">
+            <i class="bi bi-people"></i> Users
+          </a>
+        </li>
+        {{/permissions.canAccessUser}}
+        <li class="nav-item">
+          <a href="/app/notification" class="nav-link text-white">
+            <i class="bi bi-bell"></i> Notifications
+          </a>
+        </li>
       </ul>
       <hr class="text-white">
       <div class="mt-auto pt-4">
@@ -118,7 +161,9 @@
               <!-- BUTTON GROUP -->
               <div class="d-flex gap-2">
                 {{#isView}}
+                  {{#permissions.canEditProjectTask}}
                   <a href="/app/project-task/{{ task.project_task_id }}/edit" class="btn btn-warning px-4">Edit</a>
+                  {{/permissions.canEditProjectTask}}
                   <a href="/app/project-task?project_id={{ project.project_id }}" class="btn btn-secondary px-4">Back</a>
                 {{/isView}}
 

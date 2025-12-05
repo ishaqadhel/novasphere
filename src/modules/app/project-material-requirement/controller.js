@@ -84,6 +84,7 @@ class ProjectMaterialRequirementController extends BaseController {
         statuses,
         units,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         currentPath: '/app/project',
       });
     } catch (error) {

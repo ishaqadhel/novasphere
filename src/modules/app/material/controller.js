@@ -23,6 +23,7 @@ class MaterialController extends BaseController {
         materials,
         hasMaterials: materials.length > 0,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load materials', 500, error);
@@ -45,6 +46,7 @@ class MaterialController extends BaseController {
         categories,
         error: null,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load create form', 500, error);
@@ -77,6 +79,7 @@ class MaterialController extends BaseController {
         categories,
         error: error.message,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     }
   }
@@ -105,6 +108,7 @@ class MaterialController extends BaseController {
         categories: categoriesWithSelection,
         error: null,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load material', 500, error);
@@ -135,6 +139,7 @@ class MaterialController extends BaseController {
         categories: categoriesWithSelection,
         error: null,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load edit form', 500, error);
@@ -177,6 +182,7 @@ class MaterialController extends BaseController {
         categories: categoriesWithSelection,
         error: error.message,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     }
   }

@@ -29,6 +29,7 @@ class NotificationController extends BaseController {
         hasNotifications: formattedNotifications.length > 0,
         unreadCount: unreadData.count,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load notifications', 500, error);

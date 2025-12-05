@@ -15,16 +15,28 @@
       <h4 class="mb-4">Novasphere</h4>
       <ul class="nav nav-pills flex-column">
         <li class="nav-item"><a href="/app/dashboard" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+        {{#permissions.canAccessMaterialCategory}}
         <li class="nav-item"><a href="/app/material-category" class="nav-link text-white"><i class="bi bi-folder"></i> Material Categories</a></li>
+        {{/permissions.canAccessMaterialCategory}}
+        {{#permissions.canAccessMaterial}}
         <li class="nav-item"><a href="/app/material" class="nav-link text-white"><i class="bi bi-box-seam"></i> Materials</a></li>
+        {{/permissions.canAccessMaterial}}
+        {{#permissions.canAccessProject}}
         <li class="nav-item"><a href="/app/project" class="nav-link text-white"><i class="bi bi-building"></i> Projects</a></li>
+        {{/permissions.canAccessProject}}
+        {{#permissions.canAccessSupplier}}
         <li class="nav-item"><a href="/app/supplier" class="nav-link text-white active"><i class="bi bi-shop"></i> Suppliers</a></li>
+        {{/permissions.canAccessSupplier}}
+        {{#permissions.canAccessReport}}
         <li class="nav-item">
           <a href="/app/report" class="nav-link text-white">
             <i class="bi bi-graph-up"></i> Reports
           </a>
         </li>
+        {{/permissions.canAccessReport}}
+        {{#permissions.canAccessUser}}
         <li class="nav-item"><a href="/app/user" class="nav-link text-white"><i class="bi bi-people"></i> Users</a></li>
+        {{/permissions.canAccessUser}}
         <li class="nav-item"><a href="/app/notification" class="nav-link text-white"><i class="bi bi-bell"></i> Notifications</a></li>
       </ul>
       <hr class="text-white">
@@ -47,9 +59,11 @@
 
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h4>Supplier List</h4>
+          {{#permissions.canCreateSupplier}}
           <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#addSupplierCard">
             <i class="bi bi-plus-circle"></i> Add Supplier
           </button>
+          {{/permissions.canCreateSupplier}}
         </div>
 
         <!-- Form Add Supplier -->
@@ -163,13 +177,16 @@
                       </td>
                       <td class="text-end pe-4">
                         <div class="btn-group btn-group-sm">
+                          {{#permissions.canEditSupplier}}
                           <button class="btn btn-outline-primary"
                             hx-get="/app/supplier/edit/{{ supplier_id }}"
                             hx-target="closest tr"
                             hx-swap="outerHTML">
                             <i class="bi bi-pencil"></i>
                           </button>
-                          
+                          {{/permissions.canEditSupplier}}
+
+                          {{#permissions.canDeleteSupplier}}
                           <button class="btn btn-outline-danger"
                             hx-delete="/app/supplier/{{ supplier_id }}"
                             hx-target="closest tr"
@@ -177,6 +194,7 @@
                             hx-confirm="Are you sure you want to delete {{name}}?">
                             <i class="bi bi-trash"></i>
                           </button>
+                          {{/permissions.canDeleteSupplier}}
                         </div>
                       </td>
                     </tr>

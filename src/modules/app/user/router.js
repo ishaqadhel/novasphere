@@ -1,5 +1,6 @@
 import express from 'express';
 import userController from './controller.js';
+import authMiddleware from '../../../middlewares/index.js';
 
 class UserRouter {
   constructor() {
@@ -8,13 +9,20 @@ class UserRouter {
   }
 
   initializeRoutes() {
+    // Read operations (all authenticated users can access)
     this.router.get('/', userController.index);
-    this.router.get('/create', userController.create);
-    this.router.post('/', userController.store);
     this.router.get('/:id', userController.show);
-    this.router.get('/:id/edit', userController.edit);
-    this.router.post('/:id', userController.update);
-    this.router.post('/:id/delete', userController.destroy);
+
+    // Write operations (admin only)
+    this.router.get('/create', authMiddleware.canAccess('user', 'create'), userController.create);
+    this.router.post('/', authMiddleware.canAccess('user', 'create'), userController.store);
+    this.router.get('/:id/edit', authMiddleware.canAccess('user', 'update'), userController.edit);
+    this.router.post('/:id', authMiddleware.canAccess('user', 'update'), userController.update);
+    this.router.post(
+      '/:id/delete',
+      authMiddleware.canAccess('user', 'delete'),
+      userController.destroy
+    );
   }
 
   getRouter() {

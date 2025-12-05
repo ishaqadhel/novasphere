@@ -87,6 +87,7 @@ class ProjectController extends BaseController {
         projects,
         hasProjects: projects.length > 0,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         searchQuery: search,
         currentPath: '/app/project',
       });
@@ -112,6 +113,7 @@ class ProjectController extends BaseController {
         users: pmUsers, // Passing filtered users
         statuses: statuses,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         currentPath: '/app/project',
       });
     } catch (error) {
@@ -157,6 +159,7 @@ class ProjectController extends BaseController {
         statuses: statusesWithSelection,
         error: error.message,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         currentPath: '/app/project',
       });
     }
@@ -191,6 +194,7 @@ class ProjectController extends BaseController {
         users: usersWithSelection,
         statuses: statusesWithSelection,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         currentPath: '/app/project',
       });
     } catch (error) {
@@ -232,6 +236,7 @@ class ProjectController extends BaseController {
         title: `Project: ${project.name}`,
         project,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         currentPath: '/app/project',
       });
     } catch (error) {

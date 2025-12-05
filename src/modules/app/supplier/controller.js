@@ -19,6 +19,7 @@ class SupplierController extends BaseController {
         suppliers,
         hasSuppliers: suppliers.length > 0,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load suppliers', 500, error);

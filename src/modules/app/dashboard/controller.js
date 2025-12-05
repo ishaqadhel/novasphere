@@ -30,6 +30,7 @@ class DashboardController extends BaseController {
         title: 'Dashboard',
         stats,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load dashboard', 500, error);

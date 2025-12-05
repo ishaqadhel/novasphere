@@ -13,23 +13,66 @@
     <!-- Sidebar -->
     <div class="bg-dark text-white p-3" style="width: 250px;">
       <h4 class="mb-4">Novasphere</h4>
-      <ul class="nav nav-pills flex-column">
-        <li class="nav-item"><a href="/app/dashboard" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-        <li class="nav-item"><a href="/app/material-category" class="nav-link text-white"><i class="bi bi-folder"></i> Material Categories</a></li>
-        <li class="nav-item"><a href="/app/material" class="nav-link text-white"><i class="bi bi-box-seam"></i> Materials</a></li>
-        <li class="nav-item"><a href="/app/project" class="nav-link text-white active"><i class="bi bi-building"></i> Projects</a></li>
+            <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <a href="/app/dashboard" class="nav-link text-white">
+            <i class="bi bi-speedometer2"></i> Dashboard
+          </a>
+        </li>
+        {{#permissions.canAccessMaterialCategory}}
+        <li class="nav-item">
+          <a href="/app/material-category" class="nav-link text-white">
+            <i class="bi bi-folder"></i> Material Categories
+          </a>
+        </li>
+        {{/permissions.canAccessMaterialCategory}}
+        {{#permissions.canAccessMaterial}}
+        <li class="nav-item">
+          <a href="/app/material" class="nav-link text-white">
+            <i class="bi bi-box-seam"></i> Materials
+          </a>
+        </li>
+        {{/permissions.canAccessMaterial}}
+        {{#permissions.canAccessProject}}
+        <li class="nav-item">
+          <a href="/app/project" class="nav-link text-white active">
+            <i class="bi bi-building"></i> Projects
+          </a>
+        </li>
+        {{/permissions.canAccessProject}}
+        {{#permissions.canAccessProjectTask}}
+        <li class="nav-item">
+          <a href="/app/project-task" class="nav-link text-white">
+            <i class="bi bi-list-task"></i> Project Tasks
+          </a>
+        </li>
+        {{/permissions.canAccessProjectTask}}
+        {{#permissions.canAccessSupplier}}
         <li class="nav-item">
           <a href="/app/supplier" class="nav-link text-white">
             <i class="bi bi-shop"></i> Suppliers
           </a>
         </li>
+        {{/permissions.canAccessSupplier}}
+        {{#permissions.canAccessReport}}
         <li class="nav-item">
           <a href="/app/report" class="nav-link text-white">
             <i class="bi bi-graph-up"></i> Reports
           </a>
         </li>
-        <li class="nav-item"><a href="/app/user" class="nav-link text-white"><i class="bi bi-people"></i> Users</a></li>
-        <li class="nav-item"><a href="/app/notification" class="nav-link text-white"><i class="bi bi-bell"></i> Notifications</a></li>
+        {{/permissions.canAccessReport}}
+        {{#permissions.canAccessUser}}
+        <li class="nav-item">
+          <a href="/app/user" class="nav-link text-white">
+            <i class="bi bi-people"></i> Users
+          </a>
+        </li>
+        {{/permissions.canAccessUser}}
+        <li class="nav-item">
+          <a href="/app/notification" class="nav-link text-white">
+            <i class="bi bi-bell"></i> Notifications
+          </a>
+        </li>
       </ul>
       <hr class="text-white">
       <div class="mt-auto pt-4">
@@ -48,7 +91,9 @@
       <div class="p-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h4>Project List</h4>
+          {{#permissions.canCreateProject}}
           <a href="/app/project/create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Add Project</a>
+          {{/permissions.canCreateProject}}
         </div>
 
         <!-- Search Bar -->
@@ -121,17 +166,21 @@
                           <a href="/app/project/{{ project_id }}" class="btn btn-outline-primary" title="View Dashboard">
                             <i class="bi bi-eye"></i>
                           </a>
+                          {{#permissions.canEditProject}}
                           <a href="/app/project/{{ project_id }}/edit" class="btn btn-outline-warning" title="Edit">
                             <i class="bi bi-pencil"></i>
                           </a>
-                          <button class="btn btn-outline-danger" 
-                                  hx-post="/app/project/{{ project_id }}/delete" 
-                                  hx-target="#table-body" 
-                                  hx-select="#table-body" 
+                          {{/permissions.canEditProject}}
+                          {{#permissions.canDeleteProject}}
+                          <button class="btn btn-outline-danger"
+                                  hx-post="/app/project/{{ project_id }}/delete"
+                                  hx-target="#table-body"
+                                  hx-select="#table-body"
                                   hx-swap="outerHTML"
                                   hx-confirm="Delete this project?">
                             <i class="bi bi-trash"></i>
                           </button>
+                          {{/permissions.canDeleteProject}}
                         </div>
                       </td>
                     </tr>

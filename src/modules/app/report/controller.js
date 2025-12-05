@@ -6,6 +6,7 @@ class ReportController extends BaseController {
       return this.renderView(res, 'app/report/home', {
         title: 'Reports & Analytics',
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load reports', 500, error);
