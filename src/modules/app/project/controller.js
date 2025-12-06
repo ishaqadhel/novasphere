@@ -1,3 +1,4 @@
+/* global Intl */
 import BaseController from '../../../controllers/index.js';
 import projectService from './service.js';
 import moment from 'moment';

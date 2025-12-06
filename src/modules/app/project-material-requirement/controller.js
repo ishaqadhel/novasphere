@@ -1,3 +1,4 @@
+/* global Intl */
 import BaseController from '../../../controllers/index.js';
 import pmrService from './service.js';
 import projectRepository from '../../../repositories/project/index.js';
@@ -6,11 +7,6 @@ import supplierRepository from '../../../repositories/supplier/index.js';
 import pmrStatusRepository from '../../../repositories/project-material-requirement-status/index.js';
 import pmrUnitRepository from '../../../repositories/project-material-requirement-unit/index.js';
 import moment from 'moment';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 class ProjectMaterialRequirementController extends BaseController {
   constructor() {

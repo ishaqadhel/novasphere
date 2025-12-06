@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} - Novasphere</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+  <div class="d-flex min-vh-100">
+    <!-- Sidebar -->
+    <div class="bg-dark text-white p-3 flex-shrink-0" style="width: 250px; min-width: 250px;">
+      <h4 class="mb-4">Novasphere</h4>
+      <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+          <a href="/app/dashboard" class="nav-link text-white">
+            <i class="bi bi-speedometer2"></i> Dashboard
+          </a>
+        </li>
+        {{#permissions.canAccessMaterialCategory}}
+        <li class="nav-item">
+          <a href="/app/material-category" class="nav-link text-white">
+            <i class="bi bi-folder"></i> Material Categories
+          </a>
+        </li>
+        {{/permissions.canAccessMaterialCategory}}
+        {{#permissions.canAccessMaterial}}
+        <li class="nav-item">
+          <a href="/app/material" class="nav-link text-white">
+            <i class="bi bi-box-seam"></i> Materials
+          </a>
+        </li>
+        {{/permissions.canAccessMaterial}}
+        {{#permissions.canAccessProject}}
+        <li class="nav-item">
+          <a href="/app/project" class="nav-link text-white">
+            <i class="bi bi-building"></i> Projects
+          </a>
+        </li>
+        {{/permissions.canAccessProject}}
+        {{#permissions.canAccessProjectTask}}
+        <li class="nav-item">
+          <a href="/app/project-task" class="nav-link text-white">
+            <i class="bi bi-list-task"></i> Project Tasks
+          </a>
+        </li>
+        {{/permissions.canAccessProjectTask}}
+        {{#permissions.canAccessSupplier}}
+        <li class="nav-item">
+          <a href="/app/supplier" class="nav-link text-white">
+            <i class="bi bi-shop"></i> Suppliers
+          </a>
+        </li>
+        {{/permissions.canAccessSupplier}}
+        {{#permissions.canAccessReport}}
+        <li class="nav-item">
+          <a href="/app/report" class="nav-link text-white active">
+            <i class="bi bi-graph-up"></i> Reports
+          </a>
+        </li>
+        {{/permissions.canAccessReport}}
+        {{#permissions.canAccessUser}}
+        <li class="nav-item">
+          <a href="/app/user" class="nav-link text-white">
+            <i class="bi bi-people"></i> Users
+          </a>
+        </li>
+        {{/permissions.canAccessUser}}
+        <li class="nav-item">
+          <a href="/app/notification" class="nav-link text-white">
+            <i class="bi bi-bell"></i> Notifications
+          </a>
+        </li>
+      </ul>
+      <hr class="text-white">
+      <div class="mt-auto pt-4">
+        <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
+        <p class="mb-1"><small class="text-muted">{{ user.email }}</small></p>
+        <form action="/auth/logout" method="POST" class="mt-2">
+          <button type="submit" class="btn btn-sm btn-outline-light w-100">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-grow-1" style="min-width: 0;">
+      <nav class="navbar navbar-light bg-light border-bottom px-4">
+        <div class="container-fluid">
+          <h5 class="mb-0">{{ title }}</h5>
+          <span class="navbar-text">Welcome, {{ user.first_name }}!</span>
+        </div>
+      </nav>
+
+      <div class="p-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4><i class="bi bi-box-seam me-2"></i>Material Usage Report</h4>
+            <p class="text-muted mb-0">Analysis of material consumption across projects</p>
+          </div>
+          <a href="/app/report" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Reports
+          </a>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row g-4 mb-4">
+          <div class="col-md-4">
+            <div class="card border-primary h-100">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="text-muted mb-1">Total Materials</h6>
+                    <h3 class="mb-0">{{ reportData.stats.total_materials }}</h3>
+                  </div>
+                  <div class="text-primary">
+                    <i class="bi bi-box-seam" style="font-size: 2rem;"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-success h-100">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="text-muted mb-1">Categories</h6>
+                    <h3 class="mb-0">{{ reportData.stats.total_categories }}</h3>
+                  </div>
+                  <div class="text-success">
+                    <i class="bi bi-folder" style="font-size: 2rem;"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-info h-100">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="text-muted mb-1">Active Materials</h6>
+                    <h3 class="mb-0">{{ reportData.stats.active_materials }}</h3>
+                  </div>
+                  <div class="text-info">
+                    <i class="bi bi-check-circle" style="font-size: 2rem;"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Most Used Materials -->
+        <div class="card mb-4">
+          <div class="card-header bg-light">
+            <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>Most Used Materials (Top 20)</h6>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Material Name</th>
+                    <th>Category</th>
+                    <th>Usage Count</th>
+                    <th>Total Quantity</th>
+                    <th>Good Quantity</th>
+                    <th>Bad Quantity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#reportData.mostUsedMaterials}}
+                  <tr>
+                    <td>{{ material_id }}</td>
+                    <td><strong>{{ material_name }}</strong></td>
+                    <td><span class="badge bg-secondary">{{ category_name }}</span></td>
+                    <td>{{ usage_count }} projects</td>
+                    <td>{{ total_quantity }}</td>
+                    <td>{{ total_good_quantity }}</td>
+                    <td>{{ total_bad_quantity }}</td>
+                  </tr>
+                  {{/reportData.mostUsedMaterials}}
+                  {{^reportData.mostUsedMaterials}}
+                  <tr>
+                    <td colspan="7" class="text-center text-muted">No material usage data found</td>
+                  </tr>
+                  {{/reportData.mostUsedMaterials}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <!-- Materials by Category -->
+          <div class="col-md-6">
+            <div class="card h-100">
+              <div class="card-header bg-light">
+                <h6 class="mb-0"><i class="bi bi-pie-chart me-2"></i>Materials by Category</h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-sm">
+                    <thead>
+                      <tr>
+                        <th>Category</th>
+                        <th>Materials</th>
+                        <th>Projects Using</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {{#reportData.materialsByCategory}}
+                      <tr>
+                        <td><strong>{{ category_name }}</strong></td>
+                        <td>{{ material_count }}</td>
+                        <td>{{ projects_using }}</td>
+                      </tr>
+                      {{/reportData.materialsByCategory}}
+                      {{^reportData.materialsByCategory}}
+                      <tr>
+                        <td colspan="3" class="text-center text-muted">No data available</td>
+                      </tr>
+                      {{/reportData.materialsByCategory}}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Material Requirements by Project -->
+          <div class="col-md-6">
+            <div class="card h-100">
+              <div class="card-header bg-light">
+                <h6 class="mb-0"><i class="bi bi-building me-2"></i>Top Projects by Material Usage</h6>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-sm">
+                    <thead>
+                      <tr>
+                        <th>Project</th>
+                        <th>Materials</th>
+                        <th>Fulfillment</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {{#reportData.materialsByProject}}
+                      <tr>
+                        <td><strong>{{ project_name }}</strong></td>
+                        <td>{{ materials_count }} items</td>
+                        <td>
+                          <span class="badge bg-info">{{ fulfillment_rate }}%</span>
+                        </td>
+                      </tr>
+                      {{/reportData.materialsByProject}}
+                      {{^reportData.materialsByProject}}
+                      <tr>
+                        <td colspan="3" class="text-center text-muted">No data available</td>
+                      </tr>
+                      {{/reportData.materialsByProject}}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

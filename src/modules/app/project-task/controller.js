@@ -143,7 +143,6 @@ class ProjectTaskController extends BaseController {
       await projectTaskService.createTask(payload, userId);
       return this.redirect(res, `/app/project-task?project_id=${project_id}`);
     } catch (error) {
-      const { project_id } = req.query;
       return this.sendError(res, 'Failed to create task: ' + error.message, 500, error);
     }
   }
