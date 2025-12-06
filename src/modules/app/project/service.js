@@ -1,5 +1,7 @@
 import BaseService from '../../../services/index.js';
 import projectRepository from '../../../repositories/project/index.js';
+import notificationService from '../../../services/notification/index.js';
+import userRepository from '../../../repositories/user/index.js';
 
 class ProjectService extends BaseService {
   async getAllProjects() {
@@ -40,7 +42,21 @@ class ProjectService extends BaseService {
       ]);
 
       const enrichedData = { ...data, created_by: userId };
-      return await projectRepository.createOne(enrichedData);
+      const projectId = await projectRepository.createOne(enrichedData);
+
+      // Create notification
+      const user = await userRepository.getOneById(userId);
+      if (user) {
+        await notificationService.notifyOnCRUD(
+          'created',
+          'Project',
+          data.name,
+          userId,
+          `${user.first_name} ${user.last_name}`
+        );
+      }
+
+      return projectId;
     } catch (error) {
       throw this.handleError(error, 'Failed to create project');
     }
@@ -57,9 +73,23 @@ class ProjectService extends BaseService {
         'end_date',
       ]);
 
-      await this.getProjectById(id);
+      const existing = await this.getProjectById(id);
       const enrichedData = { ...data, updated_by: userId };
-      return await projectRepository.updateOneById(id, enrichedData);
+      const result = await projectRepository.updateOneById(id, enrichedData);
+
+      // Create notification
+      const user = await userRepository.getOneById(userId);
+      if (user) {
+        await notificationService.notifyOnCRUD(
+          'updated',
+          'Project',
+          data.name || existing.name,
+          userId,
+          `${user.first_name} ${user.last_name}`
+        );
+      }
+
+      return result;
     } catch (error) {
       throw this.handleError(error, 'Failed to update project');
     }
@@ -67,8 +97,22 @@ class ProjectService extends BaseService {
 
   async deleteProject(id, userId) {
     try {
-      await this.getProjectById(id);
-      return await projectRepository.deleteOneById(id, userId);
+      const existing = await this.getProjectById(id);
+      const result = await projectRepository.deleteOneById(id, userId);
+
+      // Create notification
+      const user = await userRepository.getOneById(userId);
+      if (user) {
+        await notificationService.notifyOnCRUD(
+          'deleted',
+          'Project',
+          existing.name,
+          userId,
+          `${user.first_name} ${user.last_name}`
+        );
+      }
+
+      return result;
     } catch (error) {
       throw this.handleError(error, 'Failed to delete project');
     }

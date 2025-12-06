@@ -1,3 +1,4 @@
+/* global Intl */
 import BaseController from '../../../controllers/index.js';
 import projectService from './service.js';
 import moment from 'moment';
@@ -63,6 +64,14 @@ class ProjectController extends BaseController {
     };
   }
 
+  // Helper to filter Project Managers
+  _filterProjectManagers(users) {
+    return users.filter((u) => {
+      const role = u.role_name ? u.role_name.toLowerCase() : '';
+      return role === 'project manager' || role === 'pm' || role.includes('project manager');
+    });
+  }
+
   async index(req, res) {
     try {
       const search = req.query.search;
@@ -79,6 +88,7 @@ class ProjectController extends BaseController {
         projects,
         hasProjects: projects.length > 0,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         searchQuery: search,
         currentPath: '/app/project',
       });
@@ -90,6 +100,7 @@ class ProjectController extends BaseController {
   async create(req, res) {
     try {
       const users = await userRepository.getAll();
+      const pmUsers = this._filterProjectManagers(users); // Filter applied here
       const statuses = await projectStatusService.getAllActiveStatuses();
 
       const viewPath = path.join(__dirname, '../../../views/app/project/detail/index');
@@ -100,9 +111,10 @@ class ProjectController extends BaseController {
         formAction: '/app/project',
         submitButtonText: 'Create Project',
         project: { is_active_bool: true },
-        users: users,
+        users: pmUsers, // Passing filtered users
         statuses: statuses,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         currentPath: '/app/project',
       });
     } catch (error) {
@@ -119,10 +131,11 @@ class ProjectController extends BaseController {
       return this.redirect(res, '/app/project');
     } catch (error) {
       const users = await userRepository.getAll();
+      const pmUsers = this._filterProjectManagers(users); // Filter applied here too (for error re-render)
       const statuses = await projectStatusService.getAllActiveStatuses();
       const viewPath = path.join(__dirname, '../../../views/app/project/detail/index');
 
-      const usersWithSelection = users.map((u) => ({
+      const usersWithSelection = pmUsers.map((u) => ({
         ...u,
         selected: u.user_id == req.body.project_manager,
       }));
@@ -147,6 +160,7 @@ class ProjectController extends BaseController {
         statuses: statusesWithSelection,
         error: error.message,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         currentPath: '/app/project',
       });
     }
@@ -158,9 +172,10 @@ class ProjectController extends BaseController {
       [project] = this._formatProjectData([project]);
 
       const users = await userRepository.getAll();
+      const pmUsers = this._filterProjectManagers(users); // Filter applied here
       const statuses = await projectStatusService.getAllActiveStatuses();
 
-      const usersWithSelection = users.map((u) => ({
+      const usersWithSelection = pmUsers.map((u) => ({
         ...u,
         selected: u.user_id === project.project_manager,
       }));
@@ -180,6 +195,7 @@ class ProjectController extends BaseController {
         users: usersWithSelection,
         statuses: statusesWithSelection,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         currentPath: '/app/project',
       });
     } catch (error) {
@@ -221,6 +237,7 @@ class ProjectController extends BaseController {
         title: `Project: ${project.name}`,
         project,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         currentPath: '/app/project',
       });
     } catch (error) {

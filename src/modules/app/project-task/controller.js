@@ -60,6 +60,14 @@ class ProjectTaskController extends BaseController {
     };
   }
 
+  // Helper to filter Project Managers (Added)
+  _filterProjectManagers(users) {
+    return users.filter((u) => {
+      const role = u.role_name ? u.role_name.toLowerCase() : '';
+      return role === 'project manager' || role === 'pm' || role.includes('project manager');
+    });
+  }
+
   // 1. LIST TASKS
   async index(req, res) {
     try {
@@ -86,6 +94,7 @@ class ProjectTaskController extends BaseController {
         tasks,
         hasTasks: tasks.length > 0,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         searchQuery: search,
         currentPath: '/app/project',
       });
@@ -100,6 +109,7 @@ class ProjectTaskController extends BaseController {
       const { project_id } = req.query;
       const project = await projectService.getProjectById(project_id);
       const users = await userRepository.getAll();
+      const pmUsers = this._filterProjectManagers(users); // Filter applied here
       const statuses = await projectTaskStatusRepository.getAllActive();
 
       const viewPath = path.join(__dirname, '../../../views/app/project-task/detail/index');
@@ -112,9 +122,10 @@ class ProjectTaskController extends BaseController {
         submitButtonText: 'Create Task',
         task: { project_id: project_id },
         project,
-        users,
+        users: pmUsers, // Passing filtered users
         statuses,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         currentPath: '/app/project',
       });
     } catch (error) {
@@ -132,7 +143,6 @@ class ProjectTaskController extends BaseController {
       await projectTaskService.createTask(payload, userId);
       return this.redirect(res, `/app/project-task?project_id=${project_id}`);
     } catch (error) {
-      const { project_id } = req.query;
       return this.sendError(res, 'Failed to create task: ' + error.message, 500, error);
     }
   }
@@ -147,9 +157,10 @@ class ProjectTaskController extends BaseController {
       [task] = this._formatTaskData([task]);
 
       const users = await userRepository.getAll();
+      const pmUsers = this._filterProjectManagers(users); // Filter applied here
       const statuses = await projectTaskStatusRepository.getAllActive();
 
-      const usersWithSelection = users.map((u) => ({
+      const usersWithSelection = pmUsers.map((u) => ({
         ...u,
         selected: u.user_id === task.assigned_to,
       }));
@@ -171,6 +182,7 @@ class ProjectTaskController extends BaseController {
         users: usersWithSelection,
         statuses: statusesWithSelection,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         currentPath: '/app/project',
       });
     } catch (error) {
@@ -188,9 +200,10 @@ class ProjectTaskController extends BaseController {
       [task] = this._formatTaskData([task]);
 
       const users = await userRepository.getAll();
+      const pmUsers = this._filterProjectManagers(users); // Filter applied here
       const statuses = await projectTaskStatusRepository.getAllActive();
 
-      const usersWithSelection = users.map((u) => ({
+      const usersWithSelection = pmUsers.map((u) => ({
         ...u,
         selected: u.user_id === task.assigned_to,
       }));
@@ -212,6 +225,7 @@ class ProjectTaskController extends BaseController {
         users: usersWithSelection,
         statuses: statusesWithSelection,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
         currentPath: '/app/project',
       });
     } catch (error) {

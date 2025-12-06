@@ -94,6 +94,12 @@ class ProjectRepository {
     const result = await databaseService.execute(query, [userId, id]);
     return result.affectedRows > 0;
   }
+
+  async count() {
+    const query = `SELECT COUNT(*) as count FROM ${this.tableName} WHERE deleted_at IS NULL`;
+    const result = await databaseService.query(query);
+    return result[0].count;
+  }
 }
 
 export default new ProjectRepository();

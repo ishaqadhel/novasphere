@@ -23,6 +23,7 @@ class MaterialController extends BaseController {
         materials,
         hasMaterials: materials.length > 0,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load materials', 500, error);
@@ -45,6 +46,7 @@ class MaterialController extends BaseController {
         categories,
         error: null,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load create form', 500, error);
@@ -53,13 +55,14 @@ class MaterialController extends BaseController {
 
   async store(req, res) {
     try {
+      const userId = this.getSessionUser(req).user_id;
       const data = {
         name: req.body.name,
         material_category_id: req.body.material_category_id,
         is_active: req.body.is_active === 'true' || req.body.is_active === true,
       };
 
-      await materialService.createMaterial(data);
+      await materialService.createMaterial(data, userId);
 
       return this.redirect(res, '/app/material');
     } catch (error) {
@@ -76,6 +79,7 @@ class MaterialController extends BaseController {
         categories,
         error: error.message,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     }
   }
@@ -104,6 +108,7 @@ class MaterialController extends BaseController {
         categories: categoriesWithSelection,
         error: null,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load material', 500, error);
@@ -134,6 +139,7 @@ class MaterialController extends BaseController {
         categories: categoriesWithSelection,
         error: null,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load edit form', 500, error);
@@ -142,6 +148,7 @@ class MaterialController extends BaseController {
 
   async update(req, res) {
     try {
+      const userId = this.getSessionUser(req).user_id;
       const { id } = req.params;
       const data = {
         name: req.body.name,
@@ -149,7 +156,7 @@ class MaterialController extends BaseController {
         is_active: req.body.is_active === 'true' || req.body.is_active === true,
       };
 
-      await materialService.updateMaterial(id, data);
+      await materialService.updateMaterial(id, data, userId);
 
       return this.redirect(res, '/app/material');
     } catch (error) {
@@ -175,14 +182,16 @@ class MaterialController extends BaseController {
         categories: categoriesWithSelection,
         error: error.message,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     }
   }
 
   async destroy(req, res) {
     try {
+      const userId = this.getSessionUser(req).user_id;
       const { id } = req.params;
-      await materialService.deleteMaterial(id);
+      await materialService.deleteMaterial(id, userId);
 
       return this.redirect(res, '/app/material');
     } catch (error) {

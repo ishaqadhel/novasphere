@@ -1,6 +1,7 @@
 import express from 'express';
 import projectController from './controller.js';
-import projectMaterialRequirementRouter from '../project-material-requirement/routes.js';
+import projectMaterialRequirementRouter from '../project-material-requirement/router.js';
+import authMiddleware from '../../../middlewares/index.js';
 
 class ProjectRouter {
   constructor() {
@@ -9,17 +10,35 @@ class ProjectRouter {
   }
 
   initializeRoutes() {
+    // Read operations (PM and Supervisor)
     this.router.get('/', projectController.index);
-    this.router.get('/create', projectController.create);
-    this.router.post('/', projectController.store);
-
-    // Project Materials Management - nested route (必須在 /:id 路由之前)
-    this.router.use('/:projectId/materials', projectMaterialRequirementRouter);
-
     this.router.get('/:id', projectController.show); // View Dashboard
-    this.router.get('/:id/edit', projectController.edit);
-    this.router.post('/:id', projectController.update);
-    this.router.post('/:id/delete', projectController.destroy);
+
+    // Write operations (PM only)
+    this.router.get(
+      '/create',
+      authMiddleware.canAccess('project', 'create'),
+      projectController.create
+    );
+    this.router.post('/', authMiddleware.canAccess('project', 'create'), projectController.store);
+    this.router.get(
+      '/:id/edit',
+      authMiddleware.canAccess('project', 'update'),
+      projectController.edit
+    );
+    this.router.post(
+      '/:id',
+      authMiddleware.canAccess('project', 'update'),
+      projectController.update
+    );
+    this.router.post(
+      '/:id/delete',
+      authMiddleware.canAccess('project', 'delete'),
+      projectController.destroy
+    );
+
+    // Nested router for project material requirements
+    this.router.use('/:projectId/materials', projectMaterialRequirementRouter);
   }
 
   getRouter() {

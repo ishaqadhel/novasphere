@@ -48,7 +48,7 @@
 
         <div class="text-center mt-3">
           <small class="text-muted">
-            Default: admin@example.com / admin123
+            Default: admin1@example.com / password
           </small>
         </div>
       </div>

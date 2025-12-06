@@ -22,6 +22,7 @@ class UserController extends BaseController {
         users,
         hasUsers: users.length > 0,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load users', 500, error);
@@ -44,6 +45,7 @@ class UserController extends BaseController {
         roles,
         error: null,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load create form', 500, error);
@@ -79,6 +81,7 @@ class UserController extends BaseController {
         roles,
         error: error.message,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     }
   }
@@ -107,6 +110,7 @@ class UserController extends BaseController {
         roles: rolesWithSelection,
         error: null,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load user', 500, error);
@@ -137,6 +141,7 @@ class UserController extends BaseController {
         roles: rolesWithSelection,
         error: null,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load edit form', 500, error);
@@ -182,6 +187,7 @@ class UserController extends BaseController {
         roles: rolesWithSelection,
         error: error.message,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
       });
     }
   }

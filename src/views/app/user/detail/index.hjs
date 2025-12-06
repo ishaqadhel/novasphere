@@ -19,35 +19,47 @@
             <i class="bi bi-speedometer2"></i> Dashboard
           </a>
         </li>
+        {{#permissions.canAccessMaterialCategory}}
         <li class="nav-item">
           <a href="/app/material-category" class="nav-link text-white">
             <i class="bi bi-folder"></i> Material Categories
           </a>
         </li>
+        {{/permissions.canAccessMaterialCategory}}
+        {{#permissions.canAccessMaterial}}
         <li class="nav-item">
           <a href="/app/material" class="nav-link text-white">
             <i class="bi bi-box-seam"></i> Materials
           </a>
         </li>
+        {{/permissions.canAccessMaterial}}
+        {{#permissions.canAccessProject}}
         <li class="nav-item"><a href="/app/project" class="nav-link text-white"><i class="bi bi-building"></i> Projects</a></li>
+        {{/permissions.canAccessProject}}
+        {{#permissions.canAccessSupplier}}
         <li class="nav-item">
           <a href="/app/supplier" class="nav-link text-white">
             <i class="bi bi-shop"></i> Suppliers
           </a>
         </li>
+        {{/permissions.canAccessSupplier}}
+        {{#permissions.canAccessReport}}
         <li class="nav-item">
           <a href="/app/report" class="nav-link text-white">
             <i class="bi bi-graph-up"></i> Reports
           </a>
         </li>
+        {{/permissions.canAccessReport}}
+        {{#permissions.canAccessUser}}
         <li class="nav-item">
           <a href="/app/user" class="nav-link text-white active">
             <i class="bi bi-people"></i> Users
           </a>
         </li>
+        {{/permissions.canAccessUser}}
         <li class="nav-item">
-          <a href="/pricing" class="nav-link text-white">
-            <i class="bi bi-tag"></i> Pricing
+          <a href="/app/notification" class="nav-link text-white">
+            <i class="bi bi-bell"></i> Notifications
           </a>
         </li>
       </ul>

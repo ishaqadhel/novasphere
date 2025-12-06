@@ -11,9 +11,11 @@ import projectTaskRouter from '../modules/app/project-task/router.js';
 import projectRouter from '../modules/app/project/router.js';
 
 // Additional routers
-import supplierRouter from '../modules/supplier/routes.js';
+import supplierRouter from '../modules/app/supplier/router.js';
 import pricingRouter from '../modules/home/pricing/routes.js';
 import reportRouter from '../modules/app/report/routes.js';
+import projectMaterialRequirementRouter from '../modules/app/project-material-requirement/router.js';
+import notificationRouter from '../modules/app/notification/router.js';
 
 class MainRouter {
   constructor() {
@@ -27,21 +29,45 @@ class MainRouter {
     this.router.use('/auth', authRouter);
     this.router.use('/pricing', pricingRouter);
 
-    // Protected routes (require authentication)
+    // Common routes (all authenticated users)
     this.router.use('/app/dashboard', authMiddleware.isAuthenticated, dashboardRouter);
+    this.router.use('/app/notification', authMiddleware.isAuthenticated, notificationRouter);
 
+    // All authenticated users can access (write protection at route level)
     this.router.use(
       '/app/material-category',
       authMiddleware.isAuthenticated,
       materialCategoryRouter
     );
-
     this.router.use('/app/material', authMiddleware.isAuthenticated, materialRouter);
     this.router.use('/app/user', authMiddleware.isAuthenticated, userRouter);
-
-    this.router.use('/app/project', authMiddleware.isAuthenticated, projectRouter);
-    this.router.use('/app/project-task', authMiddleware.isAuthenticated, projectTaskRouter);
     this.router.use('/app/supplier', authMiddleware.isAuthenticated, supplierRouter);
+
+    // PM and Supervisor routes (Admin cannot access)
+    this.router.use(
+      '/app/project',
+      authMiddleware.isAuthenticated,
+      authMiddleware.hasRole(['pm', 'supervisor']),
+      projectRouter
+    );
+
+    // PM-only routes
+    this.router.use(
+      '/app/project-task',
+      authMiddleware.isAuthenticated,
+      authMiddleware.hasRole('pm'),
+      projectTaskRouter
+    );
+
+    // PM and Supervisor routes
+    this.router.use(
+      '/app/project-material-requirement',
+      authMiddleware.isAuthenticated,
+      authMiddleware.hasRole(['pm', 'supervisor']),
+      projectMaterialRequirementRouter
+    );
+
+    // Report (all roles)
     this.router.use('/app/report', authMiddleware.isAuthenticated, reportRouter);
   }
 

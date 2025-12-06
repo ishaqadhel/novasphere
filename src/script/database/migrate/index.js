@@ -24,6 +24,7 @@ class MigrationScript {
       await this.createMaterialCategoriesTable();
       await this.createMaterialsTable();
       await this.createProjectMaterialRequirementStatusesTable();
+      await this.createProjectMaterialRequirementUnitsTable();
       await this.createProjectMaterialRequirementsTable();
       await this.createSupplierRatingsTable();
 
@@ -43,6 +44,7 @@ class MigrationScript {
       'supplier_ratings',
       'project_material_requirements',
       'project_material_requirement_statuses',
+      'project_material_requirement_units',
       'materials',
       'material_categories',
       'project_tasks',
@@ -200,9 +202,9 @@ class MigrationScript {
         name VARCHAR(100) NOT NULL,
         description TEXT,
         budget DECIMAL(15,2) NOT NULL,
-        start_date TIMESTAMP NOT NULL,
-        end_date TIMESTAMP NOT NULL,
-        actual_end_date TIMESTAMP NULL,
+        start_date DATE NOT NULL,
+        end_date DATE NOT NULL,
+        actual_end_date DATE NULL,
         is_active BOOLEAN NOT NULL DEFAULT TRUE,
         created_by INT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -353,38 +355,64 @@ class MigrationScript {
     `);
   }
 
+  async createProjectMaterialRequirementUnitsTable() {
+    console.log('Creating project_material_requirement_units table...');
+    await databaseService.query(`
+      CREATE TABLE project_material_requirement_units (
+        unit_id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(50) NOT NULL UNIQUE,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+        deleted_at TIMESTAMP NULL,
+        INDEX idx_units_name (name),
+        INDEX idx_units_is_active (is_active)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+  }
+
   async createProjectMaterialRequirementsTable() {
     console.log('Creating project_material_requirements table...');
     await databaseService.query(`
       CREATE TABLE project_material_requirements (
         project_material_requirement_id INT AUTO_INCREMENT PRIMARY KEY,
+
         quantity INT NOT NULL,
+        unit_id INT,
         price DECIMAL(15,2) NOT NULL,
         total_price DECIMAL(15,2) NOT NULL,
-        arrived_date TIMESTAMP NOT NULL,
-        actual_arrived_date TIMESTAMP NULL,
-        good_quantity INT,
-        bad_quantity INT,
+
+        arrived_date DATE NOT NULL,
+        actual_arrived_date DATE NULL,
+
+        good_quantity INT DEFAULT 0,
+        bad_quantity INT DEFAULT 0,
+
         is_active BOOLEAN NOT NULL DEFAULT TRUE,
         created_by INT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_by INT,
         updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
         deleted_at TIMESTAMP NULL,
+
         project_id INT NOT NULL,
         material_id INT NOT NULL,
         supplier_id INT NOT NULL,
-        status INT NOT NULL,
+        status INT NOT NULL DEFAULT 1,
+
         FOREIGN KEY (created_by) REFERENCES users(user_id),
         FOREIGN KEY (updated_by) REFERENCES users(user_id),
-        FOREIGN KEY (project_id) REFERENCES projects(project_id),
+        FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE,
         FOREIGN KEY (material_id) REFERENCES materials(material_id),
         FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id),
         FOREIGN KEY (status) REFERENCES project_material_requirement_statuses(project_material_requirement_status_id),
+        FOREIGN KEY (unit_id) REFERENCES project_material_requirement_units(unit_id),
+
         INDEX idx_pmr_material_id (material_id),
         INDEX idx_pmr_is_active (is_active),
         INDEX idx_pmr_supplier_id (supplier_id),
-        INDEX idx_pmr_status (status)
+        INDEX idx_pmr_status (status),
+        INDEX idx_pmr_unit_id (unit_id)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
   }

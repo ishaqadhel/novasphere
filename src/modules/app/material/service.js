@@ -1,5 +1,7 @@
 import BaseService from '../../../services/index.js';
 import materialRepository from '../../../repositories/material/index.js';
+import notificationService from '../../../services/notification/index.js';
+import userRepository from '../../../repositories/user/index.js';
 
 class MaterialService extends BaseService {
   constructor() {
@@ -36,26 +38,56 @@ class MaterialService extends BaseService {
     }
   }
 
-  async createMaterial(data) {
+  async createMaterial(data, userId) {
     try {
       this.validateRequired(data, ['name', 'material_category_id']);
 
-      return await materialRepository.createOne(data);
+      const materialId = await materialRepository.createOne(data);
+
+      // Create notification
+      if (userId) {
+        const user = await userRepository.getOneById(userId);
+        if (user) {
+          await notificationService.notifyOnCRUD(
+            'created',
+            'Material',
+            data.name,
+            userId,
+            `${user.first_name} ${user.last_name}`
+          );
+        }
+      }
+
+      return materialId;
     } catch (error) {
       throw this.handleError(error, 'Failed to create material');
     }
   }
 
-  async updateMaterial(id, data) {
+  async updateMaterial(id, data, userId) {
     try {
       this.validateRequired(data, ['name', 'material_category_id']);
 
-      await this.getMaterialById(id);
+      const existing = await this.getMaterialById(id);
 
       const result = await materialRepository.updateOneById(id, data);
 
       if (!result) {
         throw new Error('Failed to update material');
+      }
+
+      // Create notification
+      if (userId) {
+        const user = await userRepository.getOneById(userId);
+        if (user) {
+          await notificationService.notifyOnCRUD(
+            'updated',
+            'Material',
+            data.name || existing.name,
+            userId,
+            `${user.first_name} ${user.last_name}`
+          );
+        }
       }
 
       return result;
@@ -64,14 +96,28 @@ class MaterialService extends BaseService {
     }
   }
 
-  async deleteMaterial(id) {
+  async deleteMaterial(id, userId) {
     try {
-      await this.getMaterialById(id);
+      const existing = await this.getMaterialById(id);
 
       const result = await materialRepository.deleteOneById(id);
 
       if (!result) {
         throw new Error('Failed to delete material');
+      }
+
+      // Create notification
+      if (userId) {
+        const user = await userRepository.getOneById(userId);
+        if (user) {
+          await notificationService.notifyOnCRUD(
+            'deleted',
+            'Material',
+            existing.name,
+            userId,
+            `${user.first_name} ${user.last_name}`
+          );
+        }
       }
 
       return result;

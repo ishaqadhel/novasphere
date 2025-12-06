@@ -8,41 +8,17 @@ class SupplierRepository {
   async getAll() {
     const query = `
       SELECT s.*,
-        CONCAT(cu.first_name, ' ', cu.last_name) as created_by_name,
-        CONCAT(uu.first_name, ' ', uu.last_name) as updated_by_name
+        CONCAT(cu.first_name, ' ', cu.last_name) as created_by_name
       FROM ${this.tableName} s
       LEFT JOIN users cu ON s.created_by = cu.user_id
-      LEFT JOIN users uu ON s.updated_by = uu.user_id
       WHERE s.deleted_at IS NULL
       ORDER BY s.supplier_id DESC
     `;
     return await databaseService.query(query);
   }
 
-  async getAllActive() {
-    const query = `
-      SELECT s.*,
-        CONCAT(cu.first_name, ' ', cu.last_name) as created_by_name,
-        CONCAT(uu.first_name, ' ', uu.last_name) as updated_by_name
-      FROM ${this.tableName} s
-      LEFT JOIN users cu ON s.created_by = cu.user_id
-      LEFT JOIN users uu ON s.updated_by = uu.user_id
-      WHERE s.deleted_at IS NULL AND s.is_active = ?
-      ORDER BY s.supplier_id DESC
-    `;
-    return await databaseService.query(query, [true]);
-  }
-
   async getOneById(id) {
-    const query = `
-      SELECT s.*,
-        CONCAT(cu.first_name, ' ', cu.last_name) as created_by_name,
-        CONCAT(uu.first_name, ' ', uu.last_name) as updated_by_name
-      FROM ${this.tableName} s
-      LEFT JOIN users cu ON s.created_by = cu.user_id
-      LEFT JOIN users uu ON s.updated_by = uu.user_id
-      WHERE s.supplier_id = ? AND s.deleted_at IS NULL
-    `;
+    const query = `SELECT * FROM ${this.tableName} WHERE supplier_id = ? AND deleted_at IS NULL`;
     const rows = await databaseService.query(query, [id]);
     return rows[0] || null;
   }
@@ -98,6 +74,7 @@ class SupplierRepository {
     const result = await databaseService.query(query);
     return result[0].count;
   }
+  // ----------------------------------------------------
 }
 
 export default new SupplierRepository();

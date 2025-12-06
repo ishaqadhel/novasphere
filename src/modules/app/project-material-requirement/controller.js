@@ -1,137 +1,243 @@
+/* global Intl */
 import BaseController from '../../../controllers/index.js';
 import pmrService from './service.js';
-
-// 引入其他 Repo 以獲取下拉選單資料
 import projectRepository from '../../../repositories/project/index.js';
 import materialRepository from '../../../repositories/material/index.js';
 import supplierRepository from '../../../repositories/supplier/index.js';
+import pmrStatusRepository from '../../../repositories/project-material-requirement-status/index.js';
+import pmrUnitRepository from '../../../repositories/project-material-requirement-unit/index.js';
+import moment from 'moment';
 
 class ProjectMaterialRequirementController extends BaseController {
   constructor() {
     super();
     this.index = this.index.bind(this);
     this.create = this.create.bind(this);
-    this.delete = this.delete.bind(this);
-
-    // [關鍵修正] 必須綁定這兩個新方法，否則執行時會報錯
     this.editForm = this.editForm.bind(this);
     this.update = this.update.bind(this);
+    this.delete = this.delete.bind(this);
+    this.getRow = this.getRow.bind(this);
   }
 
-  /**
-   * 主頁面：顯示清單與新增表單
-   */
+  _formatData(items) {
+    if (!Array.isArray(items)) items = [items];
+    return items.map((item) => {
+      let badgeClass = 'bg-secondary';
+      const sName = item.status_name ? item.status_name.toLowerCase() : '';
+
+      if (sName.includes('pending')) badgeClass = 'bg-warning text-dark';
+      else if (sName.includes('approv') || sName.includes('received')) badgeClass = 'bg-success';
+      else if (sName.includes('deliver')) badgeClass = 'bg-success';
+      else if (sName.includes('reject')) badgeClass = 'bg-danger';
+
+      return {
+        ...item,
+        formatted_price: new Intl.NumberFormat('zh-TW', {
+          style: 'currency',
+          currency: 'TWD',
+          minimumFractionDigits: 0,
+        }).format(item.price),
+        formatted_total: new Intl.NumberFormat('zh-TW', {
+          style: 'currency',
+          currency: 'TWD',
+          minimumFractionDigits: 0,
+        }).format(item.total_price),
+        formatted_arrived_date: item.arrived_date
+          ? moment(item.arrived_date).format('YYYY-MM-DD')
+          : '-',
+        formatted_actual_date: item.actual_arrived_date
+          ? moment(item.actual_arrived_date).format('YYYY-MM-DD')
+          : '-',
+        status_badge_class: badgeClass,
+        is_delivered: item.status === 4,
+      };
+    });
+  }
+
   async index(req, res) {
     try {
-      const projectId = req.params.projectId;
+      const projectId = req.query.project_id;
+      if (!projectId) return res.redirect('/app/project');
 
-      // 平行執行所有查詢
-      const [requirements, project, materials, suppliers] = await Promise.all([
+      const [requirements, project, materials, suppliers, statuses, units] = await Promise.all([
         pmrService.getRequirementsByProjectId(projectId),
-        projectRepository.getById(projectId),
+        projectRepository.getOneById(projectId),
         materialRepository.getAll(),
-        supplierRepository.getAllActive
-          ? supplierRepository.getAllActive()
-          : supplierRepository.getAll(),
+        supplierRepository.getAll(),
+        pmrStatusRepository.getAllActive(),
+        pmrUnitRepository.getAllActive(),
       ]);
 
-      return this.renderView(res, 'app/project-material-requirement/home', {
-        title: 'Project Materials',
-        requirements,
+      const formattedRequirements = this._formatData(requirements);
+
+      return res.render('app/project-material-requirement/home/index', {
+        title: `Materials: ${project.name}`,
+        requirements: formattedRequirements,
+        hasRequirements: formattedRequirements.length > 0,
         project,
         materials,
         suppliers,
+        statuses,
+        units,
         user: this.getSessionUser(req),
+        permissions: this.getPermissions(req),
+        currentPath: '/app/project',
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load requirements', 500, error);
     }
   }
 
-  /**
-   * 動作：新增需求 (HTMX)
-   */
   async create(req, res) {
     try {
-      const user = this.getSessionUser(req);
-      const userId = user ? user.user_id : 1;
-      const projectId = req.params.projectId;
+      const userId = this.getSessionUser(req).user_id;
+      const newReq = await pmrService.createRequirement(req.body, userId);
+      const [formatted] = this._formatData([newReq]);
 
-      // 將 projectId 加入到 body 中
-      const dataWithProject = {
-        ...req.body,
-        project_id: projectId,
-      };
-
-      const newRequirement = await pmrService.createRequirement(dataWithProject, userId);
-
-      // HTMX 只需要片段，維持原樣
-      return this.renderView(res, 'app/project-material-requirement/row', newRequirement, false);
+      return res.render('app/project-material-requirement/home/row', {
+        ...formatted,
+        layout: false,
+      });
     } catch (error) {
-      console.error(error);
-      res.status(400).send(`<div class="alert alert-danger">${error.message}</div>`);
+      return res.send(
+        `<div id="alert-container" hx-swap-oob="true"><div class="alert alert-danger alert-dismissible fade show">${error.message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div></div>`
+      );
     }
   }
 
-  /**
-   * 動作：取得編輯表單 (HTMX)
-   */
   async editForm(req, res) {
     try {
-      const projectId = req.params.projectId;
-      const requirement = await pmrService.getRequirementById(req.params.id);
-      // 我們還需要下拉選單的資料，所以要再抓一次
-      const [project, materials, suppliers] = await Promise.all([
-        projectRepository.getById(projectId),
+      const { id } = req.params;
+      let requirement = await pmrService.getRequirementById(id);
+
+      const [materials, suppliers, statuses, units] = await Promise.all([
         materialRepository.getAll(),
-        supplierRepository.getAllActive
-          ? supplierRepository.getAllActive()
-          : supplierRepository.getAll(),
+        supplierRepository.getAll(),
+        pmrStatusRepository.getAllActive(),
+        pmrUnitRepository.getAllActive(),
       ]);
 
-      return this.renderView(
-        res,
-        'app/project-material-requirement/edit',
-        {
-          ...requirement,
-          project,
-          materials,
-          suppliers,
-        },
-        false
-      );
+      [requirement] = this._formatData([requirement]);
+
+      const materialsSel = materials.map((m) => ({
+        ...m,
+        selected: m.material_id === requirement.material_id,
+      }));
+      const suppliersSel = suppliers.map((s) => ({
+        ...s,
+        selected: s.supplier_id === requirement.supplier_id,
+      }));
+      const statusesSel = statuses.map((s) => ({
+        ...s,
+        selected: s.project_material_requirement_status_id === requirement.status,
+      }));
+      const unitsSel = units.map((u) => ({
+        ...u,
+        selected: u.unit_id === requirement.unit_id,
+      }));
+
+      return res.render('app/project-material-requirement/detail/edit', {
+        ...requirement,
+        materials: materialsSel,
+        suppliers: suppliersSel,
+        statuses: statusesSel,
+        units: unitsSel,
+        layout: false,
+      });
     } catch (error) {
-      res.status(500).send(error.message);
+      return res.status(500).send(error.message);
     }
   }
 
-  /**
-   * 動作：更新需求 (HTMX)
-   */
   async update(req, res) {
     try {
-      const user = this.getSessionUser(req);
-      const userId = user ? user.user_id : 1;
-      // 更新邏輯
-      await pmrService.update(req.params.id, req.body, userId);
-      // 更新後回傳新的 Row
-      const updatedItem = await pmrService.getRequirementById(req.params.id);
-      return this.renderView(res, 'app/project-material-requirement/row', updatedItem, false);
+      const userId = this.getSessionUser(req).user_id;
+
+      const updated = await pmrService.update(req.params.id, req.body, userId);
+      const [formatted] = this._formatData([updated]);
+
+      return res.render('app/project-material-requirement/home/row', {
+        ...formatted,
+        layout: false,
+      });
     } catch (error) {
-      res.status(500).send(error.message);
+      try {
+        const { id } = req.params;
+
+        const original = await pmrService.getRequirementById(id);
+
+        const [materials, suppliers, statuses, units] = await Promise.all([
+          materialRepository.getAll(),
+          supplierRepository.getAll(),
+          pmrStatusRepository.getAllActive(),
+          pmrUnitRepository.getAllActive(),
+        ]);
+
+        const mergedData = { ...original, ...req.body };
+
+        const materialsSel = materials.map((m) => ({
+          ...m,
+          selected: String(m.material_id) === String(req.body.material_id),
+        }));
+        const suppliersSel = suppliers.map((s) => ({
+          ...s,
+          selected: String(s.supplier_id) === String(req.body.supplier_id),
+        }));
+        const statusesSel = statuses.map((s) => ({
+          ...s,
+          selected: String(s.project_material_requirement_status_id) === String(req.body.status),
+        }));
+        const unitsSel = units.map((u) => ({
+          ...u,
+          selected: String(u.unit_id) === String(req.body.unit_id),
+        }));
+
+        const isDelivered = String(req.body.status) === '4';
+
+        return res.render('app/project-material-requirement/detail/edit', {
+          ...mergedData,
+
+          formatted_arrived_date: req.body.arrived_date,
+          formatted_actual_date: req.body.actual_arrived_date,
+
+          materials: materialsSel,
+          suppliers: suppliersSel,
+          statuses: statusesSel,
+          units: unitsSel,
+
+          error: error.message,
+          is_delivered: isDelivered,
+
+          layout: false,
+        });
+      } catch (internalError) {
+        return res.status(500).send(internalError.message);
+      }
     }
   }
 
-  /**
-   * 動作：刪除需求 (HTMX)
-   */
   async delete(req, res) {
     try {
-      await pmrService.deleteRequirement(req.params.id);
-      res.send('');
+      const userId = this.getSessionUser(req).user_id;
+      await pmrService.deleteRequirement(req.params.id, userId);
+      return res.send('');
     } catch (error) {
-      console.error(error);
-      res.status(500).send(error.message);
+      return res.status(500).send(error.message);
+    }
+  }
+
+  async getRow(req, res) {
+    try {
+      const { id } = req.params;
+      let requirement = await pmrService.getRequirementById(id);
+      const [formatted] = this._formatData([requirement]);
+
+      return res.render('app/project-material-requirement/home/row', {
+        ...formatted,
+        layout: false,
+      });
+    } catch (error) {
+      return res.status(500).send('Error loading row');
     }
   }
 }
