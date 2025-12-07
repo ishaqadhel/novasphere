@@ -9,20 +9,45 @@ class UserRouter {
   }
 
   initializeRoutes() {
-    // Read operations (all authenticated users can access)
-    this.router.get('/', userController.index);
-    this.router.get('/:id', userController.show);
+    // --- SPECIFIC ROUTES ---
+    // Specific routes must be defined BEFORE dynamic routes (like /:id)
+    // otherwise the dynamic route will catch "create" as an ID.
 
-    // Write operations (admin only)
+    // Create Page
     this.router.get('/create', authMiddleware.canAccess('user', 'create'), userController.create);
+
+    // Store User
     this.router.post('/', authMiddleware.canAccess('user', 'create'), userController.store);
-    this.router.get('/:id/edit', authMiddleware.canAccess('user', 'update'), userController.edit);
-    this.router.post('/:id', authMiddleware.canAccess('user', 'update'), userController.update);
+
+    // --- DYNAMIC ROUTES (/:id) ---
+    // These must be at the bottom so they don't intercept specific paths.
+
+    // List all users
+    this.router.get('/', userController.index);
+
+    // Edit Page
+    this.router.get(
+      '/:id(\\d+)/edit',
+      authMiddleware.canAccess('user', 'update'),
+      userController.edit
+    );
+
+    // Update User
     this.router.post(
-      '/:id/delete',
+      '/:id(\\d+)',
+      authMiddleware.canAccess('user', 'update'),
+      userController.update
+    );
+
+    // Delete User
+    this.router.post(
+      '/:id(\\d+)/delete',
       authMiddleware.canAccess('user', 'delete'),
       userController.destroy
     );
+
+    // View User Details (Catch-all for IDs)
+    this.router.get('/:id(\\d+)', userController.show);
   }
 
   getRouter() {
