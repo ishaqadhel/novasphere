@@ -8,12 +8,20 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
-<body>
+<!-- 
+  UPDATED:
+  - overflow-x-hidden: Mencegah scroll kiri-kanan pada level browser/window.
+-->
+<body class="overflow-x-hidden">
+  
   <div class="d-flex min-vh-100">
     <!-- Sidebar -->
-    <div class="bg-dark text-white p-3" style="width: 250px;">
+    <!-- 
+      Tetap Sticky dan tanpa scrollbar sidebar (overflow-hidden) 
+    -->
+    <div class="bg-dark text-white p-3 d-flex flex-column flex-shrink-0 overflow-hidden" style="width: 250px; height: 100vh; position: sticky; top: 0;">
       <h4 class="mb-4">Novasphere</h4>
-            <ul class="nav nav-pills flex-column">
+            <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
           <a href="/app/dashboard" class="nav-link text-white">
             <i class="bi bi-speedometer2"></i> Dashboard
@@ -40,13 +48,6 @@
           </a>
         </li>
         {{/permissions.canAccessProject}}
-        {{#permissions.canAccessProjectTask}}
-        <li class="nav-item">
-          <a href="/app/project-task" class="nav-link text-white">
-            <i class="bi bi-list-task"></i> Project Tasks
-          </a>
-        </li>
-        {{/permissions.canAccessProjectTask}}
         {{#permissions.canAccessSupplier}}
         <li class="nav-item">
           <a href="/app/supplier" class="nav-link text-white">
@@ -75,7 +76,7 @@
         </li>
       </ul>
       <hr class="text-white">
-      <div class="mt-auto pt-4">
+      <div class="pt-2">
         <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
         <p class="mb-1"><small class="text-muted">{{ user.email }}</small></p>
         <form action="/auth/logout" method="POST" class="mt-2">
@@ -87,9 +88,16 @@
     </div>
 
     <!-- Main Content -->
-    <div class="flex-grow-1">
+    <!-- 
+      UPDATED:
+      - min-width: 0: Ini SANGAT PENTING dalam Flexbox. 
+        Tanpa ini, jika tabel di dalam terlalu lebar, ia akan memaksa container ini melebar 
+        melebihi layar dan memicu scrollbar browser. 
+        Dengan min-width: 0, overflow tabel akan ditangani oleh 'table-responsive' di dalamnya.
+    -->
+    <div class="flex-grow-1" style="min-width: 0;">
       <!-- Header -->
-      <nav class="navbar navbar-light bg-light border-bottom px-4">
+      <nav class="navbar navbar-light bg-light border-bottom px-4 sticky-top">
         <div class="container-fluid">
           <h5 class="mb-0">{{ title }}</h5>
           <span class="navbar-text">
@@ -111,6 +119,10 @@
 
         <div class="card">
           <div class="card-body">
+            <!-- 
+              table-responsive akan memunculkan scrollbar HANYA pada tabel jika data terlalu lebar,
+              tapi halaman utama tetap diam.
+            -->
             <div class="table-responsive">
               <table class="table table-hover">
                 <thead>

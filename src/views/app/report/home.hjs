@@ -8,12 +8,13 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
-<body>
+<body class="overflow-x-hidden">
   <div class="d-flex min-vh-100">
     <!-- Sidebar -->
-    <div class="bg-dark text-white p-3 flex-shrink-0" style="width: 250px; min-width: 250px;">
+    <div class="bg-dark text-white p-3 d-flex flex-column flex-shrink-0 overflow-hidden" 
+         style="width: 250px; height: 100vh; position: sticky; top: 0; z-index: 1000;">
       <h4 class="mb-4">Novasphere</h4>
-      <ul class="nav nav-pills flex-column">
+      <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
           <a href="/app/dashboard" class="nav-link text-white">
             <i class="bi bi-speedometer2"></i> Dashboard
@@ -40,13 +41,6 @@
           </a>
         </li>
         {{/permissions.canAccessProject}}
-        {{#permissions.canAccessProjectTask}}
-        <li class="nav-item">
-          <a href="/app/project-task" class="nav-link text-white">
-            <i class="bi bi-list-task"></i> Project Tasks
-          </a>
-        </li>
-        {{/permissions.canAccessProjectTask}}
         {{#permissions.canAccessSupplier}}
         <li class="nav-item">
           <a href="/app/supplier" class="nav-link text-white">
@@ -75,17 +69,24 @@
         </li>
       </ul>
       <hr class="text-white">
-      <div class="mt-auto pt-4">
+      <div class="pt-2">
         <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
         <p class="mb-1"><small class="text-muted">{{ user.email }}</small></p>
-        <form action="/auth/logout" method="POST" class="mt-2"><button type="submit" class="btn btn-sm btn-outline-light w-100"><i class="bi bi-box-arrow-right"></i> Logout</button></form>
+        <form action="/auth/logout" method="POST" class="mt-2">
+          <button type="submit" class="btn btn-sm btn-outline-light w-100">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </button>
+        </form>
       </div>
     </div>
 
     <!-- Main Content -->
     <div class="flex-grow-1" style="min-width: 0;">
-      <nav class="navbar navbar-light bg-light border-bottom px-4">
-        <div class="container-fluid"><h5 class="mb-0">{{ title }}</h5><span class="navbar-text">Welcome, {{ user.first_name }}!</span></div>
+      <nav class="navbar navbar-light bg-light border-bottom px-4 sticky-top">
+        <div class="container-fluid">
+          <h5 class="mb-0">{{ title }}</h5>
+          <span class="navbar-text">Welcome, {{ user.first_name }}!</span>
+        </div>
       </nav>
 
       <div class="p-4">
@@ -179,69 +180,69 @@
           <h5 class="mb-3"><i class="bi bi-lightning-charge me-2"></i>Advanced Analytics (Coming Soon)</h5>
         </div>
         <div class="row g-4">
-  <!-- Advanced Supplier Performance Analytics -->
-  <div class="col-12">
-    <div class="card border-secondary h-100">
-      <div class="card-header bg-secondary bg-opacity-25">
-        <h6 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Advanced Supplier Performance</h6>
-      </div>
-      <div class="card-body">
-        <p class="card-text text-muted">
-          <i class="bi bi-graph-up-arrow me-2"></i>
-          Comprehensive supplier performance analytics including delivery rates, quality metrics, and cost analysis.
-        </p>
-        <div class="alert alert-light border small mb-2">
-          <i class="bi bi-info-circle me-1"></i> Feature in development
-        </div>
-        <button class="btn btn-outline-secondary btn-sm" disabled>
-          <i class="bi bi-lock-fill me-2"></i>Coming Soon
-        </button>
-      </div>
-    </div>
-  </div>
+          <!-- Advanced Supplier Performance Analytics -->
+          <div class="col-12">
+            <div class="card border-secondary h-100">
+              <div class="card-header bg-secondary bg-opacity-25">
+                <h6 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Advanced Supplier Performance</h6>
+              </div>
+              <div class="card-body">
+                <p class="card-text text-muted">
+                  <i class="bi bi-graph-up-arrow me-2"></i>
+                  Comprehensive supplier performance analytics including delivery rates, quality metrics, and cost analysis.
+                </p>
+                <div class="alert alert-light border small mb-2">
+                  <i class="bi bi-info-circle me-1"></i> Feature in development
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" disabled>
+                  <i class="bi bi-lock-fill me-2"></i>Coming Soon
+                </button>
+              </div>
+            </div>
+          </div>
 
-  <!-- AI-driven Predictive Delay Alerts -->
-  <div class="col-12">
-    <div class="card border-secondary h-100">
-      <div class="card-header bg-secondary bg-opacity-25">
-        <h6 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>AI Predictive Delay Alerts</h6>
-      </div>
-      <div class="card-body">
-        <p class="card-text text-muted">
-          <i class="bi bi-robot me-2"></i>
-          Machine learning-powered predictions to forecast potential project delays and supply chain disruptions.
-        </p>
-        <div class="alert alert-light border small mb-2">
-          <i class="bi bi-info-circle me-1"></i> Feature in development
-        </div>
-        <button class="btn btn-outline-secondary btn-sm" disabled>
-          <i class="bi bi-lock-fill me-2"></i>Coming Soon
-        </button>
-      </div>
-    </div>
-  </div>
+          <!-- AI-driven Predictive Delay Alerts -->
+          <div class="col-12">
+            <div class="card border-secondary h-100">
+              <div class="card-header bg-secondary bg-opacity-25">
+                <h6 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>AI Predictive Delay Alerts</h6>
+              </div>
+              <div class="card-body">
+                <p class="card-text text-muted">
+                  <i class="bi bi-robot me-2"></i>
+                  Machine learning-powered predictions to forecast potential project delays and supply chain disruptions.
+                </p>
+                <div class="alert alert-light border small mb-2">
+                  <i class="bi bi-info-circle me-1"></i> Feature in development
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" disabled>
+                  <i class="bi bi-lock-fill me-2"></i>Coming Soon
+                </button>
+              </div>
+            </div>
+          </div>
 
-  <!-- In-depth Performance Analytics -->
-  <div class="col-12">
-    <div class="card border-secondary h-100">
-      <div class="card-header bg-secondary bg-opacity-25">
-        <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>In-depth Performance Analytics</h6>
-      </div>
-      <div class="card-body">
-        <p class="card-text text-muted">
-          <i class="bi bi-bar-chart-line me-2"></i>
-          Detailed performance dashboards with KPIs, trends, and custom reporting capabilities.
-        </p>
-        <div class="alert alert-light border small mb-2">
-          <i class="bi bi-info-circle me-1"></i> Feature in development
+          <!-- In-depth Performance Analytics -->
+          <div class="col-12">
+            <div class="card border-secondary h-100">
+              <div class="card-header bg-secondary bg-opacity-25">
+                <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>In-depth Performance Analytics</h6>
+              </div>
+              <div class="card-body">
+                <p class="card-text text-muted">
+                  <i class="bi bi-bar-chart-line me-2"></i>
+                  Detailed performance dashboards with KPIs, trends, and custom reporting capabilities.
+                </p>
+                <div class="alert alert-light border small mb-2">
+                  <i class="bi bi-info-circle me-1"></i> Feature in development
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" disabled>
+                  <i class="bi bi-lock-fill me-2"></i>Coming Soon
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <button class="btn btn-outline-secondary btn-sm" disabled>
-          <i class="bi bi-lock-fill me-2"></i>Coming Soon
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
       </div>
     </div>
   </div>
