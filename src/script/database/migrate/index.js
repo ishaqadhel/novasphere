@@ -27,6 +27,7 @@ class MigrationScript {
       await this.createProjectMaterialRequirementUnitsTable();
       await this.createProjectMaterialRequirementsTable();
       await this.createSupplierRatingsTable();
+      await this.createPmrAlertLogsTable();
 
       console.log('Database migration completed successfully!');
       process.exit(0);
@@ -435,6 +436,26 @@ class MigrationScript {
         FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id),
         FOREIGN KEY (project_material_requirement_id) REFERENCES project_material_requirements(project_material_requirement_id),
         INDEX idx_supplier_ratings_supplier_id (supplier_id)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+  }
+
+  async createPmrAlertLogsTable() {
+    console.log('Creating pmr_alert_logs table...');
+    await databaseService.query(`
+      CREATE TABLE pmr_alert_logs (
+        alert_log_id INT AUTO_INCREMENT PRIMARY KEY,
+        project_material_requirement_id INT NOT NULL,
+        user_id INT NOT NULL,
+        alert_type VARCHAR(50) NOT NULL DEFAULT 'pre_delay_warning',
+        alert_date DATE NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (project_material_requirement_id) REFERENCES project_material_requirements(project_material_requirement_id),
+        FOREIGN KEY (user_id) REFERENCES users(user_id),
+        INDEX idx_alert_logs_pmr_id (project_material_requirement_id),
+        INDEX idx_alert_logs_user_id (user_id),
+        INDEX idx_alert_logs_alert_date (alert_date),
+        UNIQUE KEY unique_daily_alert (project_material_requirement_id, user_id, alert_date)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
   }

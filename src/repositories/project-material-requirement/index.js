@@ -97,6 +97,43 @@ class ProjectMaterialRequirementRepository {
     const result = await databaseService.execute(query, [userId, id]);
     return result.affectedRows > 0;
   }
+
+  /**
+   * Get PMRs that are at risk of delay
+   * Finds materials scheduled to arrive within X days but not yet delivered
+   * This indicates a potential delay risk that needs immediate attention
+   * @param {number} daysThreshold - Number of days to look ahead (e.g., 3)
+   * @returns {Promise<Array>} PMRs at risk of delay
+   */
+  async getPendingArrivalsWithinDays(daysThreshold) {
+    const query = `
+      SELECT pmr.*,
+        p.name as project_name,
+        m.name as material_name,
+        s.name as supplier_name,
+        pmrs.name as status_name,
+        pmru.name as unit_name,
+        u.user_id as creator_id,
+        u.email as creator_email,
+        CONCAT(u.first_name, ' ', u.last_name) as creator_name
+      FROM ${this.tableName} pmr
+      LEFT JOIN projects p ON pmr.project_id = p.project_id
+      LEFT JOIN materials m ON pmr.material_id = m.material_id
+      LEFT JOIN suppliers s ON pmr.supplier_id = s.supplier_id
+      LEFT JOIN project_material_requirement_statuses pmrs
+        ON pmr.status = pmrs.project_material_requirement_status_id
+      LEFT JOIN project_material_requirement_units pmru ON pmr.unit_id = pmru.unit_id
+      LEFT JOIN users u ON pmr.created_by = u.user_id
+      WHERE pmr.deleted_at IS NULL
+        AND pmr.status != 4
+        AND pmr.arrived_date IS NOT NULL
+        AND pmr.arrived_date <= DATE_ADD(CURDATE(), INTERVAL ? DAY)
+        AND pmr.arrived_date >= CURDATE()
+        AND u.is_active = 1
+      ORDER BY pmr.arrived_date ASC
+    `;
+    return await databaseService.query(query, [daysThreshold]);
+  }
 }
 
 export default new ProjectMaterialRequirementRepository();
