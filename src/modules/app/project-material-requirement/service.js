@@ -3,6 +3,8 @@ import pmrRepository from '../../../repositories/project-material-requirement/in
 import notificationService from '../../../services/notification/index.js';
 import userRepository from '../../../repositories/user/index.js';
 import materialRepository from '../../../repositories/material/index.js';
+import supplierRatingRepository from '../../../repositories/supplier-rating/index.js';
+import supplierRepository from '../../../repositories/supplier/index.js';
 
 class ProjectMaterialRequirementService extends BaseService {
   async getRequirementsByProjectId(projectId) {
@@ -94,6 +96,16 @@ class ProjectMaterialRequirementService extends BaseService {
       if (good + bad !== quantity) {
         throw new Error(`Total quantity (${quantity}) must match Good (${good}) + Bad (${bad})`);
       }
+
+      // Validate rating is required for delivered status
+      if (!data.supplier_rating || data.supplier_rating === '') {
+        throw new Error('Supplier rating is required for Delivered status');
+      }
+
+      const rating = parseFloat(data.supplier_rating);
+      if (rating < 1.0 || rating > 5.0 || ![1.0, 2.0, 3.0, 4.0, 5.0].includes(rating)) {
+        throw new Error('Rating must be 1.0, 2.0, 3.0, 4.0, or 5.0');
+      }
     }
     // ---------------------------------------
 
@@ -111,6 +123,73 @@ class ProjectMaterialRequirementService extends BaseService {
     };
 
     await pmrRepository.updateOneById(id, prepareData, userId);
+
+    // Handle supplier rating for delivered status
+    const oldStatusId = existing.status;
+    if (newStatusId === DELIVERED_STATUS_ID && data.supplier_rating) {
+      const rating = parseFloat(data.supplier_rating);
+      const supplierId = parseInt(data.supplier_id) || existing.supplier_id;
+
+      // Check if rating already exists for this PMR
+      const existingRating = await supplierRatingRepository.getByProjectMaterialRequirementId(id);
+
+      if (existingRating) {
+        // Update existing rating
+        await supplierRatingRepository.updateOneById(
+          existingRating.supplier_rating_id,
+          { rating },
+          userId
+        );
+      } else {
+        // Create new rating
+        await supplierRatingRepository.createOne(
+          {
+            supplier_id: supplierId,
+            project_material_requirement_id: id,
+            rating,
+          },
+          userId
+        );
+      }
+
+      // Recalculate and update supplier's overall rating
+      const averageRating =
+        await supplierRatingRepository.calculateAverageRatingForSupplier(supplierId);
+      if (averageRating !== null) {
+        const supplier = await supplierRepository.getOneById(supplierId);
+        await supplierRepository.updateOneById(
+          supplierId,
+          {
+            ...supplier,
+            rating: Math.round(averageRating * 10) / 10, // Round to 1 decimal
+          },
+          userId
+        );
+      }
+    }
+
+    // Handle status change FROM delivered TO other status
+    if (oldStatusId === DELIVERED_STATUS_ID && newStatusId !== DELIVERED_STATUS_ID) {
+      const existingRating = await supplierRatingRepository.getByProjectMaterialRequirementId(id);
+      if (existingRating) {
+        await supplierRatingRepository.deleteOneById(existingRating.supplier_rating_id);
+
+        // Recalculate supplier's overall rating
+        const supplierId = parseInt(data.supplier_id) || existing.supplier_id;
+        const averageRating =
+          await supplierRatingRepository.calculateAverageRatingForSupplier(supplierId);
+        const supplier = await supplierRepository.getOneById(supplierId);
+        await supplierRepository.updateOneById(
+          supplierId,
+          {
+            ...supplier,
+            rating: averageRating !== null ? Math.round(averageRating * 10) / 10 : null,
+          },
+          userId
+        );
+      }
+    }
+
     const updatedRequirement = await this.getRequirementById(id);
 
     // Create notification

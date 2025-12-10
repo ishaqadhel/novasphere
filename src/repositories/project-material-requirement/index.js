@@ -12,13 +12,16 @@ class ProjectMaterialRequirementRepository {
         m.name as material_name,
         s.name as supplier_name,
         pmrs.name as status_name,
-        pmru.name as unit_name
+        pmru.name as unit_name,
+        sr.supplier_rating_id,
+        sr.rating as supplier_rating
       FROM ${this.tableName} pmr
       LEFT JOIN projects p ON pmr.project_id = p.project_id
       LEFT JOIN materials m ON pmr.material_id = m.material_id
       LEFT JOIN suppliers s ON pmr.supplier_id = s.supplier_id
       LEFT JOIN project_material_requirement_statuses pmrs ON pmr.status = pmrs.project_material_requirement_status_id
       LEFT JOIN project_material_requirement_units pmru ON pmr.unit_id = pmru.unit_id
+      LEFT JOIN supplier_ratings sr ON pmr.project_material_requirement_id = sr.project_material_requirement_id AND sr.deleted_at IS NULL
       WHERE pmr.deleted_at IS NULL
     `;
   }

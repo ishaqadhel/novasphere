@@ -52,17 +52,37 @@
       <!-- HIDDEN FIELDS FOR DELIVERY -->
       <div id="delivery-fields-{{project_material_requirement_id}}" class="row g-2 p-2 bg-white border-top {{^is_delivered}}d-none{{/is_delivered}}">
          <div class="col-12 text-primary fw-bold small mb-1"><i class="bi bi-truck"></i> Delivery Details (Required)</div>
-         <div class="col-md-4">
+         <div class="col-md-3">
             <label class="small text-muted">Actual Arrival Date</label>
             <input type="date" name="actual_arrived_date" value="{{formatted_actual_date}}" class="form-control form-control-sm">
          </div>
-         <div class="col-md-4">
+         <div class="col-md-3">
             <label class="small text-muted">Good Qty</label>
             <input type="number" name="good_quantity" value="{{good_quantity}}" class="form-control form-control-sm">
          </div>
-         <div class="col-md-4">
+         <div class="col-md-3">
             <label class="small text-muted">Bad Qty</label>
             <input type="number" name="bad_quantity" value="{{bad_quantity}}" class="form-control form-control-sm">
+         </div>
+         <div class="col-md-3">
+            <label class="small text-muted">Supplier Rating <span class="text-danger">*</span></label>
+            <select name="supplier_rating" class="form-select form-select-sm" id="rating-{{project_material_requirement_id}}">
+               <option value="">Select...</option>
+               <option value="1.0">★ 1.0</option>
+               <option value="2.0">★★ 2.0</option>
+               <option value="3.0">★★★ 3.0</option>
+               <option value="4.0">★★★★ 4.0</option>
+               <option value="5.0">★★★★★ 5.0</option>
+            </select>
+            <script>
+              (function() {
+                var rating = '{{supplier_rating}}';
+                if (rating) {
+                  var select = document.getElementById('rating-{{project_material_requirement_id}}');
+                  if (select) select.value = rating;
+                }
+              })();
+            </script>
          </div>
       </div>
 

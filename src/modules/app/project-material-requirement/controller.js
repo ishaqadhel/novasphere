@@ -50,6 +50,8 @@ class ProjectMaterialRequirementController extends BaseController {
           : '-',
         status_badge_class: badgeClass,
         is_delivered: item.status === 4,
+        has_rating: item.supplier_rating !== null && item.supplier_rating !== undefined,
+        supplier_rating: item.supplier_rating || '',
       };
     });
   }
