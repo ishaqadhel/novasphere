@@ -42,6 +42,7 @@ class MigrationScript {
     await databaseService.query('SET FOREIGN_KEY_CHECKS = 0');
 
     const tables = [
+      'pmr_alert_logs',
       'supplier_ratings',
       'project_material_requirements',
       'project_material_requirement_statuses',
