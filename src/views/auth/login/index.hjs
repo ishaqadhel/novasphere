@@ -48,13 +48,16 @@
 
         <div class="text-center mt-3">
           <small class="text-muted">
-            Sample Admin: admin1@example.com / password
-          </small>
+            User Sample
+          </small><br>
           <small class="text-muted">
-            Sample PM: pm1@example.com / password
-          </small>
+            Admin: admin1@example.com / password
+          </small><br>
           <small class="text-muted">
-            Sample Supervisor: supervisor1@example.com / password
+            PM: pm1@example.com / password
+          </small><br>
+          <small class="text-muted">
+            Supervisor: supervisor1@example.com / password
           </small>
         </div>
       </div>

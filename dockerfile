@@ -1,7 +1,7 @@
 FROM node:20-alpine
 
-# Install mariadb-client, bash, and build dependencies for native modules
-RUN apk add --no-cache mariadb-client bash python3 make g++
+# 1. ADD 'dos2unix' to the list of installed packages
+RUN apk add --no-cache mariadb-client bash python3 make g++ dos2unix
 
 WORKDIR /app
 
@@ -15,9 +15,11 @@ RUN npm rebuild bcrypt --build-from-source
 # Copy application source code
 COPY . .
 
-# Copy and set permissions for entrypoint script
+# Copy the entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# 2. RUN dos2unix to force correct line endings, THEN make it executable
+RUN dos2unix /usr/local/bin/docker-entrypoint.sh && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 3000
 
