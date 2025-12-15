@@ -80,8 +80,7 @@
       </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="flex-grow-1" style="min-width: 0;">
+        <div class="flex-grow-1" style="min-width: 0;">
       <nav class="navbar navbar-light bg-light border-bottom px-4 sticky-top">
         <div class="container-fluid">
           <h5 class="mb-0">{{ title }}</h5>
@@ -90,32 +89,95 @@
       </nav>
 
       <div class="p-4">
-        <div class="mb-4">
-          <h4>Reports & Analytics</h4>
-          <p class="text-muted">Comprehensive reporting and analytics dashboard</p>
+        <div class="mb-4 d-flex justify-content-between align-items-center">
+          <div>
+            <h4>Reports & Analytics</h4>
+            <p class="text-muted">Real-time insights and performance tracking</p>
+          </div>
+          <!-- Export buttons removed from report home as per UX decision -->
         </div>
 
-        <!-- Basic Reports -->
+        <div class="row g-4 mb-4">
+          
+          <div class="col-md-3">
+            <div class="card border-0 border-start border-4 border-primary shadow-sm h-100">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <h6 class="text-muted text-uppercase small fw-bold mb-1">Active Projects</h6>
+                    <h2 class="display-6 fw-bold text-dark mb-0">{{ kpiData.active_projects }}</h2>
+                  </div>
+                  <div class="bg-primary bg-opacity-10 p-3 rounded">
+                    <i class="bi bi-building text-primary fs-3"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card border-0 border-start border-4 border-danger shadow-sm h-100">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <h6 class="text-muted text-uppercase small fw-bold mb-1">Delayed Projects</h6>
+                    <h2 class="display-6 fw-bold text-dark mb-0">{{ kpiData.delayed_projects }}</h2>
+                  </div>
+                  <div class="bg-danger bg-opacity-10 p-3 rounded">
+                    <i class="bi bi-exclamation-triangle text-danger fs-3"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card border-0 border-start border-4 border-success shadow-sm h-100">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <h6 class="text-muted text-uppercase small fw-bold mb-1">Active Suppliers</h6>
+                    <h2 class="display-6 fw-bold text-dark mb-0">{{ kpiData.active_suppliers }}</h2>
+                  </div>
+                  <div class="bg-success bg-opacity-10 p-3 rounded">
+                    <i class="bi bi-shop text-success fs-3"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card border-0 border-start border-4 border-info shadow-sm h-100">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <h6 class="text-muted text-uppercase small fw-bold mb-1">Defect Rate</h6>
+                    <h2 class="display-6 fw-bold text-dark mb-0">{{ kpiData.overall_defect_rate }}%</h2>
+                  </div>
+                  <div class="bg-info bg-opacity-10 p-3 rounded">
+                    <i class="bi bi-graph-down-arrow text-info fs-3"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <hr class="my-4">
+
         <div class="mb-4">
-          <h5 class="mb-3"><i class="bi bi-file-earmark-text me-2"></i>Basic Reports</h5>
+          <h5 class="mb-3"><i class="bi bi-gear-wide-connected me-2"></i>Operational Reports</h5>
           <div class="row g-4">
-            <!-- Project Summary Report -->
             <div class="col-md-4">
               <div class="card border-primary h-100">
                 <div class="card-header bg-primary bg-opacity-10">
                   <h6 class="mb-0"><i class="bi bi-file-earmark-bar-graph me-2"></i>Project Summary</h6>
                 </div>
                 <div class="card-body">
-                  <p class="card-text text-muted">
-                    <i class="bi bi-building me-2"></i>
-                    Comprehensive overview of all projects including status, budget analysis, and task completion rates.
+                  <p class="card-text text-muted small">
+                    Overview of all projects including status, budget analysis, and task completion.
                   </p>
-                  <ul class="list-unstyled small mb-3">
-                    <li><i class="bi bi-check-circle text-success me-2"></i>Total & Active Projects</li>
-                    <li><i class="bi bi-check-circle text-success me-2"></i>Budget Analysis</li>
-                    <li><i class="bi bi-check-circle text-success me-2"></i>Status Distribution</li>
-                    <li><i class="bi bi-check-circle text-success me-2"></i>Task Completion Tracking</li>
-                  </ul>
                   <a href="/app/report/project-summary" class="btn btn-primary btn-sm w-100">
                     <i class="bi bi-eye me-2"></i>View Report
                   </a>
@@ -123,23 +185,52 @@
               </div>
             </div>
 
-            <!-- Material Usage Report -->
+            <div class="col-md-4">
+              <div class="card border-danger h-100">
+                <div class="card-header bg-danger bg-opacity-10">
+                  <h6 class="mb-0"><i class="bi bi-exclamation-diamond me-2"></i>Delay Risks & Alerts</h6>
+                </div>
+                <div class="card-body">
+                  <p class="card-text text-muted small">
+                    Monitor schedule risks, overdue projects, and upcoming deadlines (Pre-Delay Alerts).
+                  </p>
+                  <a href="/app/report/risk-analysis" class="btn btn-danger btn-sm w-100">
+                    <i class="bi bi-eye me-2"></i>View Alerts
+                  </a>
+                </div>
+              </div>
+            </div>
+
+             <div class="col-md-4">
+              <div class="card border-warning h-100">
+                <div class="card-header bg-warning bg-opacity-10">
+                  <h6 class="mb-0"><i class="bi bi-shield-check me-2"></i>Quality Control</h6>
+                </div>
+                <div class="card-body">
+                  <p class="card-text text-muted small">
+                    Track material defects, return rates, and non-compliant items to reduce rework.
+                  </p>
+                  <a href="/app/report/quality-control" class="btn btn-warning btn-sm w-100">
+                    <i class="bi bi-eye me-2"></i>View Quality Data
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <h5 class="mb-3"><i class="bi bi-box-seam me-2"></i>Supply Chain Reports</h5>
+          <div class="row g-4">
             <div class="col-md-4">
               <div class="card border-success h-100">
                 <div class="card-header bg-success bg-opacity-10">
-                  <h6 class="mb-0"><i class="bi bi-box-seam me-2"></i>Material Usage</h6>
+                  <h6 class="mb-0"><i class="bi bi-box me-2"></i>Material Usage</h6>
                 </div>
                 <div class="card-body">
-                  <p class="card-text text-muted">
-                    <i class="bi bi-graph-up me-2"></i>
-                    Detailed analysis of material consumption, most used materials, and category-wise breakdown.
+                  <p class="card-text text-muted small">
+                    Analysis of material consumption, fulfillment rates, and category breakdown.
                   </p>
-                  <ul class="list-unstyled small mb-3">
-                    <li><i class="bi bi-check-circle text-success me-2"></i>Most Used Materials</li>
-                    <li><i class="bi bi-check-circle text-success me-2"></i>Category Analysis</li>
-                    <li><i class="bi bi-check-circle text-success me-2"></i>Project Material Requirements</li>
-                    <li><i class="bi bi-check-circle text-success me-2"></i>Fulfillment Rates</li>
-                  </ul>
                   <a href="/app/report/material-usage" class="btn btn-success btn-sm w-100">
                     <i class="bi bi-eye me-2"></i>View Report
                   </a>
@@ -147,102 +238,47 @@
               </div>
             </div>
 
-            <!-- Supplier Performance Report -->
             <div class="col-md-4">
               <div class="card border-info h-100">
                 <div class="card-header bg-info bg-opacity-10">
                   <h6 class="mb-0"><i class="bi bi-shop me-2"></i>Supplier Performance</h6>
                 </div>
                 <div class="card-body">
-                  <p class="card-text text-muted">
-                    <i class="bi bi-star me-2"></i>
-                    Supplier ratings, performance metrics, and comprehensive evaluation of supplier effectiveness.
+                  <p class="card-text text-muted small">
+                    Supplier ratings, performance metrics, and effectiveness evaluation.
                   </p>
-                  <ul class="list-unstyled small mb-3">
-                    <li><i class="bi bi-check-circle text-success me-2"></i>Supplier Ratings</li>
-                    <li><i class="bi bi-check-circle text-success me-2"></i>Top Performers</li>
-                    <li><i class="bi bi-check-circle text-success me-2"></i>Rating Distribution</li>
-                    <li><i class="bi bi-check-circle text-success me-2"></i>Projects Served</li>
-                  </ul>
                   <a href="/app/report/supplier-performance" class="btn btn-info btn-sm w-100">
                     <i class="bi bi-eye me-2"></i>View Report
                   </a>
                 </div>
               </div>
             </div>
+
+            <!-- Export Center removed from report home as per UX decision -->
           </div>
         </div>
 
         <hr class="my-4">
 
-        <!-- Advanced Analytics Features -->
         <div class="mb-3">
-          <h5 class="mb-3"><i class="bi bi-lightning-charge me-2"></i>Advanced Analytics (Coming Soon)</h5>
+          <h5 class="mb-3"><i class="bi bi-stars me-2"></i>Future Roadmap</h5>
         </div>
         <div class="row g-4">
-          <!-- Advanced Supplier Performance Analytics -->
           <div class="col-12">
-            <div class="card border-secondary h-100">
-              <div class="card-header bg-secondary bg-opacity-25">
-                <h6 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Advanced Supplier Performance</h6>
-              </div>
-              <div class="card-body">
-                <p class="card-text text-muted">
-                  <i class="bi bi-graph-up-arrow me-2"></i>
-                  Comprehensive supplier performance analytics including delivery rates, quality metrics, and cost analysis.
-                </p>
-                <div class="alert alert-light border small mb-2">
-                  <i class="bi bi-info-circle me-1"></i> Feature in development
+            <div class="card border-light bg-white shadow-sm h-100">
+              <div class="card-body d-flex align-items-center justify-content-between">
+                <div>
+                  <h6 class="mb-1"><i class="bi bi-robot me-2"></i>AI Predictive Delay Alerts</h6>
+                  <p class="card-text text-muted small mb-0">
+                    Machine learning predictions for weather, traffic, and supply chain disruptions. (Phase 2)
+                  </p>
                 </div>
-                <button class="btn btn-outline-secondary btn-sm" disabled>
-                  <i class="bi bi-lock-fill me-2"></i>Coming Soon
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- AI-driven Predictive Delay Alerts -->
-          <div class="col-12">
-            <div class="card border-secondary h-100">
-              <div class="card-header bg-secondary bg-opacity-25">
-                <h6 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>AI Predictive Delay Alerts</h6>
-              </div>
-              <div class="card-body">
-                <p class="card-text text-muted">
-                  <i class="bi bi-robot me-2"></i>
-                  Machine learning-powered predictions to forecast potential project delays and supply chain disruptions.
-                </p>
-                <div class="alert alert-light border small mb-2">
-                  <i class="bi bi-info-circle me-1"></i> Feature in development
-                </div>
-                <button class="btn btn-outline-secondary btn-sm" disabled>
-                  <i class="bi bi-lock-fill me-2"></i>Coming Soon
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- In-depth Performance Analytics -->
-          <div class="col-12">
-            <div class="card border-secondary h-100">
-              <div class="card-header bg-secondary bg-opacity-25">
-                <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>In-depth Performance Analytics</h6>
-              </div>
-              <div class="card-body">
-                <p class="card-text text-muted">
-                  <i class="bi bi-bar-chart-line me-2"></i>
-                  Detailed performance dashboards with KPIs, trends, and custom reporting capabilities.
-                </p>
-                <div class="alert alert-light border small mb-2">
-                  <i class="bi bi-info-circle me-1"></i> Feature in development
-                </div>
-                <button class="btn btn-outline-secondary btn-sm" disabled>
-                  <i class="bi bi-lock-fill me-2"></i>Coming Soon
-                </button>
+                <button class="btn btn-outline-secondary btn-sm" disabled>Coming Soon</button>
               </div>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>

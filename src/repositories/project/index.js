@@ -19,7 +19,7 @@ class ProjectRepository {
   }
 
   async getAll() {
-    const query = `${this._getBaseQuery()} ORDER BY p.project_id DESC`;
+    const query = `${this._getBaseQuery()} ORDER BY p.project_id ASC`;
     return await databaseService.query(query);
   }
 
@@ -27,7 +27,7 @@ class ProjectRepository {
     const query = `
       ${this._getBaseQuery()} 
       AND (p.name LIKE ? OR p.description LIKE ? OR ps.name LIKE ?)
-      ORDER BY p.project_id DESC
+      ORDER BY p.project_id ASC
     `;
     const searchTerm = `%${keyword}%`;
     return await databaseService.query(query, [searchTerm, searchTerm, searchTerm]);

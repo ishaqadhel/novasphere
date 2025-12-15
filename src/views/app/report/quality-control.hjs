@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} - Novasphere</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body class="overflow-x-hidden">
+  <div class="d-flex min-vh-100">
+    <div class="bg-dark text-white p-3 d-flex flex-column flex-shrink-0" 
+         style="width: 250px; height: 100vh; position: sticky; top: 0; z-index: 1000;">
+      <h4 class="mb-4">Novasphere</h4>
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item"><a href="/app/dashboard" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+        {{#permissions.canAccessMaterialCategory}}<li class="nav-item"><a href="/app/material-category" class="nav-link text-white"><i class="bi bi-folder"></i> Material Categories</a></li>{{/permissions.canAccessMaterialCategory}}
+        {{#permissions.canAccessMaterial}}<li class="nav-item"><a href="/app/material" class="nav-link text-white"><i class="bi bi-box-seam"></i> Materials</a></li>{{/permissions.canAccessMaterial}}
+        {{#permissions.canAccessProject}}<li class="nav-item"><a href="/app/project" class="nav-link text-white"><i class="bi bi-building"></i> Projects</a></li>{{/permissions.canAccessProject}}
+        {{#permissions.canAccessSupplier}}<li class="nav-item"><a href="/app/supplier" class="nav-link text-white"><i class="bi bi-shop"></i> Suppliers</a></li>{{/permissions.canAccessSupplier}}
+        {{#permissions.canAccessReport}}<li class="nav-item"><a href="/app/report" class="nav-link text-white active"><i class="bi bi-graph-up"></i> Reports</a></li>{{/permissions.canAccessReport}}
+        {{#permissions.canAccessUser}}<li class="nav-item"><a href="/app/user" class="nav-link text-white"><i class="bi bi-people"></i> Users</a></li>{{/permissions.canAccessUser}}
+        <li class="nav-item"><a href="/app/notification" class="nav-link text-white"><i class="bi bi-bell"></i> Notifications</a></li>
+      </ul>
+      <hr class="text-white">
+      <div class="pt-2">
+        <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
+        <form action="/auth/logout" method="POST" class="mt-2"><button type="submit" class="btn btn-sm btn-outline-light w-100"><i class="bi bi-box-arrow-right"></i> Logout</button></form>
+      </div>
+    </div>
+
+    <div class="flex-grow-1">
+      <nav class="navbar navbar-light bg-light border-bottom px-4 sticky-top">
+        <div class="container-fluid"><h5 class="mb-0">{{ title }}</h5><span class="navbar-text">Welcome, {{ user.first_name }}!</span></div>
+      </nav>
+
+      <div class="p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4><i class="bi bi-shield-check me-2"></i>Quality Control Report</h4>
+            <p class="text-muted mb-0">Analysis of material defects, returns, and compliance issues</p>
+          </div>
+          <div class="d-flex gap-2">
+            <a class="btn btn-outline-primary" href="/app/report/export?type=quality-control&format=xlsx">
+              <i class="bi bi-download me-2"></i>Download XLSX
+            </a>
+            <a href="/app/report" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-2"></i>Back</a>
+          </div>
+        </div>
+
+        <div class="alert alert-info border-0 shadow-sm d-flex align-items-center" role="alert">
+          <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+          <div>
+            <strong>Why this matters:</strong>
+            High defect rates lead to rework, which costs the construction industry billions annually. Use this data to negotiate better terms or switch suppliers.
+          </div>
+        </div>
+
+        <div class="card shadow-sm">
+          <div class="card-header bg-white py-3">
+            <h6 class="mb-0 fw-bold"><i class="bi bi-bug me-2"></i>High Defect Rate Materials (Top 20)</h6>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Material Name</th>
+                    <th>Supplier</th>
+                    <th>Total Delivered</th>
+                    <th>Defect Qty</th>
+                    <th>Defect Rate</th>
+                    <th>Supplier Rating</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#reportData.qualityStats}}
+                  <tr>
+                    <td class="fw-bold">{{ material_name }}</td>
+                    <td>{{ supplier_name }}</td>
+                    <td>{{ total_delivered }}</td>
+                    <td class="text-danger fw-bold">{{ total_defects }}</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <span class="me-2 fw-bold {{#is_high_defect}}text-danger{{/is_high_defect}}{{^is_high_defect}}text-dark{{/is_high_defect}}">
+                          {{ defect_rate }}%
+                        </span>
+                        <div class="progress flex-grow-1" style="height: 6px; width: 60px;">
+                          <div class="progress-bar {{#is_high_defect}}bg-danger{{/is_high_defect}}{{^is_high_defect}}bg-warning{{/is_high_defect}}" 
+                               role="progressbar" 
+                               style="width: {{ defect_rate }}%">
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="badge bg-light text-dark border">
+                        <i class="bi bi-star-fill text-warning"></i> {{ current_supplier_rating }}
+                      </span>
+                    </td>
+                    <td>
+                      <a href="/app/supplier" class="btn btn-sm btn-outline-secondary">Review Supplier</a>
+                    </td>
+                  </tr>
+                  {{/reportData.qualityStats}}
+                  {{^reportData.qualityStats}}
+                  <tr><td colspan="7" class="text-center text-muted py-4">No quality issues detected. Excellent work!</td></tr>
+                  {{/reportData.qualityStats}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

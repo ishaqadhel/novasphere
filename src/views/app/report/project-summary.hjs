@@ -10,7 +10,6 @@
 </head>
 <body class="overflow-x-hidden">
   <div class="d-flex min-vh-100">
-    <!-- Sidebar -->
     <div class="bg-dark text-white p-3 d-flex flex-column flex-shrink-0 overflow-hidden" 
          style="width: 250px; height: 100vh; position: sticky; top: 0; z-index: 1000;">
       <h4 class="mb-4">Novasphere</h4>
@@ -80,7 +79,6 @@
       </div>
     </div>
 
-    <!-- Main Content -->
     <div class="flex-grow-1" style="min-width: 0;">
       <nav class="navbar navbar-light bg-light border-bottom px-4 sticky-top">
         <div class="container-fluid">
@@ -90,18 +88,21 @@
       </nav>
 
       <div class="p-4">
-        <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
           <div>
             <h4><i class="bi bi-file-earmark-bar-graph me-2"></i>Project Summary Report</h4>
             <p class="text-muted mb-0">Overview of all projects and their status</p>
           </div>
-          <a href="/app/report" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-2"></i>Back to Reports
-          </a>
+          <div class="d-flex gap-2">
+            <a class="btn btn-outline-primary" href="/app/report/export?type=project-summary&format=xlsx">
+              <i class="bi bi-download me-2"></i>Download XLSX
+            </a>
+            <a href="/app/report" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left me-2"></i>Back
+            </a>
+          </div>
         </div>
 
-        <!-- Statistics Cards -->
         <div class="row g-4 mb-4">
           <div class="col-md-3">
             <div class="card border-primary h-100">
@@ -165,7 +166,6 @@
           </div>
         </div>
 
-        <!-- Budget Overview -->
         <div class="row g-4 mb-4">
           <div class="col-md-6">
             <div class="card h-100">
@@ -176,13 +176,13 @@
                 <div class="mb-3">
                   <div class="d-flex justify-content-between mb-1">
                     <span>Total Budget</span>
-                    <strong>${{ reportData.stats.total_budget }}</strong>
+                    <strong>${{ reportData.stats.formatted_total_budget }}</strong>
                   </div>
                 </div>
                 <div class="mb-3">
                   <div class="d-flex justify-content-between mb-1">
                     <span>Average Budget per Project</span>
-                    <strong>${{ reportData.stats.average_budget }}</strong>
+                    <strong>${{ reportData.stats.formatted_average_budget }}</strong>
                   </div>
                 </div>
               </div>
@@ -200,9 +200,8 @@
                     <span>{{ status_name }}</span>
                     <strong>{{ count }} projects</strong>
                   </div>
-                  <div class="progress" style="height: 20px;">
-                    <div class="progress-bar" role="progressbar" style="width: {{ count }}%">
-                      {{ count }}
+                  <div class="progress" style="height: 10px;">
+                    <div class="progress-bar bg-primary" role="progressbar" style="width: {{ count }}%">
                     </div>
                   </div>
                 </div>
@@ -212,14 +211,13 @@
           </div>
         </div>
 
-        <!-- Projects Table -->
         <div class="card">
           <div class="card-header bg-light">
             <h6 class="mb-0"><i class="bi bi-table me-2"></i>Project Details</h6>
           </div>
           <div class="card-body">
             <div class="table-responsive">
-              <table class="table table-hover">
+              <table class="table table-hover align-middle">
                 <thead>
                   <tr>
                     <th>ID</th>
@@ -240,37 +238,39 @@
                     <td>
                       <strong>{{ name }}</strong>
                       {{#is_active}}
-                      <span class="badge bg-success ms-2">Active</span>
+                      <span class="badge bg-success ms-2 rounded-pill" style="font-size: 0.6em;">Active</span>
                       {{/is_active}}
                       {{^is_active}}
-                      <span class="badge bg-secondary ms-2">Inactive</span>
+                      <span class="badge bg-secondary ms-2 rounded-pill" style="font-size: 0.6em;">Inactive</span>
                       {{/is_active}}
                     </td>
                     <td>{{ manager_name }}</td>
                     <td>
-                      <span class="badge bg-info">{{ status_name }}</span>
+                      <span class="badge bg-light text-dark border">{{ status_name }}</span>
                     </td>
-                    <td>${{ budget }}</td>
-                    <td>{{ start_date }}</td>
-                    <td>{{ end_date }}</td>
-                    <td>{{ completed_tasks }}/{{ total_tasks }}</td>
-                    <td>
+                    <td class="text-end" style="font-family: monospace;">${{ formatted_budget }}</td>
+                    <td><small>{{ formatted_start_date }}</small></td>
+                    <td><small>{{ formatted_end_date }}</small></td>
+                    <td><small>{{ completed_tasks }}/{{ total_tasks }}</small></td>
+                    <td style="width: 150px;">
                       {{#total_tasks}}
-                      <div class="progress" style="width: 100px;">
-                        <div class="progress-bar bg-success" role="progressbar" 
-                             style="width: calc({{ completed_tasks }} / {{ total_tasks }} * 100%)">
-                        </div>
+                      <div class="d-flex align-items-center">
+                         <div class="progress flex-grow-1 me-2" style="height: 6px;">
+                           <div class="progress-bar bg-success" role="progressbar" 
+                                style="width: calc({{ completed_tasks }} / {{ total_tasks }} * 100%)">
+                           </div>
+                         </div>
                       </div>
                       {{/total_tasks}}
                       {{^total_tasks}}
-                      <span class="text-muted">No tasks</span>
+                      <span class="text-muted small">No tasks</span>
                       {{/total_tasks}}
                     </td>
                   </tr>
                   {{/reportData.projects}}
                   {{^reportData.projects}}
                   <tr>
-                    <td colspan="9" class="text-center text-muted">No projects found</td>
+                    <td colspan="9" class="text-center text-muted py-4">No projects found</td>
                   </tr>
                   {{/reportData.projects}}
                 </tbody>
