@@ -16,6 +16,11 @@
         <div>Act: <strong>{{formatted_actual_date}}</strong></div>
         <div class="text-success">Good: {{good_quantity}}</div>
         <div class="text-danger">Bad: {{bad_quantity}}</div>
+        {{#has_rating}}
+          <div class="text-warning fw-bold mt-1">
+            <i class="bi bi-star-fill"></i> {{supplier_rating}}
+          </div>
+        {{/has_rating}}
       </div>
     {{/is_delivered}}
     {{^is_delivered}}

@@ -12,7 +12,7 @@ class SupplierRepository {
       FROM ${this.tableName} s
       LEFT JOIN users cu ON s.created_by = cu.user_id
       WHERE s.deleted_at IS NULL
-      ORDER BY s.supplier_id DESC
+      ORDER BY s.supplier_id ASC
     `;
     return await databaseService.query(query);
   }

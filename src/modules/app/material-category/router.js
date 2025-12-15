@@ -9,36 +9,52 @@ class MaterialCategoryRouter {
   }
 
   initializeRoutes() {
-    // Read operations (all authenticated users can access)
-    this.router.get('/', materialCategoryController.index);
-    this.router.get('/:id', materialCategoryController.show);
+    // --- SPECIFIC ROUTES (MUST BE AT THE TOP) ---
+    // These must be defined BEFORE /:id so they are not intercepted.
 
-    // Write operations (admin only)
+    // Create Page
     this.router.get(
       '/create',
       authMiddleware.canAccess('material-category', 'create'),
       materialCategoryController.create
     );
+
+    // Store New Category
     this.router.post(
       '/',
       authMiddleware.canAccess('material-category', 'create'),
       materialCategoryController.store
     );
+
+    // --- DYNAMIC ROUTES (/:id) ---
+    // These act as catch-alls for IDs and must be at the BOTTOM.
+
+    // List All
+    this.router.get('/', materialCategoryController.index);
+
+    // Edit Page
     this.router.get(
       '/:id/edit',
       authMiddleware.canAccess('material-category', 'update'),
       materialCategoryController.edit
     );
+
+    // Update
     this.router.post(
       '/:id',
       authMiddleware.canAccess('material-category', 'update'),
       materialCategoryController.update
     );
+
+    // Delete
     this.router.post(
       '/:id/delete',
       authMiddleware.canAccess('material-category', 'delete'),
       materialCategoryController.destroy
     );
+
+    // Show Detail (The wildcard that caused the error - MUST BE LAST)
+    this.router.get('/:id', materialCategoryController.show);
   }
 
   getRouter() {

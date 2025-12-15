@@ -7,6 +7,7 @@ import appConfig from './config/app/index.js';
 import databaseService from './services/database/index.js';
 import mainRouter from './routes/index.js';
 import authMiddleware from './middlewares/index.js';
+import schedulerService from './services/scheduler/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,6 +25,7 @@ class Application {
       this.setupViewEngine();
       this.setupRoutes();
       this.setupErrorHandlers();
+      this.setupGracefulShutdown();
       this.start();
     } catch (error) {
       console.error('Failed to initialize application:', error);
@@ -77,13 +79,37 @@ class Application {
 
   setupErrorHandlers() {
     this.app.use((req, res) => {
-      res.status(404).send('404 - Not Found');
+      res.status(404).render('errors/404');
     });
 
     this.app.use((err, req, res, _next) => {
       console.error('Error:', err);
       res.status(500).send('500 - Internal Server Error');
     });
+  }
+
+  setupGracefulShutdown() {
+    process.on('SIGTERM', async () => {
+      console.log('SIGTERM received, shutting down gracefully...');
+      await this.shutdown();
+    });
+
+    process.on('SIGINT', async () => {
+      console.log('SIGINT received, shutting down gracefully...');
+      await this.shutdown();
+    });
+  }
+
+  async shutdown() {
+    try {
+      schedulerService.stop();
+      await databaseService.close();
+      console.log('Shutdown complete');
+      process.exit(0);
+    } catch (error) {
+      console.error('Error during shutdown:', error);
+      process.exit(1);
+    }
   }
 
   start() {
@@ -97,6 +123,9 @@ class Application {
 ║  URL:         http://localhost:${this.port.toString().padEnd(12)} ║
 ╚════════════════════════════════════════╝
       `);
+
+      // Start scheduler after server is listening
+      schedulerService.start();
     });
   }
 }

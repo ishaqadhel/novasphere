@@ -62,6 +62,22 @@ class SupplierRatingRepository {
     const result = await databaseService.execute(query, [id]);
     return result.affectedRows > 0;
   }
+
+  async getByProjectMaterialRequirementId(pmrId) {
+    const query = `SELECT * FROM ${this.tableName} WHERE project_material_requirement_id = ? AND deleted_at IS NULL`;
+    const rows = await databaseService.query(query, [pmrId]);
+    return rows[0] || null;
+  }
+
+  async calculateAverageRatingForSupplier(supplierId) {
+    const query = `
+      SELECT AVG(rating) as average_rating
+      FROM ${this.tableName}
+      WHERE supplier_id = ? AND deleted_at IS NULL
+    `;
+    const result = await databaseService.query(query, [supplierId]);
+    return result[0]?.average_rating || null;
+  }
 }
 
 export default new SupplierRatingRepository();

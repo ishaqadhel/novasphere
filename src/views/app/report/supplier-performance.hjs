@@ -8,12 +8,12 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
-<body>
+<body class="overflow-x-hidden">
   <div class="d-flex min-vh-100">
-    <!-- Sidebar -->
-    <div class="bg-dark text-white p-3 flex-shrink-0" style="width: 250px; min-width: 250px;">
+    <div class="bg-dark text-white p-3 d-flex flex-column flex-shrink-0 overflow-hidden" 
+         style="width: 250px; height: 100vh; position: sticky; top: 0; z-index: 1000;">
       <h4 class="mb-4">Novasphere</h4>
-      <ul class="nav nav-pills flex-column">
+      <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
           <a href="/app/dashboard" class="nav-link text-white">
             <i class="bi bi-speedometer2"></i> Dashboard
@@ -40,13 +40,6 @@
           </a>
         </li>
         {{/permissions.canAccessProject}}
-        {{#permissions.canAccessProjectTask}}
-        <li class="nav-item">
-          <a href="/app/project-task" class="nav-link text-white">
-            <i class="bi bi-list-task"></i> Project Tasks
-          </a>
-        </li>
-        {{/permissions.canAccessProjectTask}}
         {{#permissions.canAccessSupplier}}
         <li class="nav-item">
           <a href="/app/supplier" class="nav-link text-white">
@@ -75,7 +68,7 @@
         </li>
       </ul>
       <hr class="text-white">
-      <div class="mt-auto pt-4">
+      <div class="pt-2">
         <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
         <p class="mb-1"><small class="text-muted">{{ user.email }}</small></p>
         <form action="/auth/logout" method="POST" class="mt-2">
@@ -86,9 +79,8 @@
       </div>
     </div>
 
-    <!-- Main Content -->
     <div class="flex-grow-1" style="min-width: 0;">
-      <nav class="navbar navbar-light bg-light border-bottom px-4">
+      <nav class="navbar navbar-light bg-light border-bottom px-4 sticky-top">
         <div class="container-fluid">
           <h5 class="mb-0">{{ title }}</h5>
           <span class="navbar-text">Welcome, {{ user.first_name }}!</span>
@@ -96,18 +88,21 @@
       </nav>
 
       <div class="p-4">
-        <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
           <div>
             <h4><i class="bi bi-shop me-2"></i>Supplier Performance Report</h4>
             <p class="text-muted mb-0">Comprehensive supplier rating and performance metrics</p>
           </div>
-          <a href="/app/report" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-2"></i>Back to Reports
-          </a>
+          <div class="d-flex gap-2">
+            <a class="btn btn-outline-primary" href="/app/report/export?type=supplier-performance&format=xlsx">
+              <i class="bi bi-download me-2"></i>Download XLSX
+            </a>
+            <a href="/app/report" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left me-2"></i>Back
+            </a>
+          </div>
         </div>
 
-        <!-- Statistics Cards -->
         <div class="row g-4 mb-4">
           <div class="col-md-3">
             <div class="card border-primary h-100">
@@ -172,7 +167,6 @@
         </div>
 
         <div class="row g-4 mb-4">
-          <!-- Top Rated Suppliers -->
           <div class="col-md-6">
             <div class="card h-100">
               <div class="card-header bg-light">
@@ -180,7 +174,7 @@
               </div>
               <div class="card-body">
                 <div class="table-responsive">
-                  <table class="table table-sm">
+                  <table class="table table-sm align-middle">
                     <thead>
                       <tr>
                         <th>#</th>
@@ -214,7 +208,6 @@
             </div>
           </div>
 
-          <!-- Rating Distribution -->
           <div class="col-md-6">
             <div class="card h-100">
               <div class="card-header bg-light">
@@ -245,14 +238,13 @@
           </div>
         </div>
 
-        <!-- All Suppliers Table -->
         <div class="card">
           <div class="card-header bg-light">
             <h6 class="mb-0"><i class="bi bi-table me-2"></i>All Suppliers Performance</h6>
           </div>
           <div class="card-body">
             <div class="table-responsive">
-              <table class="table table-hover">
+              <table class="table table-hover align-middle">
                 <thead>
                   <tr>
                     <th>ID</th>
@@ -289,7 +281,7 @@
                       </span>
                       {{/rating}}
                       {{^rating}}
-                      <span class="text-muted">N/A</span>
+                      <span class="text-muted small">N/A</span>
                       {{/rating}}
                     </td>
                     <td>
@@ -299,7 +291,7 @@
                       </span>
                       {{/avg_detailed_rating}}
                       {{^avg_detailed_rating}}
-                      <span class="text-muted">N/A</span>
+                      <span class="text-muted small">N/A</span>
                       {{/avg_detailed_rating}}
                     </td>
                     <td>{{ rating_count }}</td>

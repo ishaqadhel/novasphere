@@ -8,12 +8,12 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
-<body>
+<body class="overflow-x-hidden">
   <div class="d-flex min-vh-100">
-    <!-- Sidebar -->
-    <div class="bg-dark text-white p-3 flex-shrink-0" style="width: 250px; min-width: 250px;">
+    <div class="bg-dark text-white p-3 d-flex flex-column flex-shrink-0 overflow-hidden" 
+         style="width: 250px; height: 100vh; position: sticky; top: 0; z-index: 1000;">
       <h4 class="mb-4">Novasphere</h4>
-      <ul class="nav nav-pills flex-column">
+      <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
           <a href="/app/dashboard" class="nav-link text-white">
             <i class="bi bi-speedometer2"></i> Dashboard
@@ -40,13 +40,6 @@
           </a>
         </li>
         {{/permissions.canAccessProject}}
-        {{#permissions.canAccessProjectTask}}
-        <li class="nav-item">
-          <a href="/app/project-task" class="nav-link text-white">
-            <i class="bi bi-list-task"></i> Project Tasks
-          </a>
-        </li>
-        {{/permissions.canAccessProjectTask}}
         {{#permissions.canAccessSupplier}}
         <li class="nav-item">
           <a href="/app/supplier" class="nav-link text-white">
@@ -75,7 +68,7 @@
         </li>
       </ul>
       <hr class="text-white">
-      <div class="mt-auto pt-4">
+      <div class="pt-2">
         <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
         <p class="mb-1"><small class="text-muted">{{ user.email }}</small></p>
         <form action="/auth/logout" method="POST" class="mt-2">
@@ -86,9 +79,8 @@
       </div>
     </div>
 
-    <!-- Main Content -->
     <div class="flex-grow-1" style="min-width: 0;">
-      <nav class="navbar navbar-light bg-light border-bottom px-4">
+      <nav class="navbar navbar-light bg-light border-bottom px-4 sticky-top">
         <div class="container-fluid">
           <h5 class="mb-0">{{ title }}</h5>
           <span class="navbar-text">Welcome, {{ user.first_name }}!</span>
@@ -96,18 +88,21 @@
       </nav>
 
       <div class="p-4">
-        <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
           <div>
             <h4><i class="bi bi-box-seam me-2"></i>Material Usage Report</h4>
             <p class="text-muted mb-0">Analysis of material consumption across projects</p>
           </div>
-          <a href="/app/report" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-2"></i>Back to Reports
-          </a>
+          <div class="d-flex gap-2">
+            <a class="btn btn-outline-primary" href="/app/report/export?type=material-usage&format=xlsx">
+              <i class="bi bi-download me-2"></i>Download XLSX
+            </a>
+            <a href="/app/report" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left me-2"></i>Back
+            </a>
+          </div>
         </div>
 
-        <!-- Statistics Cards -->
         <div class="row g-4 mb-4">
           <div class="col-md-4">
             <div class="card border-primary h-100">
@@ -156,24 +151,22 @@
           </div>
         </div>
 
-        <!-- Most Used Materials -->
         <div class="card mb-4">
           <div class="card-header bg-light">
             <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>Most Used Materials (Top 20)</h6>
           </div>
           <div class="card-body">
             <div class="table-responsive">
-              <table class="table table-hover">
+              <table class="table table-hover align-middle">
                 <thead>
                   <tr>
                     <th>ID</th>
                     <th>Material Name</th>
                     <th>Category</th>
                     <th>Usage Count</th>
-                    <th>Total Quantity</th>
-                    <th>Good Quantity</th>
-                    <th>Bad Quantity</th>
-                  </tr>
+                    <th>Total Qty</th>
+                    <th class="text-success">Good Qty</th>
+                    <th class="text-danger">Bad Qty</th> </tr>
                 </thead>
                 <tbody>
                   {{#reportData.mostUsedMaterials}}
@@ -184,7 +177,7 @@
                     <td>{{ usage_count }} projects</td>
                     <td>{{ total_quantity }}</td>
                     <td>{{ total_good_quantity }}</td>
-                    <td>{{ total_bad_quantity }}</td>
+                    <td class="text-danger fw-bold">{{ total_bad_quantity }}</td>
                   </tr>
                   {{/reportData.mostUsedMaterials}}
                   {{^reportData.mostUsedMaterials}}
@@ -199,7 +192,6 @@
         </div>
 
         <div class="row g-4 mb-4">
-          <!-- Materials by Category -->
           <div class="col-md-6">
             <div class="card h-100">
               <div class="card-header bg-light">
@@ -207,7 +199,7 @@
               </div>
               <div class="card-body">
                 <div class="table-responsive">
-                  <table class="table table-sm">
+                  <table class="table table-sm align-middle">
                     <thead>
                       <tr>
                         <th>Category</th>
@@ -235,7 +227,6 @@
             </div>
           </div>
 
-          <!-- Material Requirements by Project -->
           <div class="col-md-6">
             <div class="card h-100">
               <div class="card-header bg-light">
@@ -243,7 +234,7 @@
               </div>
               <div class="card-body">
                 <div class="table-responsive">
-                  <table class="table table-sm">
+                  <table class="table table-sm align-middle">
                     <thead>
                       <tr>
                         <th>Project</th>
@@ -257,7 +248,12 @@
                         <td><strong>{{ project_name }}</strong></td>
                         <td>{{ materials_count }} items</td>
                         <td>
-                          <span class="badge bg-info">{{ fulfillment_rate }}%</span>
+                          <div class="d-flex align-items-center">
+                            <div class="progress flex-grow-1 me-2" style="height: 6px;">
+                              <div class="progress-bar bg-info" role="progressbar" style="width: {{ fulfillment_rate }}%"></div>
+                            </div>
+                            <span class="small">{{ fulfillment_rate }}%</span>
+                          </div>
                         </td>
                       </tr>
                       {{/reportData.materialsByProject}}
