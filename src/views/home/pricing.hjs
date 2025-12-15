@@ -1,173 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pricing - Novasphere</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novasphere Pricing</title>
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .pricing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            padding-bottom: 50px;
+        }
+
+        .header-section {
+            margin-bottom: 50px;
+        }
+
+        .header-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #222;
+        }
+
+        .header-section p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Pricing Cards Layout */
+        .pricing-grid {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px 30px;
+            width: 300px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: transform 0.2s;
+            border: 1px solid #eee;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Special Styling for the Middle Card (Pro) */
+        .card.popular {
+            border: 2px solid #2546bc;
+            position: relative;
+        }
+
+        .badge-popular {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2546bc;
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* Typography inside cards */
+        .tier-name {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .price-main {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #222;
+            margin: 10px 0;
+        }
+
+        .price-sub {
+            font-size: 1rem;
+            color: #888;
+            font-weight: normal;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 30px 0;
+            width: 100%;
+        }
+
+        /* Features List */
+        .features-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+            flex-grow: 1; /* Pushes content to fill space */
+        }
+
+        .features-list li {
+            margin-bottom: 15px;
+            color: #444;
+            display: flex;
+            align-items: start;
+        }
+
+        .checkmark {
+            color: #2546bc;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .green-check {
+            color: #28a745;
+        }
+
+        /* Footer CTA */
+        .cta-footer {
+            margin-top: 60px;
+            padding: 20px;
+            background-color: #eef2ff;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .cta-text {
+            font-size: 1.1rem;
+            color: #2546bc;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .pricing-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            .card {
+                width: 100%;
+                max-width: 350px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="d-flex min-vh-100">
-    <!-- Sidebar -->
-    <div class="bg-dark text-white p-3" style="width: 250px;">
-      <h4 class="mb-4">Novasphere</h4>
-      <ul class="nav nav-pills flex-column">
-        <li class="nav-item"><a href="/app/dashboard" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-        <li class="nav-item"><a href="/app/material-category" class="nav-link text-white"><i class="bi bi-folder"></i> Material Categories</a></li>
-        <li class="nav-item"><a href="/app/material" class="nav-link text-white"><i class="bi bi-box-seam"></i> Materials</a></li>
-        <li class="nav-item"><a href="/app/project" class="nav-link text-white"><i class="bi bi-building"></i> Projects</a></li>
-        <li class="nav-item">
-          <a href="/app/supplier" class="nav-link text-white">
-            <i class="bi bi-shop"></i> Suppliers
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="/app/report" class="nav-link text-white">
-            <i class="bi bi-graph-up"></i> Reports
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="/app/user" class="nav-link text-white">
-            <i class="bi bi-people"></i> Users
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="/pricing" class="nav-link text-white active">
-            <i class="bi bi-tag"></i> Pricing
-          </a>
-        </li>
-      </ul>
-      <hr class="text-white">
-      <div class="mt-auto pt-4">
-        <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
-        <p class="mb-1"><small class="text-muted">{{ user.email }}</small></p>
-        <form action="/auth/logout" method="POST" class="mt-2"><button type="submit" class="btn btn-sm btn-outline-light w-100"><i class="bi bi-box-arrow-right"></i> Logout</button></form>
-      </div>
+
+<div class="pricing-container">
+    
+    <div class="header-section">
+        <h1>Flexible Deployment</h1>
+        <p>From small contractors to government enterprises.</p>
     </div>
 
-    <!-- Main Content -->
-    <div class="flex-grow-1">
-      <nav class="navbar navbar-light bg-light border-bottom px-4">
-        <div class="container-fluid"><h5 class="mb-0">Pricing Plans</h5><span class="navbar-text">Welcome, {{ user.first_name }}!</span></div>
-      </nav>
+    <div class="pricing-grid">
+        
+        <div class="card">
+            <div class="tier-name">Basic</div>
+            <div class="price-main">$0<span class="price-sub">/mo</span></div>
+            
+            <div class="divider"></div>
 
-      <div class="p-4">
-        <div class="container py-5">
-          <div class="text-center mb-5">
-            <h1 class="display-4 fw-bold mb-3">Choose Your Plan</h1>
-            <p class="lead text-muted">Select the perfect plan for your construction management needs</p>
-          </div>
-          
-          <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
-            <!-- Basic Plan -->
-            <div class="col">
-              <div class="card h-100 shadow-sm">
-                <div class="card-header py-3 bg-light">
-                  <h4 class="my-0 fw-normal text-center">Basic</h4>
-                </div>
-                <div class="card-body d-flex flex-column">
-                  <h1 class="card-title pricing-card-title text-center mb-4">
-                    $29<small class="text-muted fw-light">/month</small>
-                  </h1>
-                  <p class="text-muted text-center mb-4">Perfect for small teams</p>
-                  <ul class="list-unstyled mb-4 flex-grow-1">
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Up to 5 projects</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Basic supplier management</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Material tracking</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Email support</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Standard reporting</li>
-                  </ul>
-                  <button type="button" class="w-100 btn btn-lg btn-outline-secondary">Get Started</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Professional Plan -->
-            <div class="col">
-              <div class="card h-100 shadow border-primary" style="border-width: 2px;">
-                <div class="card-header py-3 bg-primary text-white position-relative">
-                  <h4 class="my-0 fw-normal text-center">Professional</h4>
-                  <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-warning text-dark">
-                    Most Popular
-                  </span>
-                </div>
-                <div class="card-body d-flex flex-column">
-                  <h1 class="card-title pricing-card-title text-center mb-4">
-                    $79<small class="text-muted fw-light">/month</small>
-                  </h1>
-                  <p class="text-muted text-center mb-4">Ideal for growing businesses</p>
-                  <ul class="list-unstyled mb-4 flex-grow-1">
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Unlimited projects</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Advanced supplier analytics</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Real-time inventory tracking</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Priority support</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Custom reports & dashboards</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Team collaboration tools</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Mobile app access</li>
-                  </ul>
-                  <button type="button" class="w-100 btn btn-lg btn-primary">Get Started</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Enterprise Plan -->
-            <div class="col">
-              <div class="card h-100 shadow-sm">
-                <div class="card-header py-3 bg-dark text-white">
-                  <h4 class="my-0 fw-normal text-center">Enterprise</h4>
-                </div>
-                <div class="card-body d-flex flex-column">
-                  <h1 class="card-title pricing-card-title text-center mb-4">
-                    Custom
-                  </h1>
-                  <p class="text-muted text-center mb-4">Tailored for large organizations</p>
-                  <ul class="list-unstyled mb-4 flex-grow-1">
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Everything in Professional</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Dedicated account manager</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Custom integrations</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Advanced security features</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>24/7 phone support</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>On-premise deployment option</li>
-                    <li class="mb-2"><i class="bi bi-check-circle-fill text-dark me-2"></i>Training & onboarding</li>
-                  </ul>
-                  <button type="button" class="w-100 btn btn-lg btn-dark">Contact Sales</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Additional Information -->
-          <div class="row mt-5">
-            <div class="col-12">
-              <div class="card bg-light">
-                <div class="card-body text-center py-4">
-                  <h5 class="mb-3">All plans include:</h5>
-                  <div class="row">
-                    <div class="col-md-3">
-                      <i class="bi bi-shield-check fs-3 text-primary mb-2"></i>
-                      <p class="mb-0">Secure data encryption</p>
-                    </div>
-                    <div class="col-md-3">
-                      <i class="bi bi-cloud-check fs-3 text-primary mb-2"></i>
-                      <p class="mb-0">Cloud-based storage</p>
-                    </div>
-                    <div class="col-md-3">
-                      <i class="bi bi-arrow-clockwise fs-3 text-primary mb-2"></i>
-                      <p class="mb-0">Regular updates</p>
-                    </div>
-                    <div class="col-md-3">
-                      <i class="bi bi-person-check fs-3 text-primary mb-2"></i>
-                      <p class="mb-0">User training resources</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+            <ul class="features-list">
+                <li><span class="checkmark">✓</span> Up to 10 Users</li>
+                <li><span class="checkmark">✓</span> Max 5 Projects</li>
+                <li><span class="checkmark">✓</span> Supplier Comparison</li>
+                <li><span class="checkmark">✓</span> Material Tracking</li>
+            </ul>
         </div>
-      </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <div class="card popular">
+            <div class="badge-popular">MOST POPULAR</div>
+            <div class="tier-name" style="color: #2546bc; font-weight:bold;">Pro & Pro+</div>
+            <div class="price-main" style="font-size: 2rem;">Subscription</div>
+            <div class="price-sub">Cloud SaaS Model</div>
+
+            <div class="divider"></div>
+
+            <ul class="features-list">
+                <li><span class="checkmark green-check">✓</span> <strong>Unlimited</strong> Users & Projects</li>
+                <li><span class="checkmark green-check">✓</span> Basic Progress Reports</li>
+                <li><span class="checkmark green-check">✓</span> <strong>Pre-Delay Alerts</strong></li>
+                <li><span class="checkmark green-check">✓</span> Priority Support</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="tier-name">Enterprise</div>
+            <div class="price-main" style="font-size: 2rem;">On-Prem</div>
+            <div class="price-sub">Private Server Deployment</div>
+
+            <div class="divider"></div>
+
+            <ul class="features-list">
+                <li><span class="checkmark">✓</span> Full Data Control</li>
+                <li><span class="checkmark">✓</span> Custom Integrations (ERP/BIM)</li>
+                <li><span class="checkmark">✓</span> Government Compliance</li>
+                <li><span class="checkmark">✓</span> Dedicated Account Manager</li>
+                <li><span class="checkmark">✓</span> SLA-backed Support</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="cta-footer">
+        <span class="cta-text">Interest in our product? Contact customer support to start with Novasphere.</span>
+    </div>
+
+</div>
+
 </body>
 </html>

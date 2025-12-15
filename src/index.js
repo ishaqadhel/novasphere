@@ -119,8 +119,10 @@ class Application {
 ║         Novasphere Application         ║
 ╠════════════════════════════════════════╣
 ║  Environment: ${appConfig.env.padEnd(27)} ║
-║  Port:        ${this.port.toString().padEnd(27)} ║
-║  URL:         http://localhost:${this.port.toString().padEnd(12)} ║
+║  Server Port:        ${this.port.toString().padEnd(27)} ║
+║  Server URL:         http://localhost:${this.port.toString().padEnd(12)} ║
+║  Access Port:        20255             ║
+║  Access URL:         http://localhost:20255║
 ╚════════════════════════════════════════╝
       `);
 
