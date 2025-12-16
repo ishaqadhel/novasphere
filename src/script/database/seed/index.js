@@ -218,7 +218,7 @@ class SeedScript {
     const usersToSeed = [
       // Admin users
       {
-        email: 'aom',
+        email: 'admin1@example.com',
         password: 'password',
         firstName: 'Admin',
         lastName: 'One',
