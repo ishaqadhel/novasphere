@@ -11,7 +11,7 @@ services:
       - DB_HOST=mysql
       - DB_PORT=3306
       - DB_USER=root
-      - DB_PASSWORD=password
+      - DB_PASSWORD=ziAPH9b2s52E
       - DB_NAME=novasphere_db
       - PORT=3000
       - SESSION_SECRET=novasphere-secret-key-production
@@ -29,14 +29,14 @@ services:
     ports:
       - '3307:3306'
     environment:
-      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=ziAPH9b2s52E
       - MYSQL_DATABASE=novasphere_db
     volumes:
       - novasphere-mysql-data:/var/lib/mysql
     networks:
       - novasphere-network
     healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-ppassword']
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-pziAPH9b2s52E']
       interval: 10s
       timeout: 5s
       retries: 5
