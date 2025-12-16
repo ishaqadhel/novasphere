@@ -17,7 +17,8 @@ class SchedulerService {
 
     // PMR Pre-Delay Alert Job - runs every hour
     const pmrAlertCronJob = cron.schedule(
-      '0 * * * *',
+      // '0 * * * *', -- FIXME: TEMPORARILY SET TO RUN EVERY MINUTE FOR DEMO
+      '* * * * *',
       async () => {
         console.log(`[${new Date().toISOString()}] Running PMR alert job...`);
         try {
