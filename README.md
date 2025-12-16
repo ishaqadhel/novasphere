@@ -171,7 +171,21 @@ novasphere/
 
 ## Installation
 
-### Option 1: Local Development (with Docker for MySQL only)
+### Option 1: Default Docker Setup (Recommended)
+
+The simplest way to get started with the application.
+
+1. **Build and start containers**
+   ```bash
+   docker compose up -d
+   ```
+
+2. **Access the application**
+   - URL: http://localhost:20255
+
+### Option 2: Local Development (with Docker for MySQL only)
+
+For developers who want to run the Node.js app locally while using Docker for MySQL.
 
 1. **Install dependencies**
    ```bash
@@ -180,7 +194,7 @@ novasphere/
 
 2. **Start MySQL container**
    ```bash
-   docker-compose -f docker-compose-local.yml up -d
+   docker compose -f docker-compose-local.yml up -d
    ```
 
 3. **Configure environment**
@@ -202,11 +216,13 @@ novasphere/
    - URL: http://localhost:3000
    - Default credentials: `admin@example.com` / `admin123`
 
-### Option 2: Full Docker Development Environment
+### Option 3: Full Docker Development Environment
+
+For development with hot-reload enabled inside Docker.
 
 1. **Build and start containers**
    ```bash
-   docker-compose -f docker-compose-dev.yml up --build
+   docker compose -f docker-compose-dev.yml up --build
    ```
 
 2. **Access the container and run migrations**
@@ -390,31 +406,55 @@ SESSION_MAX_AGE=86400000
 
 ## Docker Commands
 
+### Default Setup
+```bash
+# Start all services
+docker compose up -d
+
+# Stop all services
+docker compose down
+
+# View logs
+docker compose logs -f
+
+# Rebuild
+docker compose up --build --force-recreate
+
+# Remove volumes (for clean reset)
+docker compose down -v
+```
+
 ### Local MySQL Only
 ```bash
 # Start MySQL
-docker-compose -f docker-compose-local.yml up -d
+docker compose -f docker-compose-local.yml up -d
 
 # Stop MySQL
-docker-compose -f docker-compose-local.yml down
+docker compose -f docker-compose-local.yml down
 
 # View logs
-docker-compose -f docker-compose-local.yml logs -f
+docker compose -f docker-compose-local.yml logs -f
+
+# Remove volumes
+docker compose -f docker-compose-local.yml down -v
 ```
 
 ### Full Development Environment
 ```bash
 # Start all services
-docker-compose -f docker-compose-dev.yml up --build
+docker compose -f docker-compose-dev.yml up --build
 
 # Stop all services
-docker-compose -f docker-compose-dev.yml down
+docker compose -f docker-compose-dev.yml down
 
 # View logs
-docker-compose -f docker-compose-dev.yml logs -f app
+docker compose -f docker-compose-dev.yml logs -f app
 
 # Rebuild
-docker-compose -f docker-compose-dev.yml up --build --force-recreate
+docker compose -f docker-compose-dev.yml up --build --force-recreate
+
+# Remove volumes
+docker compose -f docker-compose-dev.yml down -v
 ```
 
 ## Code Style
