@@ -1,0 +1,187 @@
+<div id="analytics-content">
+  <!-- KPI Summary Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center">
+          <h6 class="text-muted text-uppercase small fw-bold mb-1">Avg SPI</h6>
+          <h2 class="fw-bold {{ spiClass }} mb-0">{{ summary.avg_spi }}</h2>
+          <small class="text-muted">≥1.0 = on schedule</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center">
+          <h6 class="text-muted text-uppercase small fw-bold mb-1">Avg Task Completion</h6>
+          <h2 class="fw-bold text-primary mb-0">{{ summary.avg_task_completion }}%</h2>
+          <small class="text-muted">across all projects</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center">
+          <h6 class="text-muted text-uppercase small fw-bold mb-1">Overall Defect Rate</h6>
+          <h2 class="fw-bold {{ defectClass }} mb-0">{{ summary.avg_defect_rate }}%</h2>
+          <small class="text-muted">threshold: 5%</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center">
+          <h6 class="text-muted text-uppercase small fw-bold mb-1">Projects</h6>
+          <h2 class="fw-bold text-dark mb-0">{{ summary.total_active_projects }}</h2>
+          <small class="text-danger">{{ summary.total_delayed_projects }} delayed</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts 2x2 Grid -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header bg-light"><h6 class="mb-0"><i class="bi bi-bar-chart-horizontal me-2"></i>Schedule Performance (SPI) by Project</h6></div>
+        <div class="card-body">
+          {{#hasScheduleData}}
+          <canvas id="scheduleChart" height="220"></canvas>
+          {{/hasScheduleData}}
+          {{^hasScheduleData}}<p class="text-center text-muted py-4">No schedule data</p>{{/hasScheduleData}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header bg-light"><h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>Quality Defect Rate Trend</h6></div>
+        <div class="card-body">
+          {{#hasQualityData}}
+          <canvas id="qualityChart" height="220"></canvas>
+          {{/hasQualityData}}
+          {{^hasQualityData}}<p class="text-center text-muted py-4">No quality data</p>{{/hasQualityData}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header bg-light"><h6 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Budget vs Orders by Project</h6></div>
+        <div class="card-body">
+          {{#hasBudgetData}}
+          <canvas id="budgetChart" height="220"></canvas>
+          {{/hasBudgetData}}
+          {{^hasBudgetData}}<p class="text-center text-muted py-4">No budget data</p>{{/hasBudgetData}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header bg-light"><h6 class="mb-0"><i class="bi bi-bar-chart-horizontal me-2"></i>Task Completion by Project</h6></div>
+        <div class="card-body">
+          {{#hasScheduleData}}
+          <canvas id="completionChart" height="220"></canvas>
+          {{/hasScheduleData}}
+          {{^hasScheduleData}}<p class="text-center text-muted py-4">No task data</p>{{/hasScheduleData}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Details Table -->
+  {{#hasScheduleData}}
+  <div class="card">
+    <div class="card-header bg-light"><h6 class="mb-0"><i class="bi bi-table me-2"></i>Project KPI Details</h6></div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle table-sm">
+          <thead>
+            <tr>
+              <th>Project</th><th>SPI</th><th>Completion %</th>
+              <th>Days Overdue</th><th>Planned Duration</th><th>Actual Duration</th>
+              <th>Tasks</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#scheduleKPIs}}
+            <tr>
+              <td><strong>{{ name }}</strong></td>
+              <td><span class="{{ spi_class }}">{{ spi }}</span></td>
+              <td>
+                <div class="progress" style="height:16px;">
+                  <div class="progress-bar" style="width:{{ task_completion_rate }}%">{{ task_completion_rate }}%</div>
+                </div>
+              </td>
+              <td><span class="{{ overdue_class }}">{{ days_overdue }}</span></td>
+              <td>{{ planned_duration }}d</td>
+              <td>{{ actual_duration }}d</td>
+              <td>{{ completed_tasks }}/{{ total_tasks }}</td>
+            </tr>
+            {{/scheduleKPIs}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {{/hasScheduleData}}
+
+  <script>
+    (function() {
+      var scheduleData = {{{ scheduleChartJson }}};
+      var qualityData = {{{ qualityChartJson }}};
+      var budgetData = {{{ budgetChartJson }}};
+      var completionData = {{{ completionChartJson }}};
+
+      if (document.getElementById('scheduleChart') && scheduleData) {
+        new Chart(document.getElementById('scheduleChart'), {
+          type: 'bar',
+          data: scheduleData,
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { x: { title: { display: true, text: 'SPI (≥1.0 = on schedule)' } } }
+          }
+        });
+      }
+      if (document.getElementById('qualityChart') && qualityData) {
+        new Chart(document.getElementById('qualityChart'), {
+          type: 'line',
+          data: qualityData,
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              annotation: {}
+            },
+            scales: { y: { title: { display: true, text: 'Defect Rate %' } } }
+          }
+        });
+      }
+      if (document.getElementById('budgetChart') && budgetData) {
+        new Chart(document.getElementById('budgetChart'), {
+          type: 'bar',
+          data: budgetData,
+          options: {
+            responsive: true,
+            scales: {
+              y: { type: 'linear', position: 'left', title: { display: true, text: 'Budget (NT$)' } },
+              y1: { type: 'linear', position: 'right', title: { display: true, text: 'Orders' }, grid: { drawOnChartArea: false } }
+            }
+          }
+        });
+      }
+      if (document.getElementById('completionChart') && completionData) {
+        new Chart(document.getElementById('completionChart'), {
+          type: 'bar',
+          data: completionData,
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { x: { min: 0, max: 100, title: { display: true, text: 'Completion %' } } }
+          }
+        });
+      }
+    })();
+  </script>
+</div>

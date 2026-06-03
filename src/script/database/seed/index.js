@@ -175,6 +175,7 @@ class SeedScript {
       { name: 'Supplier', description: 'Supplier management module' },
       { name: 'User', description: 'User management module' },
       { name: 'Report', description: 'Report generation and viewing module' },
+      { name: 'SRMA', description: 'Schedule Risk & Mitigation Advisor' },
     ];
 
     for (const module of modules) {

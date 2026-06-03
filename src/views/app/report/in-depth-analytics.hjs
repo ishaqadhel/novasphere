@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} - Novasphere</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="overflow-x-hidden">
+  <div class="d-flex min-vh-100">
+    <div class="bg-dark text-white p-3 d-flex flex-column flex-shrink-0 overflow-hidden"
+         style="width: 250px; height: 100vh; position: sticky; top: 0; z-index: 1000;">
+      <h4 class="mb-4">Novasphere</h4>
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item"><a href="/app/dashboard" class="nav-link text-white"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+        {{#permissions.canAccessMaterialCategory}}<li class="nav-item"><a href="/app/material-category" class="nav-link text-white"><i class="bi bi-folder"></i> Material Categories</a></li>{{/permissions.canAccessMaterialCategory}}
+        {{#permissions.canAccessMaterial}}<li class="nav-item"><a href="/app/material" class="nav-link text-white"><i class="bi bi-box-seam"></i> Materials</a></li>{{/permissions.canAccessMaterial}}
+        {{#permissions.canAccessProject}}<li class="nav-item"><a href="/app/project" class="nav-link text-white"><i class="bi bi-building"></i> Projects</a></li>{{/permissions.canAccessProject}}
+        {{#permissions.canAccessSupplier}}<li class="nav-item"><a href="/app/supplier" class="nav-link text-white"><i class="bi bi-shop"></i> Suppliers</a></li>{{/permissions.canAccessSupplier}}
+        {{#permissions.canAccessReport}}<li class="nav-item"><a href="/app/report" class="nav-link text-white active"><i class="bi bi-graph-up"></i> Reports</a></li>{{/permissions.canAccessReport}}
+        {{#permissions.canAccessUser}}<li class="nav-item"><a href="/app/user" class="nav-link text-white"><i class="bi bi-people"></i> Users</a></li>{{/permissions.canAccessUser}}
+        <li class="nav-item"><a href="/app/notification" class="nav-link text-white"><i class="bi bi-bell"></i> Notifications</a></li>
+      </ul>
+      <hr class="text-white">
+      <div class="pt-2">
+        <p class="mb-1"><small>{{ user.first_name }} {{ user.last_name }}</small></p>
+        <p class="mb-1"><small class="text-muted">{{ user.email }}</small></p>
+        <form action="/auth/logout" method="POST" class="mt-2">
+          <button type="submit" class="btn btn-sm btn-outline-light w-100"><i class="bi bi-box-arrow-right"></i> Logout</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="flex-grow-1" style="min-width: 0;">
+      <nav class="navbar navbar-light bg-light border-bottom px-4 sticky-top">
+        <div class="container-fluid">
+          <h5 class="mb-0">{{ title }}</h5>
+          <span class="navbar-text">Welcome, {{ user.first_name }}!</span>
+        </div>
+      </nav>
+
+      <div class="p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4><i class="bi bi-layers me-2"></i>In-Depth Performance Analytics</h4>
+            <p class="text-muted mb-0">Multi-dimensional KPI dashboard with real-time HTMX filter updates</p>
+          </div>
+          <a href="/app/report" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back</a>
+        </div>
+
+        <!-- HTMX Filter Bar -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <form hx-get="/app/report/in-depth-analytics"
+                  hx-target="#analytics-content"
+                  hx-swap="innerHTML"
+                  hx-trigger="change"
+                  class="row g-3 align-items-end">
+              <div class="col-md-3">
+                <label class="form-label fw-semibold small">Project</label>
+                <select name="projectId" class="form-select form-select-sm">
+                  <option value="">All Projects</option>
+                  {{#allProjects}}
+                  <option value="{{ project_id }}" {{#filters.projectIdValue}}{{/filters.projectIdValue}}>{{ name }}</option>
+                  {{/allProjects}}
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label fw-semibold small">KPI Focus</label>
+                <select name="kpi" class="form-select form-select-sm">
+                  <option value="all">All KPIs</option>
+                  <option value="schedule">Schedule</option>
+                  <option value="quality">Quality</option>
+                  <option value="budget">Budget</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <label class="form-label fw-semibold small">Start Date</label>
+                <input type="date" name="start" class="form-control form-control-sm" value="{{ filters.startValue }}">
+              </div>
+              <div class="col-md-2">
+                <label class="form-label fw-semibold small">End Date</label>
+                <input type="date" name="end" class="form-control form-control-sm" value="{{ filters.endValue }}">
+              </div>
+              <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-sm w-100">
+                  <i class="bi bi-funnel me-1"></i>Apply Filters
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Analytics Content (HTMX swap target) -->
+        <div id="analytics-content">
+          <!-- KPI Summary Cards -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-3">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                  <h6 class="text-muted text-uppercase small fw-bold mb-1">Avg SPI</h6>
+                  <h2 class="fw-bold {{ spiClass }} mb-0">{{ summary.avg_spi }}</h2>
+                  <small class="text-muted">≥1.0 = on schedule</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                  <h6 class="text-muted text-uppercase small fw-bold mb-1">Avg Task Completion</h6>
+                  <h2 class="fw-bold text-primary mb-0">{{ summary.avg_task_completion }}%</h2>
+                  <small class="text-muted">across all projects</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                  <h6 class="text-muted text-uppercase small fw-bold mb-1">Overall Defect Rate</h6>
+                  <h2 class="fw-bold {{ defectClass }} mb-0">{{ summary.avg_defect_rate }}%</h2>
+                  <small class="text-muted">threshold: 5%</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                  <h6 class="text-muted text-uppercase small fw-bold mb-1">Projects</h6>
+                  <h2 class="fw-bold text-dark mb-0">{{ summary.total_active_projects }}</h2>
+                  <small class="text-danger">{{ summary.total_delayed_projects }} delayed</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts 2x2 Grid -->
+          <div class="row g-4 mb-4">
+            <div class="col-md-6">
+              <div class="card h-100">
+                <div class="card-header bg-light"><h6 class="mb-0"><i class="bi bi-bar-chart-horizontal me-2"></i>Schedule Performance (SPI) by Project</h6></div>
+                <div class="card-body">
+                  {{#hasScheduleData}}
+                  <canvas id="scheduleChart" height="220"></canvas>
+                  {{/hasScheduleData}}
+                  {{^hasScheduleData}}<p class="text-center text-muted py-4">No schedule data</p>{{/hasScheduleData}}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card h-100">
+                <div class="card-header bg-light"><h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>Quality Defect Rate Trend — dashed line at 5%</h6></div>
+                <div class="card-body">
+                  {{#hasQualityData}}
+                  <canvas id="qualityChart" height="220"></canvas>
+                  {{/hasQualityData}}
+                  {{^hasQualityData}}<p class="text-center text-muted py-4">No quality data</p>{{/hasQualityData}}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card h-100">
+                <div class="card-header bg-light"><h6 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Budget vs Orders by Project</h6></div>
+                <div class="card-body">
+                  {{#hasBudgetData}}
+                  <canvas id="budgetChart" height="220"></canvas>
+                  {{/hasBudgetData}}
+                  {{^hasBudgetData}}<p class="text-center text-muted py-4">No budget data</p>{{/hasBudgetData}}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card h-100">
+                <div class="card-header bg-light"><h6 class="mb-0"><i class="bi bi-bar-chart-horizontal me-2"></i>Task Completion by Project</h6></div>
+                <div class="card-body">
+                  {{#hasScheduleData}}
+                  <canvas id="completionChart" height="220"></canvas>
+                  {{/hasScheduleData}}
+                  {{^hasScheduleData}}<p class="text-center text-muted py-4">No task data</p>{{/hasScheduleData}}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Details Table -->
+          {{#hasScheduleData}}
+          <div class="card">
+            <div class="card-header bg-light"><h6 class="mb-0"><i class="bi bi-table me-2"></i>Project KPI Details</h6></div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle table-sm">
+                  <thead>
+                    <tr>
+                      <th>Project</th><th>SPI</th><th>Completion %</th>
+                      <th>Days Overdue</th><th>Planned Duration</th><th>Actual Duration</th>
+                      <th>Tasks</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {{#scheduleKPIs}}
+                    <tr>
+                      <td><strong>{{ name }}</strong></td>
+                      <td><span class="{{ spi_class }}">{{ spi }}</span></td>
+                      <td>
+                        <div class="progress" style="height:16px;">
+                          <div class="progress-bar" style="width:{{ task_completion_rate }}%">{{ task_completion_rate }}%</div>
+                        </div>
+                      </td>
+                      <td><span class="{{ overdue_class }}">{{ days_overdue }}</span></td>
+                      <td>{{ planned_duration }}d</td>
+                      <td>{{ actual_duration }}d</td>
+                      <td>{{ completed_tasks }}/{{ total_tasks }}</td>
+                    </tr>
+                    {{/scheduleKPIs}}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          {{/hasScheduleData}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function initCharts() {
+      var scheduleData = {{{ scheduleChartJson }}};
+      var qualityData = {{{ qualityChartJson }}};
+      var budgetData = {{{ budgetChartJson }}};
+      var completionData = {{{ completionChartJson }}};
+
+      if (document.getElementById('scheduleChart') && scheduleData) {
+        new Chart(document.getElementById('scheduleChart'), {
+          type: 'bar',
+          data: scheduleData,
+          options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { title: { display: true, text: 'SPI' } } } }
+        });
+      }
+      if (document.getElementById('qualityChart') && qualityData) {
+        new Chart(document.getElementById('qualityChart'), {
+          type: 'line',
+          data: qualityData,
+          options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { title: { display: true, text: 'Defect Rate %' } } } }
+        });
+      }
+      if (document.getElementById('budgetChart') && budgetData) {
+        new Chart(document.getElementById('budgetChart'), {
+          type: 'bar',
+          data: budgetData,
+          options: {
+            responsive: true,
+            scales: {
+              y: { type: 'linear', position: 'left', title: { display: true, text: 'Budget (NT$)' } },
+              y1: { type: 'linear', position: 'right', title: { display: true, text: 'Orders' }, grid: { drawOnChartArea: false } }
+            }
+          }
+        });
+      }
+      if (document.getElementById('completionChart') && completionData) {
+        new Chart(document.getElementById('completionChart'), {
+          type: 'bar',
+          data: completionData,
+          options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { min: 0, max: 100, title: { display: true, text: 'Completion %' } } } }
+        });
+      }
+    })();
+
+    // Re-init charts after HTMX swap
+    document.body.addEventListener('htmx:afterSwap', function(e) {
+      if (e.detail.target && e.detail.target.id === 'analytics-content') {
+        // Charts are initialized via inline script in the partial
+      }
+    });
+  </script>
+</body>
+</html>
