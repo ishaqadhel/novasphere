@@ -346,30 +346,6 @@
         </div>
       </div>
 
-      <!-- Bottom: Founders Cards -->
-      <div class="row justify-content-center g-4">
-         <div class="col-md-4 col-lg-4">
-             <div class="founder-card h-100">
-                <div class="founder-avatar"><i class="bi bi-person"></i></div>
-                <h5 class="fw-bold mb-2">Ishaq Adheltyo</h5>
-                <small class="text-primary fw-bold text-uppercase tracking-wide">Chief Technology Officer (CTO)</small>
-             </div>
-         </div>
-         <div class="col-md-4 col-lg-4">
-             <div class="founder-card h-100">
-                <div class="founder-avatar"><i class="bi bi-person"></i></div>
-                <h5 class="fw-bold mb-2">王紹帆</h5>
-                <small class="text-primary fw-bold text-uppercase tracking-wide">Chief Operating Officer (COO)</small>
-             </div>
-         </div>
-         <div class="col-md-4 col-lg-4">
-             <div class="founder-card h-100">
-                <div class="founder-avatar"><i class="bi bi-person"></i></div>
-                <h5 class="fw-bold mb-2">Cornelius Jefferson Tjahjono</h5>
-                <small class="text-primary fw-bold text-uppercase tracking-wide">Chief Executive Officer (CEO)</small>
-             </div>
-         </div>
-      </div>
 
     </div>
   </section>
@@ -387,9 +363,7 @@
               <i class="bi bi-envelope-fill text-primary fs-3 mb-2"></i>
               <h5 class="fw-bold mb-3">Email Us</h5>
               <ul class="list-unstyled">
-                <li class="mb-2"><a href="mailto:M11402805@mail.ntust.edu.tw" class="text-decoration-none text-muted">M11402805@mail.ntust.edu.tw</a></li>
-                <li class="mb-2"><a href="mailto:M11405505@mail.ntust.edu.tw" class="text-decoration-none text-muted">M11405505@mail.ntust.edu.tw</a></li>
-                <li class="mb-2"><a href="mailto:M11405806@mail.ntust.edu.tw" class="text-decoration-none text-muted">M11405806@mail.ntust.edu.tw</a></li>
+                <li class="mb-2"><a href="mailto:contact@novasphere.co" class="text-decoration-none text-muted">contact@novasphere.co</a></li>
               </ul>
             </div>
           </div>
