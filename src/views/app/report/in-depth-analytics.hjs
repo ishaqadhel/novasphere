@@ -94,6 +94,63 @@
           </div>
         </div>
 
+        <!-- AI Quality Forecast Insight -->
+        {{#hasAiQualityInsight}}
+        <div class="card mb-4 border-0 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex align-items-start gap-3">
+              <i class="bi bi-robot fs-3 text-primary mt-1"></i>
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <strong>AI Quality Forecast</strong>
+                  <span class="badge bg-primary bg-opacity-10 text-primary border border-primary" style="font-size:0.7rem;">Linear Regression · 80/20 train/test split</span>
+                </div>
+                <div class="row g-3 mb-2">
+                  <div class="col-sm-3 text-center">
+                    <div class="fw-bold {{ aiQualityInsight.trend_class }} fs-5">{{ aiQualityInsight.trend_label }}</div>
+                    <small class="text-muted">Defect Trend</small>
+                  </div>
+                  <div class="col-sm-3 text-center">
+                    <div class="fw-bold {{ aiQualityInsight.predicted_3m_class }} fs-5">{{ aiQualityInsight.predicted_3m }}%</div>
+                    <small class="text-muted">Predicted in 3 months</small>
+                  </div>
+                  <div class="col-sm-3 text-center border-start">
+                    <div class="fw-bold {{ aiQualityInsight.accuracy_class }}">{{ aiQualityInsight.accuracy_label }}</div>
+                    <small class="text-muted">Overall Accuracy</small>
+                  </div>
+                  <div class="col-sm-3 text-center">
+                    <div class="text-muted small">{{ aiQualityInsight.train_points }} train / {{ aiQualityInsight.test_points }} test pts</div>
+                    <small class="text-muted">time-based split</small>
+                  </div>
+                </div>
+                <div class="row g-2 border-top pt-2">
+                  <div class="col-sm-6">
+                    <small class="text-muted fw-semibold">Train set</small>
+                    <div class="d-flex gap-3 mt-1">
+                      <span><small class="text-muted">R²</small> <strong>{{ aiQualityInsight.train_r2 }}</strong></span>
+                      <span><small class="text-muted">RMSE</small> <strong>{{ aiQualityInsight.train_rmse }}%</strong></span>
+                    </div>
+                  </div>
+                  {{#aiQualityInsight.has_test}}
+                  <div class="col-sm-6 border-start">
+                    <small class="text-muted fw-semibold">Test set <span class="text-primary">(unseen data)</span></small>
+                    <div class="d-flex gap-3 mt-1">
+                      <span><small class="text-muted">R²</small> <strong class="{{ aiQualityInsight.accuracy_class }}">{{ aiQualityInsight.test_r2 }}</strong></span>
+                      <span><small class="text-muted">RMSE</small> <strong>{{ aiQualityInsight.test_rmse }}%</strong></span>
+                      <span><small class="text-muted">MAE</small> <strong>{{ aiQualityInsight.test_mae }}%</strong></span>
+                    </div>
+                  </div>
+                  {{/aiQualityInsight.has_test}}
+                </div>
+                <div class="mt-2">
+                  <small class="text-muted">R² ≥ 0.8 = High &nbsp;&bull;&nbsp; 0.5–0.8 = Medium &nbsp;&bull;&nbsp; &lt;0.5 = Low &nbsp;&bull;&nbsp; Test R² = true out-of-sample accuracy</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/hasAiQualityInsight}}
+
         <!-- Analytics Content (HTMX swap target) -->
         <div id="analytics-content">
           <!-- KPI Summary Cards -->
@@ -151,7 +208,7 @@
             </div>
             <div class="col-md-6">
               <div class="card h-100">
-                <div class="card-header bg-light"><h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>Quality Defect Rate Trend — dashed line at 5%</h6></div>
+                <div class="card-header bg-light"><h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>Quality Defect Rate Trend <span class="badge bg-warning text-dark ms-1" style="font-size:0.65rem;">AI Forecast</span></h6></div>
                 <div class="card-body">
                   {{#hasQualityData}}
                   <canvas id="qualityChart" height="220"></canvas>
@@ -244,7 +301,11 @@
         new Chart(document.getElementById('qualityChart'), {
           type: 'line',
           data: qualityData,
-          options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { title: { display: true, text: 'Defect Rate %' } } } }
+          options: {
+            responsive: true,
+            plugins: { legend: { display: true, position: 'top' } },
+            scales: { y: { title: { display: true, text: 'Defect Rate %' }, min: 0 } }
+          }
         });
       }
       if (document.getElementById('budgetChart') && budgetData) {

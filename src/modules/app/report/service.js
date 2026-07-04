@@ -1,6 +1,7 @@
 import databaseService from '../../../services/database/index.js';
 import ExcelJS from 'exceljs';
 import PDFDocument from 'pdfkit';
+import { linearRegression, predict, classifyTrend, addMonths, trainTestSplit, computeAccuracy } from '../../../services/analytics/ai-helpers.js';
 
 class ReportService {
   async getDashboardKPIs() {
@@ -312,7 +313,55 @@ class ReportService {
 
       const summary = { avg_spi, avg_task_completion, avg_defect_rate, total_active_projects, total_delayed_projects };
 
-      return { scheduleKPIs, qualityTrend, budgetKPIs, summary, filters };
+      // AI: linear regression on monthly defect rate → 3-month forecast
+      let qualityForecast = [];
+      let aiQualityInsight = null;
+
+      if (qualityTrend.length >= 2) {
+        const qPoints = qualityTrend.map((m, i) => ({ x: i, y: Number(m.defect_rate) || 0 }));
+
+        // Train/test split — time-based (80% train, 20% test)
+        const { train: qTrain, test: qTest } = trainTestSplit(qPoints, 0.8);
+        const qModel = linearRegression(qTrain);
+        const qTrainAcc = computeAccuracy(qModel, qTrain);
+        const qTestAcc = qTest.length > 0 ? computeAccuracy(qModel, qTest) : null;
+
+        const lastMonth = qualityTrend[qualityTrend.length - 1].month;
+        const trend = classifyTrend(-qModel.slope); // negative slope = defect rate falling = improving
+
+        qualityForecast = [1, 2, 3].map((offset) => ({
+          month: addMonths(lastMonth, offset),
+          defect_rate: parseFloat(Math.max(0, predict(qModel, qPoints.length - 1 + offset)).toFixed(2)),
+          is_forecast: true,
+        }));
+
+        const predicted3m = qualityForecast[2].defect_rate;
+
+        // Use test accuracy for label if available, otherwise fall back to train
+        const qEvalAcc = qTestAcc || qTrainAcc;
+        const qAccuracyLabel = qEvalAcc.r2 >= 0.8 ? 'High' : qEvalAcc.r2 >= 0.5 ? 'Medium' : 'Low';
+        const qAccuracyClass = qEvalAcc.r2 >= 0.8 ? 'text-success' : qEvalAcc.r2 >= 0.5 ? 'text-warning' : 'text-danger';
+
+        aiQualityInsight = {
+          trend,
+          trend_label: trend === 'improving' ? '↓ Improving' : trend === 'declining' ? '↑ Worsening' : '→ Stable',
+          trend_class: trend === 'improving' ? 'text-success' : trend === 'declining' ? 'text-danger' : 'text-muted',
+          predicted_3m: predicted3m,
+          predicted_3m_class: predicted3m > 5 ? 'text-danger' : 'text-success',
+          train_r2: qTrainAcc.r2,
+          train_rmse: qTrainAcc.rmse,
+          test_r2: qTestAcc ? qTestAcc.r2 : null,
+          test_rmse: qTestAcc ? qTestAcc.rmse : null,
+          test_mae: qTestAcc ? qTestAcc.mae : null,
+          has_test: !!qTestAcc,
+          accuracy_label: qAccuracyLabel,
+          accuracy_class: qAccuracyClass,
+          train_points: qTrain.length,
+          test_points: qTest.length,
+        };
+      }
+
+      return { scheduleKPIs, qualityTrend, qualityForecast, budgetKPIs, summary, filters, aiQualityInsight };
     } catch (error) {
       throw new Error(`Failed to get in-depth analytics: ${error.message}`);
     }
@@ -431,6 +480,64 @@ class ReportService {
     } catch (error) {
       throw new Error(`Failed to generate material usage report: ${error.message}`);
     }
+  }
+
+  addSupplierAiTrends(suppliers, trends) {
+    const supplierTrendMap = new Map();
+    for (const t of trends) {
+      if (!supplierTrendMap.has(t.supplier_id)) supplierTrendMap.set(t.supplier_id, []);
+      supplierTrendMap.get(t.supplier_id).push(t);
+    }
+
+    return suppliers.map((s) => {
+      const history = (supplierTrendMap.get(s.supplier_id) || [])
+        .sort((a, b) => a.month.localeCompare(b.month));
+
+      if (history.length < 2) {
+        return { ...s, ai_has_data: false };
+      }
+
+      const points = history.map((h, i) => ({ x: i, y: Number(h.avg_rating) }));
+      // Train/test split — time-based (80% train, 20% test)
+      const { train, test } = trainTestSplit(points, 0.8);
+      const model = linearRegression(train);
+      const trainAcc = computeAccuracy(model, train);
+      const testAcc = test.length > 0 ? computeAccuracy(model, test) : null;
+
+      const nextX = points.length;
+      const rawPrediction = predict(model, nextX);
+      const clamped = Math.min(5, Math.max(0, rawPrediction));
+      const trend = classifyTrend(model.slope);
+
+      const trendMeta = {
+        improving: { label: '↑ Improving', cls: 'text-success fw-bold' },
+        stable:    { label: '→ Stable',    cls: 'text-muted' },
+        declining: { label: '↓ Declining', cls: 'text-danger fw-bold' },
+      };
+
+      // Use test accuracy if available, otherwise fall back to train
+      const evalAcc = testAcc || trainAcc;
+      const accuracyLabel = evalAcc.r2 >= 0.8 ? 'High' : evalAcc.r2 >= 0.5 ? 'Medium' : 'Low';
+      const accuracyClass = evalAcc.r2 >= 0.8 ? 'text-success' : evalAcc.r2 >= 0.5 ? 'text-warning' : 'text-danger';
+
+      return {
+        ...s,
+        ai_has_data: true,
+        ai_trend: trend,
+        ai_trend_label: trendMeta[trend].label,
+        ai_trend_class: trendMeta[trend].cls,
+        ai_predicted_rating: parseFloat(clamped.toFixed(2)),
+        ai_train_r2: trainAcc.r2,
+        ai_train_rmse: trainAcc.rmse,
+        ai_test_r2: testAcc ? testAcc.r2 : null,
+        ai_test_rmse: testAcc ? testAcc.rmse : null,
+        ai_has_test: !!testAcc,
+        ai_accuracy_label: accuracyLabel,
+        ai_accuracy_class: accuracyClass,
+        ai_train_points: train.length,
+        ai_test_points: test.length,
+      };
+    });
   }
 
   // F1: Generate PDF report using pdfkit

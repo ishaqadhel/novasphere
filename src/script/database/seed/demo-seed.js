@@ -21,6 +21,17 @@ const d = (offsetDays) => {
   return dt.toISOString().slice(0, 10);
 };
 
+// Returns "YYYY-MM-15" for N months ago
+const monthDateStr = (monthsAgo) => {
+  const dt = new Date(NOW.getFullYear(), NOW.getMonth() - monthsAgo, 15);
+  const yyyy = dt.getFullYear();
+  const mm = String(dt.getMonth() + 1).padStart(2, '0');
+  return `${yyyy}-${mm}-15`;
+};
+
+// Returns MySQL DATETIME string "YYYY-MM-15 12:00:00" for N months ago
+const monthCreatedAt = (monthsAgo) => `${monthDateStr(monthsAgo)} 12:00:00`;
+
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 async function getIds() {
@@ -167,6 +178,36 @@ async function createPmr(projectId, supplierId, materialId, data, ids) {
       ids.deliveredStatusId,
       ids.adminId, ids.adminId,
     ]
+  );
+}
+
+async function createPmrWithDate(projectId, supplierId, materialId, data, ids, createdAt) {
+  const result = await databaseService.execute(
+    `INSERT INTO project_material_requirements
+     (project_id, material_id, supplier_id, quantity, unit_id, price, total_price,
+      arrived_date, actual_arrived_date, good_quantity, bad_quantity, status, is_active,
+      created_by, updated_by, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?)`,
+    [
+      projectId, materialId, supplierId,
+      data.quantity, ids.unitId,
+      data.price, data.quantity * data.price,
+      data.arrivedDate, data.actualArrivedDate,
+      data.goodQty, data.badQty,
+      ids.deliveredStatusId,
+      ids.adminId, ids.adminId,
+      createdAt,
+    ]
+  );
+  return result.insertId;
+}
+
+async function createSupplierRating(supplierId, pmrId, rating, createdAt, adminId) {
+  await databaseService.execute(
+    `INSERT INTO supplier_ratings
+     (supplier_id, project_material_requirement_id, rating, created_by, updated_by, created_at)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [supplierId, pmrId, rating, adminId, adminId, createdAt]
   );
 }
 
@@ -676,6 +717,71 @@ async function seedProject3(ids) {
   return projectId;
 }
 
+async function seedAiHistoryData(ids, projectId) {
+  console.log('\n[AI History] Seeding 12-month PMR + supplier rating history...');
+
+  const sup = ids.suppliers;
+  const mat = ids.materials;
+
+  if (sup.length < 5 || mat.length < 5) {
+    console.log('  ⚠ Not enough suppliers/materials (need ≥5 each). Skipping AI history.');
+    return;
+  }
+
+  // Idempotency: skip if already seeded for this supplier
+  const existing = await databaseService.query(
+    `SELECT supplier_rating_id FROM supplier_ratings WHERE supplier_id = ? LIMIT 1`,
+    [sup[0]]
+  );
+  if (existing.length > 0) {
+    console.log('  AI history already seeded. Skipping.');
+    return;
+  }
+
+  // Monthly defect rates: index 0 = 11 months ago → index 11 = this month
+  // Trend: mostly improving with a mid-year spike (gives AI a clear downward slope)
+  const monthlyDefectRates = [0.15, 0.13, 0.18, 0.12, 0.14, 0.10, 0.12, 0.08, 0.09, 0.07, 0.06, 0.05];
+
+  // 5 supplier rating trends (index 0 = 11 months ago → index 11 = this month)
+  const supplierRatingTrends = [
+    [2.5, 2.5, 3.0, 3.0, 3.5, 3.5, 3.5, 4.0, 4.0, 4.5, 4.5, 5.0], // sup[0] — steadily improving
+    [4.5, 4.5, 4.0, 4.0, 3.5, 3.5, 3.0, 3.0, 2.5, 2.5, 2.0, 2.0], // sup[1] — declining
+    [4.0, 4.5, 4.5, 4.0, 4.5, 4.0, 4.5, 4.0, 4.5, 4.0, 4.5, 4.0], // sup[2] — stable high
+    [3.0, 3.5, 3.0, 3.0, 3.5, 3.0, 3.5, 3.0, 3.0, 3.5, 3.0, 3.5], // sup[3] — stable medium
+    [2.0, 3.0, 2.0, 3.5, 2.5, 4.0, 3.0, 4.0, 3.5, 4.5, 4.0, 4.5], // sup[4] — volatile but improving
+  ];
+
+  for (let monthsAgo = 11; monthsAgo >= 0; monthsAgo--) {
+    const monthIdx = 11 - monthsAgo;
+    const createdAt = monthCreatedAt(monthsAgo);
+    const arrivedDate = monthDateStr(monthsAgo);
+
+    // PMR for quality trend (sup[0])
+    const defectRate = monthlyDefectRates[monthIdx];
+    const qty = 200;
+    const badQty = Math.round(qty * defectRate);
+    const qualityPmrId = await createPmrWithDate(
+      projectId, sup[0], mat[0],
+      { quantity: qty, price: 1000, arrivedDate, actualArrivedDate: arrivedDate, goodQty: qty - badQty, badQty },
+      ids, createdAt
+    );
+
+    // Supplier ratings — each needs its own PMR as FK
+    for (let sIdx = 0; sIdx < 5; sIdx++) {
+      const pmrId = sIdx === 0
+        ? qualityPmrId
+        : await createPmrWithDate(
+            projectId, sup[sIdx], mat[sIdx % mat.length],
+            { quantity: 100, price: 1500, arrivedDate, actualArrivedDate: arrivedDate, goodQty: 95, badQty: 5 },
+            ids, createdAt
+          );
+      await createSupplierRating(sup[sIdx], pmrId, supplierRatingTrends[sIdx][monthIdx], createdAt, ids.adminId);
+    }
+  }
+
+  console.log('  ✓ 12 months × (quality PMRs + 5 supplier ratings) seeded');
+}
+
 async function getProjectName(id) {
   const rows = await databaseService.query('SELECT name FROM projects WHERE project_id = ?', [id]);
   return rows[0]?.name || id;
@@ -691,34 +797,43 @@ async function run() {
   try {
     await databaseService.connect();
 
-    // Skip if demo projects already exist
-    const existing = await databaseService.query(
-      `SELECT project_id FROM projects WHERE name IN (
+    const ids = await getIds();
+
+    // Check if demo projects already exist
+    const existingProjects = await databaseService.query(
+      `SELECT project_id, name FROM projects WHERE name IN (
         'Harbor Bridge Rehabilitation',
         'Tech Park Office Fit-Out',
         'Coastal Highway Expansion'
-       ) LIMIT 1`
+       )`
     );
-    if (existing.length > 0) {
-      console.log('Demo projects already exist. Skipping.');
-      process.exit(0);
+
+    let p1;
+    if (existingProjects.length > 0) {
+      console.log('Demo projects already exist. Skipping project/task/risk seeding.');
+      const row = existingProjects.find((p) => p.name === 'Harbor Bridge Rehabilitation');
+      p1 = row ? row.project_id : existingProjects[0].project_id;
+    } else {
+      p1 = await seedProject1(ids);
+      const p2 = await seedProject2(ids);
+      const p3 = await seedProject3(ids);
+      console.log('\n==========================================');
+      console.log('Projects created successfully!');
+      console.log('==========================================');
+      console.log(`\nProjects created: ${p1}, ${p2}, ${p3}`);
+      console.log('\nExpected SRMA results after running simulation:');
+      console.log('  Harbor Bridge Rehabilitation  → ~25-40% on-time  (HIGH RISK)');
+      console.log('  Tech Park Office Fit-Out       → ~85-95% on-time  (LOW RISK)');
+      console.log('  Coastal Highway Expansion      → ~50-65% on-time  (MODERATE)');
+      console.log('\nRun: POST /app/report/predictive-delay/run with each project ID');
     }
 
-    const ids = await getIds();
-
-    const p1 = await seedProject1(ids);
-    const p2 = await seedProject2(ids);
-    const p3 = await seedProject3(ids);
+    // Always seed AI history (idempotent — skips if already seeded)
+    await seedAiHistoryData(ids, p1);
 
     console.log('\n==========================================');
     console.log('Demo seed completed successfully!');
     console.log('==========================================');
-    console.log(`\nProjects created: ${p1}, ${p2}, ${p3}`);
-    console.log('\nExpected SRMA results after running simulation:');
-    console.log('  Harbor Bridge Rehabilitation  → ~25-40% on-time  (HIGH RISK)');
-    console.log('  Tech Park Office Fit-Out       → ~85-95% on-time  (LOW RISK)');
-    console.log('  Coastal Highway Expansion      → ~50-65% on-time  (MODERATE)');
-    console.log('\nRun: POST /app/report/predictive-delay/run with each project ID');
 
     process.exit(0);
   } catch (error) {

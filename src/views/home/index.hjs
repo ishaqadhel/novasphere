@@ -8,34 +8,31 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-  
+
   <style>
     :root {
-      /* Trinova/NovaSphere Blue Scheme */
-      --primary-color: #0d47a1; 
+      --primary-color: #0d47a1;
       --accent-color: #42a5f5;
       --text-dark: #212529;
     }
-    
+
     body {
-      padding-top: 76px; /* Space for fixed navbar */
+      padding-top: 76px;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* Navbar Styling */
     .navbar {
       box-shadow: 0 2px 15px rgba(0,0,0,0.05);
       background-color: rgba(255, 255, 255, 0.95) !important;
       backdrop-filter: blur(10px);
     }
-    
+
     .navbar-brand {
       font-weight: 700;
       letter-spacing: -0.5px;
       color: var(--primary-color) !important;
     }
 
-    /* Hero Section */
     .hero-section {
       background: linear-gradient(135deg, #f0f4f8 0%, #e1e8ed 100%);
       padding: 120px 0 100px;
@@ -53,7 +50,6 @@
       display: block;
     }
 
-    /* Features */
     .feature-card {
       padding: 2.5rem;
       border-radius: 1rem;
@@ -82,12 +78,105 @@
       font-size: 2rem;
     }
 
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 0;
+    }
+
+    .feature-list li {
+      font-size: 0.9rem;
+      color: #6c757d;
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .feature-list li:last-child {
+      border-bottom: none;
+    }
+
+    .feature-list li i {
+      color: var(--primary-color);
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .advanced-badge {
+      font-size: 0.7rem;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    /* Sprint Roadmap */
+    .sprint-section {
+      background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
+      color: white;
+    }
+
+    .sprint-card {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 1rem;
+      padding: 2rem;
+      height: 100%;
+      backdrop-filter: blur(5px);
+    }
+
+    .sprint-card .sprint-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: white;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .sprint-story {
+      background: rgba(255,255,255,0.05);
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      border-left: 3px solid rgba(255,255,255,0.3);
+      font-size: 0.9rem;
+    }
+
+    .sprint-story:last-child {
+      margin-bottom: 0;
+    }
+
+    .sprint-story .epic-tag {
+      font-size: 0.7rem;
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    .value-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 2px;
+    }
+
     /* Pricing */
     .pricing-card {
       transition: all 0.3s;
       border: 1px solid #dee2e6;
       border-radius: 1rem;
-      overflow: visible; /* Changed from hidden to visible so badge can float */
+      overflow: visible;
     }
 
     .pricing-card:hover {
@@ -99,19 +188,19 @@
       background: #f8f9fa;
       padding: 2rem 0;
       border-bottom: 1px solid #eee;
-      border-radius: 1rem 1rem 0 0; /* Re-add radius since overflow is visible */
+      border-radius: 1rem 1rem 0 0;
     }
-    
+
     .card-pro {
       border: 2px solid var(--primary-color);
       position: relative;
     }
-    
+
     .badge-popular {
       position: absolute;
-      top: -15px; /* Move up to sit on the border */
-      left: 50%; /* Center horizontally */
-      transform: translateX(-50%); /* Center alignment correction */
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
       background: var(--primary-color);
       color: white;
       padding: 5px 15px;
@@ -170,6 +259,7 @@
         <ul class="navbar-nav ms-auto align-items-center">
           <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="#features">Solutions</a></li>
+          <li class="nav-item"><a class="nav-link" href="#roadmap">Roadmap</a></li>
           <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
           <li class="nav-item"><a class="nav-link" href="#about">About Trinova</a></li>
           <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
@@ -189,11 +279,11 @@
           <span class="hero-tagline">By Trinova Company</span>
           <h1 class="display-3 fw-bold mb-4 text-dark">Stay Ahead,<br>Finish On Time!</h1>
           <p class="lead text-muted mb-5">
-            Empowering construction professionals with a unified platform to centralize project data and streamline material procurement. Eliminate inefficiencies and manage your supply chain with confidence.
+            Empowering construction professionals with a unified platform to centralize project data and streamline material procurement. Manage users, suppliers, projects, materials, ratings, and AI-driven analytics — all in one place.
           </p>
           <div class="d-flex gap-3">
             <a href="/auth/login" class="btn btn-primary btn-lg px-5 shadow-sm">START APP</a>
-            <a href="#features" class="btn btn-outline-secondary btn-lg px-4">Explore MVP</a>
+            <a href="#features" class="btn btn-outline-secondary btn-lg px-4">Explore Features</a>
           </div>
           <div class="mt-5 text-muted small">
             <i class="bi bi-check-circle-fill text-success me-2"></i>Cloud SaaS
@@ -201,6 +291,8 @@
             <i class="bi bi-check-circle-fill text-success me-2"></i>On-Premise Options
             <span class="mx-3">|</span>
             <i class="bi bi-check-circle-fill text-success me-2"></i>Real-Time Tracking
+            <span class="mx-3">|</span>
+            <i class="bi bi-check-circle-fill text-success me-2"></i>AI-Powered Alerts
           </div>
         </div>
         <div class="col-lg-5 d-none d-lg-block">
@@ -216,43 +308,237 @@
   <section id="features" class="bg-white">
     <div class="container">
       <div class="text-center mb-5 mw-75 mx-auto">
-        <h2 class="fw-bold display-6 mb-3">Core Solutions</h2>
-        <p class="text-muted fs-5">Addressing the 9 out of 10 projects that face cost overruns through data-driven supplier management.</p>
+        <h2 class="fw-bold display-6 mb-3">Complete Feature Suite</h2>
+        <p class="text-muted fs-5">Six integrated modules covering every aspect of construction project and supply chain management.</p>
       </div>
-      
+
       <div class="row g-4">
-        <!-- Feature 1: Supplier Management (MVP) -->
+
+        <!-- Feature 1: User Management -->
         <div class="col-md-4">
           <div class="feature-card">
             <div class="feature-icon">
-              <i class="bi bi-graph-up-arrow"></i>
+              <i class="bi bi-people-fill"></i>
             </div>
-            <h4>Supplier Comparison</h4>
-            <p class="text-muted">Compare suppliers based on material costs, delivery schedules, and availability to find the perfect match for your project.</p>
+            <h4>User Management</h4>
+            <p class="text-muted">Full employee lifecycle management with role-based access control.</p>
+            <ul class="feature-list">
+              <li><i class="bi bi-check2"></i>Create employee accounts with activation email</li>
+              <li><i class="bi bi-check2"></i>Modify employee name, email, department & role</li>
+              <li><i class="bi bi-check2"></i>Deactivate or permanently delete accounts</li>
+              <li><i class="bi bi-check2"></i>Assign roles: Administrator, Project Manager, Supervisor</li>
+            </ul>
           </div>
         </div>
-        
-        <!-- Feature 2: Material Tracking (MVP) -->
+
+        <!-- Feature 2: Supplier Management -->
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="bi bi-shop"></i>
+            </div>
+            <h4>Supplier Management</h4>
+            <p class="text-muted">Centralised supplier directory with full profile and audit trail.</p>
+            <ul class="feature-list">
+              <li><i class="bi bi-check2"></i>Add suppliers with contact, catalog & pricing</li>
+              <li><i class="bi bi-check2"></i>Update supplier info with timestamped change history</li>
+              <li><i class="bi bi-check2"></i>Delete suppliers with active-project safeguard</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Feature 3: Project Management -->
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="bi bi-kanban-fill"></i>
+            </div>
+            <h4>Project Management</h4>
+            <p class="text-muted">End-to-end project lifecycle from creation to completion.</p>
+            <ul class="feature-list">
+              <li><i class="bi bi-check2"></i>Create projects with budget, timeline & team</li>
+              <li><i class="bi bi-check2"></i>Real-time milestones, task completion & budget alerts</li>
+              <li><i class="bi bi-check2"></i>Assign tasks to employees with deadlines</li>
+              <li><i class="bi bi-check2"></i>Dashboard view of all assignments & statuses</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Feature 4: Material Management -->
         <div class="col-md-4">
           <div class="feature-card">
             <div class="feature-icon">
               <i class="bi bi-truck"></i>
             </div>
-            <h4>Material Tracking</h4>
-            <p class="text-muted">Track material orders from the supplier to the site. Receive simple pre-delay alerts if orders fall behind schedule.</p>
+            <h4>Material Management</h4>
+            <p class="text-muted">Track every material from order to acceptance — with quality gates.</p>
+            <ul class="feature-list">
+              <li><i class="bi bi-check2"></i>Bill of materials per project phase or task</li>
+              <li><i class="bi bi-check2"></i>Real-time order & delivery status tracking</li>
+              <li><i class="bi bi-check2"></i>Quality inspection with photo/document attachments</li>
+              <li><i class="bi bi-check2"></i>Flag non-compliant deliveries with supplier accountability</li>
+            </ul>
           </div>
         </div>
-        
-        <!-- Feature 3: Quality (MVP) -->
+
+        <!-- Feature 5: Supplier Rating -->
         <div class="col-md-4">
           <div class="feature-card">
             <div class="feature-icon">
-              <i class="bi bi-shield-check"></i>
+              <i class="bi bi-star-fill"></i>
             </div>
-            <h4>Quality Verification</h4>
-            <p class="text-muted">Verify material quality standards upon delivery and track non-compliant items to prevent costly rework.</p>
+            <h4>Supplier Rating</h4>
+            <p class="text-muted">Data-driven supplier evaluation with performance benchmarking.</p>
+            <ul class="feature-list">
+              <li><i class="bi bi-check2"></i>Rate on price, delivery timeliness & quality per transaction</li>
+              <li><i class="bi bi-check2"></i>Historical performance timeline with date & project filters</li>
+              <li><i class="bi bi-check2"></i>Benchmark against industry standards <span class="advanced-badge">Advanced</span></li>
+              <li><i class="bi bi-check2"></i>Trend analytics with top/at-risk supplier highlights <span class="advanced-badge">Advanced</span></li>
+            </ul>
           </div>
         </div>
+
+        <!-- Feature 6: Reporting & Analytics -->
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <h4>Reporting & Analytics</h4>
+            <p class="text-muted">From basic summaries to AI-powered predictive intelligence.</p>
+            <ul class="feature-list">
+              <li><i class="bi bi-check2"></i>Project status, material & supplier summary reports (PDF/Excel)</li>
+              <li><i class="bi bi-check2"></i>Multi-dimensional cost, schedule & quality KPI dashboard <span class="advanced-badge">Advanced</span></li>
+              <li><i class="bi bi-check2"></i>SRMA: Monte Carlo delay simulation with S-curve <span class="advanced-badge">Advanced</span></li>
+              <li><i class="bi bi-check2"></i>Ranked mitigation actions with cost-risk distribution <span class="advanced-badge">Advanced</span></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="text-center mt-4">
+        <small class="text-muted"><span class="advanced-badge">Advanced</span> features available in Pro+ and Enterprise tiers.</small>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sprint Roadmap Section -->
+  <section id="roadmap" class="sprint-section">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold display-6 mb-3">Delivery Roadmap</h2>
+        <p class="opacity-75 fs-5">Three focused sprints. Every feature intentionally sequenced for maximum early value.</p>
+      </div>
+
+      <div class="row g-4">
+
+        <!-- Sprint 1 -->
+        <div class="col-lg-4">
+          <div class="sprint-card">
+            <div class="sprint-badge">Sprint 1 — Apr 27 – May 8</div>
+            <h5 class="fw-bold mb-1">Foundation & Core Workflows</h5>
+            <p class="opacity-60 small mb-3">20 dev-days &nbsp;·&nbsp; 20 story points</p>
+
+            <div class="sprint-story">
+              <div class="epic-tag">User Management</div>
+              Create, Modify & Delete Employee Accounts
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">User Management</div>
+              Assign Roles & Permissions (Admin / PM / Supervisor)
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Supplier Management</div>
+              Add, Modify & Delete Suppliers
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Project Management</div>
+              Create Project (budget, timeline, team)
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Project Management</div>
+              Manage & Track Project (real-time status, alerts)
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Project Management</div>
+              Assign Resources & Tasks to Team Members
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Supplier Rating</div>
+              Rate Suppliers per Transaction
+            </div>
+          </div>
+        </div>
+
+        <!-- Sprint 2 -->
+        <div class="col-lg-4">
+          <div class="sprint-card">
+            <div class="sprint-badge">Sprint 2 — May 11 – May 22</div>
+            <h5 class="fw-bold mb-1">Materials, Quality & Insights</h5>
+            <p class="opacity-60 small mb-3">16 dev-days &nbsp;·&nbsp; 20 story points capacity</p>
+
+            <div class="sprint-story">
+              <div class="epic-tag">Material Management</div>
+              Manage Material Requirements (Bill of Materials)
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Material Management</div>
+              Track Ordering & Delivery with Delay Alerts
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Material Management</div>
+              Verify Material Quality (photos & documents)
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Material Management</div>
+              Mark Non-compliant Materials & Notify PM
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Supplier Rating</div>
+              Review Supplier Performance History
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Supplier Rating</div>
+              Benchmark Supplier Performance <span class="advanced-badge">Advanced</span>
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Reporting</div>
+              Generate Basic Reports (PDF / Excel)
+            </div>
+          </div>
+        </div>
+
+        <!-- Sprint 3 -->
+        <div class="col-lg-4">
+          <div class="sprint-card">
+            <div class="sprint-badge">Sprint 3 — May 25 – Jun 5</div>
+            <h5 class="fw-bold mb-1">AI Intelligence & Advanced Analytics</h5>
+            <p class="opacity-60 small mb-3">15 dev-days &nbsp;·&nbsp; 20 story points capacity</p>
+
+            <div class="sprint-story">
+              <div class="epic-tag">Reporting &amp; Analytics</div>
+              AI-Driven Predictive Delay Alerts (SRMA) <span class="advanced-badge">Advanced</span>
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Reporting &amp; Analytics</div>
+              Monte Carlo Simulation with S-Curve Output <span class="advanced-badge">Advanced</span>
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Reporting &amp; Analytics</div>
+              Ranked Mitigation Actions & Cost-Risk Distribution <span class="advanced-badge">Advanced</span>
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Reporting &amp; Analytics</div>
+              In-depth Multi-dimensional Performance Analytics <span class="advanced-badge">Advanced</span>
+            </div>
+            <div class="sprint-story">
+              <div class="epic-tag">Supplier Rating</div>
+              Advanced Supplier Trend Analytics & Export <span class="advanced-badge">Advanced</span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -264,7 +550,7 @@
         <h2 class="fw-bold display-6">Flexible Deployment</h2>
         <p class="text-muted">From small contractors to government enterprises.</p>
       </div>
-      
+
       <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
         <!-- Free Tier -->
         <div class="col">
@@ -277,13 +563,14 @@
               <ul class="list-unstyled mt-3 mb-4 text-start mx-auto">
                 <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Up to 10 Users</li>
                 <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Max 5 Projects</li>
-                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Supplier Comparison</li>
+                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Supplier Comparison & Rating</li>
                 <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Material Tracking</li>
+                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Basic Reports</li>
               </ul>
             </div>
           </div>
         </div>
-        
+
         <!-- Pro Tier -->
         <div class="col">
           <div class="card mb-4 rounded-4 shadow-sm pricing-card h-100 card-pro">
@@ -296,14 +583,16 @@
             <div class="card-body d-flex flex-column">
               <ul class="list-unstyled mt-3 mb-4 text-start mx-auto">
                 <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i><strong>Unlimited</strong> Users & Projects</li>
-                <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Basic Progress Reports</li>
-                <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i><strong>Pre-Delay Alerts</strong></li>
+                <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Full Material Quality Verification</li>
+                <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Supplier Benchmarking</li>
+                <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i><strong>Pre-Delay Alerts (SRMA)</strong></li>
+                <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Advanced Analytics & Reports</li>
                 <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Priority Support</li>
               </ul>
             </div>
           </div>
         </div>
-        
+
         <!-- Enterprise Tier -->
         <div class="col">
           <div class="card mb-4 rounded-4 shadow-sm pricing-card h-100 border-0">
@@ -317,6 +606,7 @@
                 <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Full Data Control</li>
                 <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Custom Integrations (ERP/BIM)</li>
                 <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Government Compliance</li>
+                <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Monte Carlo AI Engine (SRMA)</li>
                 <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>Dedicated Account Manager</li>
                 <li class="mb-2"><i class="bi bi-check2 text-primary me-2"></i>SLA-backed Support</li>
               </ul>
@@ -327,17 +617,15 @@
     </div>
   </section>
 
-  <!-- About Section (Redesigned) -->
+  <!-- About Section -->
   <section id="about" class="bg-white">
     <div class="container">
-      
-      <!-- Top: Text Content -->
       <div class="row justify-content-center mb-5">
         <div class="col-lg-10 text-center">
           <h2 class="fw-bold mb-4">About Trinova Company</h2>
           <p class="lead text-primary fw-bold mb-3">"Tri" (Three Pillars) + "Nova" (New Star)</p>
           <p class="lead text-muted mb-4">
-            Our mission is to eliminate the inefficiencies that have plagued construction for decades. 
+            Our mission is to eliminate the inefficiencies that have plagued construction for decades.
             We believe that true success lies in the perfect balance of <strong>Cost, Schedule, and Quality</strong>.
           </p>
           <p class="text-muted fs-5">
@@ -345,8 +633,6 @@
           </p>
         </div>
       </div>
-
-
     </div>
   </section>
 
@@ -357,7 +643,7 @@
         <div class="col-lg-8 text-center">
           <h2 class="fw-bold mb-4">Get in Touch</h2>
           <p class="mb-5 text-white-50">Ready to transform your construction workflow? Contact our team at NTUST.</p>
-          
+
           <div class="row justify-content-center gap-4">
             <div class="col-md-6 bg-white text-dark rounded p-4 mb-3">
               <i class="bi bi-envelope-fill text-primary fs-3 mb-2"></i>

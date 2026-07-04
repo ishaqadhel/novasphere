@@ -103,6 +103,25 @@
           </div>
         </div>
 
+        <!-- AI Declining Trend Alert -->
+        {{#hasAiDeclining}}
+        <div class="alert alert-warning mb-4">
+          <h6 class="alert-heading"><i class="bi bi-robot me-2"></i>AI Prediction — Rating Declining</h6>
+          <p class="mb-2 small">Linear regression on 12-month rating history detected a downward trend for these suppliers:</p>
+          <div class="row g-2 mt-1">
+            {{#aiDecliningSuppliers}}
+            <div class="col-md-4">
+              <div class="d-flex align-items-center gap-2">
+                <span class="text-danger fw-bold">↓</span>
+                <strong>{{ name }}</strong>
+                <span class="badge bg-warning text-dark">Predicted: {{ ai_predicted_rating }}</span>
+              </div>
+            </div>
+            {{/aiDecliningSuppliers}}
+          </div>
+        </div>
+        {{/hasAiDeclining}}
+
         <!-- At-Risk Alert -->
         {{#hasAtRisk}}
         <div class="alert alert-danger mb-4">
@@ -194,6 +213,7 @@
                   <tr>
                     <th>ID</th><th>Supplier Name</th><th>Status</th><th>Rating</th>
                     <th>On-Time %</th><th>Defect %</th><th>Avg Detail Rating</th><th>Projects</th><th>Risk</th>
+                    <th>AI Trend</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -217,6 +237,22 @@
                     <td>{{#avg_detailed_rating}}<span class="badge bg-info">{{ avg_detailed_rating }}</span>{{/avg_detailed_rating}}{{^avg_detailed_rating}}<span class="text-muted small">N/A</span>{{/avg_detailed_rating}}</td>
                     <td>{{ projects_count }}</td>
                     <td>{{#is_at_risk}}<span class="badge bg-danger"><i class="bi bi-exclamation-triangle-fill"></i> At Risk</span>{{/is_at_risk}}{{^is_at_risk}}<span class="badge bg-success">OK</span>{{/is_at_risk}}</td>
+                    <td>
+                      {{#ai_has_data}}
+                      <span class="{{ ai_trend_class }}">{{ ai_trend_label }}</span>
+                      <br><small class="text-muted">Next: <strong>{{ ai_predicted_rating }}</strong></small>
+                      <br>
+                      <small>
+                        Train R²: <span class="{{ ai_accuracy_class }}">{{ ai_train_r2 }}</span> RMSE: {{ ai_train_rmse }}
+                        {{#ai_has_test}}
+                        <br>Test R²: <span class="{{ ai_accuracy_class }}">{{ ai_test_r2 }}</span> RMSE: {{ ai_test_rmse }}
+                        {{/ai_has_test}}
+                        <br><span class="badge" style="font-size:0.6rem;background:var(--bs-{{ ai_accuracy_class }})">{{ ai_accuracy_label }} accuracy</span>
+                        <span class="text-muted">({{ ai_train_points }}tr / {{ ai_test_points }}te pts)</span>
+                      </small>
+                      {{/ai_has_data}}
+                      {{^ai_has_data}}<span class="text-muted small">Not enough data</span>{{/ai_has_data}}
+                    </td>
                   </tr>
                   {{/reportData.suppliers}}
                   {{^reportData.suppliers}}<tr><td colspan="9" class="text-center text-muted">No suppliers found</td></tr>{{/reportData.suppliers}}

@@ -166,10 +166,16 @@ class ReportController extends BaseController {
 
       const reportData = perfData;
 
+      // AI: enrich suppliers with trend prediction
+      reportData.suppliers = reportService.addSupplierAiTrends(reportData.suppliers || [], trends);
+
       // Split suppliers
       const atRiskSuppliers = (reportData.suppliers || []).filter((s) => Number(s.is_at_risk) === 1);
       const topPerformers = (reportData.suppliers || []).filter(
         (s) => Number(s.rating) >= 4.0 && Number(s.is_at_risk) === 0
+      );
+      const aiDecliningSuppliers = (reportData.suppliers || []).filter(
+        (s) => s.ai_has_data && s.ai_trend === 'declining'
       );
 
       // Build Chart.js datasets for trend line (top 5 by rating)
@@ -252,6 +258,8 @@ class ReportController extends BaseController {
         topPerformers,
         hasAtRisk: atRiskWithBadges.length > 0,
         hasTopPerformers: topPerformers.length > 0,
+        aiDecliningSuppliers,
+        hasAiDeclining: aiDecliningSuppliers.length > 0,
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load supplier performance report', 500, error);
@@ -469,17 +477,48 @@ class ReportController extends BaseController {
         ],
       });
 
+      // Build quality chart with AI forecast as dashed second dataset
+      const allQualityLabels = [
+        ...analyticsData.qualityTrend.map((m) => m.month),
+        ...(analyticsData.qualityForecast || []).map((m) => m.month),
+      ];
+      const actualLen = analyticsData.qualityTrend.length;
+      const forecastLen = (analyticsData.qualityForecast || []).length;
+      const lastActualVal = analyticsData.qualityTrend.length > 0
+        ? Number(analyticsData.qualityTrend[analyticsData.qualityTrend.length - 1].defect_rate) || 0
+        : null;
+
+      // Actual dataset: fill nulls for forecast months (except repeat last point for visual join)
+      const actualData = [
+        ...analyticsData.qualityTrend.map((m) => Number(m.defect_rate) || 0),
+        ...(forecastLen > 0 ? [lastActualVal, ...Array(forecastLen - 1).fill(null)] : []),
+      ];
+      // Forecast dataset: nulls for historical months (except last), then forecast values
+      const forecastData = [
+        ...Array(actualLen - 1).fill(null),
+        ...(forecastLen > 0 ? [lastActualVal, ...(analyticsData.qualityForecast || []).map((m) => m.defect_rate)] : []),
+      ];
+
       const qualityChartJson = safeJson({
-        labels: analyticsData.qualityTrend.map((m) => m.month),
+        labels: allQualityLabels,
         datasets: [
           {
             label: 'Defect Rate %',
-            data: analyticsData.qualityTrend.map((m) => Number(m.defect_rate) || 0),
+            data: actualData,
             borderColor: 'rgba(220,53,69,0.8)',
             backgroundColor: 'rgba(220,53,69,0.1)',
             fill: true,
             tension: 0.3,
           },
+          ...(forecastLen > 0 ? [{
+            label: 'AI Forecast',
+            data: forecastData,
+            borderColor: 'rgba(255,153,0,0.9)',
+            backgroundColor: 'transparent',
+            borderDash: [6, 4],
+            tension: 0.3,
+            pointStyle: 'triangle',
+          }] : []),
         ],
       });
 
@@ -550,6 +589,8 @@ class ReportController extends BaseController {
         hasBudgetData: analyticsData.budgetKPIs.length > 0,
         spiClass: Number(analyticsData.summary.avg_spi) >= 1.0 ? 'text-success' : 'text-danger',
         defectClass: Number(analyticsData.summary.avg_defect_rate) > 5 ? 'text-danger' : 'text-success',
+        aiQualityInsight: analyticsData.aiQualityInsight || null,
+        hasAiQualityInsight: !!analyticsData.aiQualityInsight,
       });
     } catch (error) {
       return this.sendError(res, 'Failed to load in-depth analytics', 500, error);
